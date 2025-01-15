@@ -1,0 +1,25 @@
+#stacked_widget{
+    background-image: url(:/assets/iris-background.png);
+    font: 8px "Inter";
+    border: 0px solid white;
+    color: white;
+}
+#central_widget{
+    background-color: rgb(3, 11, 37);
+    color: white
+}
+
+QLabel {
+    font: 15px "inter";
+    color: rgb(179, 182, 195);
+    border: none;
+    background: transparent;
+    font-weight: 400;
+}
+
+
+#msg_box{
+    background-color: #1B233B;
+    color: white ;
+    border-radius: 8px;
+}

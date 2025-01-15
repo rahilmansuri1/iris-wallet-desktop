@@ -1,0 +1,344 @@
+name: Iris Wallet Desktop CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code with submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 1
+          submodule-fetch-depth: 1
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          source "$HOME/.cargo/env"
+
+      - name: Set up Python 3.12.3
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.3"
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install libxcb-cursor0 -y
+          sudo apt-get install ruby-dev build-essential && sudo gem i fpm -f
+
+      - name: Clone rgb-lightning-node repository with submodules
+        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+
+      - name: Build the rgb-lightning-node binary
+        working-directory: rgb-lightning-node
+        run: cargo install --debug --path .
+
+      - name: Copy rgb-lightning-node binary to root directory
+        run: |
+          mkdir ln_node_binary
+          cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary
+
+      - name: Set environment variables from secrets and create config.py
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          AUTH_URI: ${{ secrets.AUTH_URI }}
+          TOKEN_URI: ${{ secrets.TOKEN_URI }}
+          AUTH_PROVIDER_CERT_URL: ${{ secrets.AUTH_PROVIDER_CERT_URL }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        run: |
+          cd src/utils
+          python generate_config.py
+
+      - name: Install python dependencies
+        run: |
+          pip install poetry
+          pip install pyinstaller
+          poetry install
+
+      - name: Compile QT resources
+        run: |
+          poetry run pyside6-rcc src/resources.qrc -o src/resources_rc.py
+
+      - name: Build the application
+        run: |
+          chmod +x build_linux.sh
+          ./build_linux.sh
+
+      - name: Create AppImage
+        run: |
+          chmod +x build_appimage.sh
+          ./build_appimage.sh
+          ARCH=$(uname -m)
+          APPIMAGE_NAME="iriswallet-${ARCH}.AppImage"
+          echo "APPIMAGE_NAME=${APPIMAGE_NAME}" >> $GITHUB_ENV
+          echo $APPIMAGE_NAME
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            iriswallet.deb
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux_appimage
+          path: |
+            ${{ env.APPIMAGE_NAME }}
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code with submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 1
+          submodule-fetch-depth: 1
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          source "$HOME/.cargo/env"
+
+      - name: Set up Python 3.12.3
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.3"
+
+      - name: Clone rgb-lightning-node repository with submodules
+        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+
+      - name: Build the rgb-lightning-node binary
+        working-directory: rgb-lightning-node
+        run: cargo install --debug --path .
+
+      - name: Copy rgb-lightning-node binary to root directory
+        run: |
+          mkdir ln_node_binary
+          cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary
+
+      - name: Set environment variables from secrets and create config.py
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          AUTH_URI: ${{ secrets.AUTH_URI }}
+          TOKEN_URI: ${{ secrets.TOKEN_URI }}
+          AUTH_PROVIDER_CERT_URL: ${{ secrets.AUTH_PROVIDER_CERT_URL }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        run: |
+          cd src/utils
+          python generate_config.py
+
+      - name: Install python dependencies
+        run: |
+          pip install poetry
+          pip install pyinstaller
+          poetry install
+
+      - name: Compile QT resources
+        run: |
+          poetry run pyside6-rcc src/resources.qrc -o src/resources_rc.py
+
+      - name: Build the application
+        run: |
+          chmod +x build_macos.sh
+          ./build_macos.sh
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: iriswallet*
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code with submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 1
+          submodule-fetch-depth: 1
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Clone rgb-lightning-node repository with submodules
+        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+
+      - name: Build the rgb-lightning-node binary
+        working-directory: rgb-lightning-node
+        run: cargo install --debug --path .
+
+      - name: Copy rgb-lightning-node binary to root directory
+        run: |
+          mkdir ln_node_binary
+          copy rgb-lightning-node\\target\\debug\\rgb-lightning-node.exe ln_node_binary
+
+      - name: Generate config.py with secrets and inno Setup script with dynamic version
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          AUTH_URI: ${{ secrets.AUTH_URI }}
+          TOKEN_URI: ${{ secrets.TOKEN_URI }}
+          AUTH_PROVIDER_CERT_URL: ${{ secrets.AUTH_PROVIDER_CERT_URL }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        run: |
+          cd src/utils
+          python generate_config.py
+          python generate_iss.py
+
+      - name: Install python dependencies
+        run: |
+          pip install poetry
+          pip install pyinstaller
+          poetry install
+
+      - name: Compile QT resources and build exe
+        run: |
+          poetry run pyside6-rcc src/resources.qrc -o src/resources_rc.py
+          poetry run pyinstaller iris_wallet_desktop.spec
+
+      - name: Build the application
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: updated_iriswallet.iss
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: iriswallet.exe
+
+
+  upload-release:
+    if: needs.build-linux.result == 'success' || needs.build-macos.result == 'success' || needs.build-windows.result == 'success'
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-macos, build-windows]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version from VERSION.py
+        run: |
+          VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
+          echo "TAG_NAME=v${VERSION}" >> $GITHUB_ENV
+          echo "RELEASE_NAME=Release v${VERSION}" >> $GITHUB_ENV
+          ARCH=$(uname -m)
+          APPIMAGE_NAME="iriswallet-${ARCH}.AppImage"
+          echo "APPIMAGE_NAME=${APPIMAGE_NAME}" >> $GITHUB_ENV
+          echo $APPIMAGE_NAME
+          APPNAME_MAC="iriswallet ${VERSION}".dmg
+          echo "APPNAME_MAC=${APPNAME_MAC}" >> $GITHUB_ENV
+          echo $APPNAME_MAC
+
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "${{ env.TAG_NAME }}"
+          release_name: "${{ env.RELEASE_NAME }}"
+          draft: false
+          prerelease: false
+
+      - name: Create uploads folder
+        run: mkdir -p ./uploads
+
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux # Name of the Linux artifact
+          path: ./uploads # Destination path folder
+
+      - name: Download Linux AppImage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux_appimage # Name of the Linux artifact
+          path: ./uploads # Destination path folder
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: macos # Name of the macOS artifact
+          path: ./uploads # Destination path folder
+
+      - name: Download windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows # Name of the windows artifact
+          path: ./uploads # Destination path folder
+
+      - name: Upload Release Artifact Linux DEB
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./uploads/iriswallet.deb
+          asset_name: iris-wallet-desktop-linux-"${{ env.TAG_NAME }}".deb
+          asset_content_type: application/vnd.debian.binary-package
+
+      - name: Upload Release Artifact Linux AppImage
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./uploads/${{ env.APPIMAGE_NAME }}
+          asset_name: iris-wallet-desktop-"${{ env.TAG_NAME }}".AppImage
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Artifact windows
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./uploads/iriswallet.exe
+          asset_name: iris-wallet-desktop-windows-"${{ env.TAG_NAME }}".exe
+          asset_content_type: application/vnd.microsoft.portable-executable
+
+      - name: Upload Release Artifact macOS
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./uploads/${{ env.APPNAME_MAC }}
+          asset_name: iris-wallet-desktop-macos-"${{ env.TAG_NAME }}".dmg
+          asset_content_type: application/octet-stream
+
+  cleanup:
+    if: always()
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-macos, build-windows,upload-release]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cleanup Artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            linux
+            linux_appimage
+            macos
+            windows
+          failOnError: false
