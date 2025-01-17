@@ -3,58 +3,50 @@ name: Iris Wallet Desktop CI
 on:
   push:
     tags:
-      - '*'  # Trigger workflow when a new tag is pushed.
+      - '*' # Trigger this workflow on any tag push
 
 jobs:
-  build-linux:
-    name: Build and Package Iris Wallet for Linux
+  build-linux-artifacts:
     runs-on: ubuntu-22.04
     steps:
-      # Step 1: Check out code repository, including submodules
-      - name: Checkout code with submodules
+      - name: Checkout repository with submodules
         uses: actions/checkout@v3
         with:
-          submodules: true
-          fetch-depth: 1
-          submodule-fetch-depth: 1  # Fetch minimal depth for submodules to reduce build time.
+          submodules: true # Include submodules in the checkout
+          fetch-depth: 1 # Fetch the latest commit only
+          submodule-fetch-depth: 1 # Fetch the latest commit of submodules
 
-      # Step 2: Install Rust programming language
-      - name: Install Rust
+      - name: Install Rust Programming Environment
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
           source "$HOME/.cargo/env"
 
-      # Step 3: Set up Python environment
-      - name: Set up Python 3.12.3
+      - name: Set up Python 3.12.3 environment
         uses: actions/setup-python@v5
         with:
           python-version: "3.12.3"
 
-      # Step 4: Install system dependencies required for building the project
-      - name: Install system dependencies
+      - name: Install required system dependencies
         run: |
           sudo apt update
-          sudo apt install libxcb-cursor0 libfuse2 -y
-          sudo apt install ruby-dev build-essential && sudo gem install fpm -f
+          sudo apt install libxcb-cursor0 -y # Required by the application
+          sudo apt-get install ruby-dev build-essential -y && sudo gem i fpm -f
+          sudo apt-get update && sudo apt-get install -y libfuse2 # Required for AppImage creation
 
-      # Step 5: Clone the rgb-lightning-node repository with submodules
-      - name: Clone rgb-lightning-node repository
+      - name: Clone rgb-lightning-node repository with submodules
         run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
 
-      # Step 6: Build the rgb-lightning-node binary
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node
-        run: cargo install --locked --debug --path .
+        run: cargo install --locked --debug --path . 
 
-      # Step 7: Copy the rgb-lightning-node binary to the root directory
-      - name: Copy rgb-lightning-node binary
+      - name: Copy rgb-lightning-node binary to root directory
         run: |
           mkdir ln_node_binary
-          cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary/
+          cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary
 
-      # Step 8: Create a configuration file from environment variables
-      - name: Set environment variables and create config.py
+      - name: Set environment variables from GitHub Secrets and generate config.py
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           PROJECT_ID: ${{ secrets.PROJECT_ID }}
@@ -70,18 +62,17 @@ jobs:
           cd src/utils
           python generate_config.py
 
-      # Step 9: Install Python dependencies
       - name: Install Python dependencies
         run: |
-          pip install poetry pyinstaller
-          poetry install
+          pip install poetry # Dependency management tool
+          pip install pyinstaller # Required for building executable files
+          poetry install # Install application dependencies
 
-      # Step 10: Compile PySide6 Qt resources
-      - name: Compile PySide6 Qt resources
-        run: poetry run pyside6-rcc src/resources.qrc -o src/resources_rc.py
+      - name: Compile QT resources
+        run: |
+          poetry run pyside6-rcc src/resources.qrc -o src/resources_rc.py
 
-      # Step 11: Build and rename AppImage for regtest
-      - name: Create AppImage for regtest
+      - name: Create AppImage for Regtest network
         run: |
           ARCH=$(uname -m)
           VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
@@ -90,16 +81,16 @@ jobs:
           RENAME_REGTEST_APPIMAGE_NAME="iriswallet-regtest-${VERSION}-${ARCH}.AppImage"
           mv ${REGTEST_APPIMAGE_NAME} ${RENAME_REGTEST_APPIMAGE_NAME}
           echo "RENAME_REGTEST_APPIMAGE_NAME=${RENAME_REGTEST_APPIMAGE_NAME}" >> $GITHUB_ENV
+          echo "Generated file: $RENAME_REGTEST_APPIMAGE_NAME"
+        shell: bash
 
-      # Step 12: Upload regtest AppImage artifact
-      - name: Upload regtest AppImage artifact
+      - name: Upload Regtest AppImage artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux_appimage_regtest
           path: ${{ env.RENAME_REGTEST_APPIMAGE_NAME }}
 
-      # Step 13: Build and rename AppImage for testnet
-      - name: Create AppImage for testnet
+      - name: Create AppImage for Testnet network
         run: |
           ARCH=$(uname -m)
           VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
@@ -108,32 +99,31 @@ jobs:
           RENAME_TESTNET_APPIMAGE_NAME="iriswallet-testnet-${VERSION}-${ARCH}.AppImage"
           mv ${TESTNET_APPIMAGE_NAME} ${RENAME_TESTNET_APPIMAGE_NAME}
           echo "RENAME_TESTNET_APPIMAGE_NAME=${RENAME_TESTNET_APPIMAGE_NAME}" >> $GITHUB_ENV
+          echo "Generated file: $RENAME_TESTNET_APPIMAGE_NAME"
+        shell: bash
 
-      # Step 14: Upload testnet AppImage artifact
-      - name: Upload testnet AppImage artifact
+      - name: Upload Testnet AppImage artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux_appimage_testnet
           path: ${{ env.RENAME_TESTNET_APPIMAGE_NAME }}
 
-  upload-release:
-    name: Create GitHub Release and Upload Artifacts
-    if: needs.build-linux.result == 'success'
+  release-artifacts:
+    if: needs.build-linux-artifacts.result == 'success'
     runs-on: ubuntu-latest
-    needs: build-linux
+    needs: [build-linux-artifacts]
     permissions:
       contents: write
     steps:
-      # Step 1: Checkout codebase
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Step 2: Get the tag name
-      - name: Get tag name
+      - name: Retrieve tag name
         run: |
           TAG_NAME=$(git describe --tags)
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+          echo "Using tag: $TAG_NAME"
 
-      # Step 3: Create a GitHub Release
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -145,36 +135,60 @@ jobs:
           draft: false
           prerelease: false
 
-      # Step 4: Download and upload regtest AppImage
-      - name: Upload regtest artifact to release
+      - name: Read version and architecture information
+        run: |
+          VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
+          ARCH=$(uname -m)
+          TESTNET_APPIMAGE_NAME="iriswallet-testnet-${VERSION}-${ARCH}.AppImage"
+          REGTEST_APPIMAGE_NAME="iriswallet-regtest-${VERSION}-${ARCH}.AppImage"
+          echo "ARCH=${ARCH}" >> $GITHUB_ENV
+          echo "TESTNET_APPIMAGE_NAME=${TESTNET_APPIMAGE_NAME}" >> $GITHUB_ENV
+          echo "REGTEST_APPIMAGE_NAME=${REGTEST_APPIMAGE_NAME}" >> $GITHUB_ENV
+
+      - name: Prepare uploads folder
+        run: mkdir -p ./uploads
+
+      - name: Download Testnet AppImage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux_appimage_testnet
+          path: ./uploads/testnet
+
+      - name: Download Regtest AppImage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux_appimage_regtest
+          path: ./uploads/regtest
+
+      - name: Upload Testnet AppImage to GitHub Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: uploads/regtest/${{ env.RENAME_REGTEST_APPIMAGE_NAME }}
-          asset_name: regtest-${{ env.TAG_NAME }}.AppImage
+          asset_path: ./uploads/testnet/${{ env.TESTNET_APPIMAGE_NAME }}
+          asset_name: iris-wallet-${{ env.TAG_NAME }}-testnet-${{env.ARCH}}.AppImage
           asset_content_type: application/octet-stream
 
-      # Step 5: Download and upload testnet AppImage
-      - name: Upload testnet artifact to release
+      - name: Upload Regtest AppImage to GitHub Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: uploads/testnet/${{ env.RENAME_TESTNET_APPIMAGE_NAME }}
-          asset_name: testnet-${{ env.TAG_NAME }}.AppImage
+          asset_path: ./uploads/regtest/${{ env.REGTEST_APPIMAGE_NAME }}
+          asset_name: iris-wallet-${{ env.TAG_NAME }}-regtest-${{env.ARCH}}.AppImage
           asset_content_type: application/octet-stream
 
-  cleanup:
-    name: Cleanup Artifacts
+  cleanup-artifacts:
     if: always()
     runs-on: ubuntu-latest
-    needs: [build-linux, upload-release]
+    needs: [build-linux-artifacts, release-artifacts]
     steps:
-      # Step 1: Remove leftover artifacts
-      - name: Cleanup Artifacts
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Delete Artifacts from Workflow Run
         uses: geekyeggo/delete-artifact@v5
         with:
           name: |
