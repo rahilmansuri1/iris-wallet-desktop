@@ -31,17 +31,17 @@ jobs:
           sudo apt install libxcb-cursor0 -y
           sudo apt-get install ruby-dev build-essential && sudo gem i fpm -f
 
-      - name: Clone rgb-lightning-node repository with submodules
-        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+      # - name: Clone rgb-lightning-node repository with submodules
+      #   run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
 
-      - name: Build the rgb-lightning-node binary
-        working-directory: rgb-lightning-node
-        run: cargo install --locked --debug --path . 
+      # - name: Build the rgb-lightning-node binary
+      #   working-directory: rgb-lightning-node
+      #   run: cargo install --locked --debug --path . 
 
-      - name: Copy rgb-lightning-node binary to root directory
-        run: |
-          mkdir ln_node_binary
-          cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary
+      # - name: Copy rgb-lightning-node binary to root directory
+      #   run: |
+      #     mkdir ln_node_binary
+      #     cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary
 
       - name: Set environment variables from secrets and create config.py
         env:
@@ -78,7 +78,8 @@ jobs:
         run: |
           poetry run build-iris-wallet --network=regtest --distribution=appimage
           ARCH=$(uname -m)
-          APPIMAGE_NAME="iriswallet-${ARCH}.AppImage"
+          VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
+          APPIMAGE_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
           echo "APPIMAGE_NAME=${APPIMAGE_NAME}" >> $GITHUB_ENV
           echo $APPIMAGE_NAME
 
