@@ -146,19 +146,26 @@ jobs:
       - name: Create uploads folder
         run: mkdir -p ./uploads
 
-
-      - name: Download Linux AppImage artifacts for testnet and regtest
+      - name: Download Linux AppImage artifacts for testnet
         uses: actions/download-artifact@v4
         with:
           name: linux_appimage_testnet # Name of the testnet artifact
           path: ./uploads/testnet # Destination path folder for testnet
-
+      
       - name: Download Linux AppImage artifacts for regtest
         uses: actions/download-artifact@v4
         with:
           name: linux_appimage_regtest # Name of the regtest artifact
           path: ./uploads/regtest # Destination path folder for regtest
-
+      
+      - name: Set dynamic AppImage name for testnet
+        run: |
+          VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
+          ARCH=$(uname -m)
+          APPIMAGE_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
+          echo "APPIMAGE_NAME=${APPIMAGE_NAME}" >> $GITHUB_ENV
+          echo "Using AppImage: ${APPIMAGE_NAME}"
+      
       - name: Upload Release Artifact for testnet
         uses: actions/upload-release-asset@v1
         env:
@@ -168,7 +175,7 @@ jobs:
           asset_path: ./uploads/testnet/${{ env.APPIMAGE_NAME }}
           asset_name: iris-wallet-${{ env.TAG_NAME }}-testnet.AppImage
           asset_content_type: application/octet-stream
-
+      
       - name: Upload Release Artifact for regtest
         uses: actions/upload-release-asset@v1
         env:
@@ -178,7 +185,7 @@ jobs:
           asset_path: ./uploads/regtest/${{ env.APPIMAGE_NAME }}
           asset_name: iris-wallet-${{ env.TAG_NAME }}-regtest.AppImage
           asset_content_type: application/octet-stream
-
+      
 
   cleanup:
     if: always()
