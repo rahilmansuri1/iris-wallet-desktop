@@ -34,17 +34,17 @@ jobs:
           sudo apt-get install ruby-dev build-essential && sudo gem i fpm -f
           sudo apt-get update && sudo apt-get install -y libfuse2
 
-      # - name: Clone rgb-lightning-node repository with submodules
-      #   run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+      - name: Clone rgb-lightning-node repository with submodules
+        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
 
-      # - name: Build the rgb-lightning-node binary
-      #   working-directory: rgb-lightning-node
-      #   run: cargo install --locked --debug --path . 
+      - name: Build the rgb-lightning-node binary
+        working-directory: rgb-lightning-node
+        run: cargo install --locked --debug --path . 
 
-      # - name: Copy rgb-lightning-node binary to root directory
-      #   run: |
-      #     mkdir ln_node_binary
-      #     cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary
+      - name: Copy rgb-lightning-node binary to root directory
+        run: |
+          mkdir ln_node_binary
+          cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary
 
       - name: Set environment variables from secrets and create config.py
         env:
@@ -143,6 +143,7 @@ jobs:
           TESTNET_APPIMAGE_NAME="iriswallet-testnet-${VERSION}-${ARCH}.AppImage"
           REGTEST_APPIMAGE_NAME="iriswallet-regtest-${VERSION}-${ARCH}.AppImage"
 
+          echo "ARCH=${ARCH}" >> $GITHUB_ENV
           echo "TESTNET_APPIMAGE_NAME=${TESTNET_APPIMAGE_NAME}" >> $GITHUB_ENV
           echo "REGTEST_APPIMAGE_NAME=${REGTEST_APPIMAGE_NAME}" >> $GITHUB_ENV
           echo $TESTNET_APPIMAGE_NAME
@@ -171,7 +172,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./uploads/testnet/${{ env.TESTNET_APPIMAGE_NAME }}
-          asset_name: iris-wallet-${{ env.TAG_NAME }}-testnet.AppImage
+          asset_name: iris-wallet-${{ env.TAG_NAME }}-testnet-${{env.ARCH}}.AppImage
           asset_content_type: application/octet-stream
       
       - name: Upload Release Artifact for regtest
@@ -181,7 +182,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./uploads/regtest/${{ env.REGTEST_APPIMAGE_NAME }}
-          asset_name: iris-wallet-${{ env.TAG_NAME }}-regtest.AppImage
+          asset_name: iris-wallet-${{ env.TAG_NAME }}-regtest-${{env.ARCH}}.AppImage
           asset_content_type: application/octet-stream
       
 
@@ -196,5 +197,6 @@ jobs:
         uses: geekyeggo/delete-artifact@v5
         with:
           name: |
-            linux_appimage
+            linux_appimage_regtest
+            linux_appimage_testnet
           failOnError: false
