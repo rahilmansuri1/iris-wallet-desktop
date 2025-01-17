@@ -255,7 +255,8 @@ jobs:
           echo "TAG_NAME=v${VERSION}" >> $GITHUB_ENV
           echo "RELEASE_NAME=Release v${VERSION}" >> $GITHUB_ENV
           ARCH=$(uname -m)
-          APPIMAGE_NAME="iriswallet-${ARCH}.AppImage"
+          VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
+          APPIMAGE_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
           echo "APPIMAGE_NAME=${APPIMAGE_NAME}" >> $GITHUB_ENV
           echo $APPIMAGE_NAME
 #          APPNAME_MAC="iriswallet ${VERSION}".dmg
