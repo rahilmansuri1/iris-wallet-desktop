@@ -76,7 +76,6 @@ jobs:
 
       - name: Create AppImage
         run: |
-          poetry shell
           poetry run build-iris-wallet --network=regtest --distribution=appimage
           ARCH=$(uname -m)
           APPIMAGE_NAME="iriswallet-${ARCH}.AppImage"
