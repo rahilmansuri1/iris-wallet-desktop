@@ -76,22 +76,27 @@ jobs:
 
       - name: Create AppImage
         run: |
+          sudo apt-get update && sudo apt-get install -y libfuse2
           poetry run build-iris-wallet --network=regtest --distribution=appimage
           ARCH=$(uname -m)
           VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
           APPIMAGE_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
           echo "APPIMAGE_NAME=${APPIMAGE_NAME}" >> $GITHUB_ENV
-          echo $APPIMAGE_NAME
+          echo "Generated file: $APPIMAGE_NAME"
         shell: bash
 
-      - name: Verify AppImage file
-        run: ls -lh ${{ env.APPIMAGE_NAME }}
+      - name: Locate AppImage file
+        run: find . -name "*.AppImage" -print
+
+      - name: Debug file list
+        run: ls -lh
 
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux_appimage
           path: ${{ env.APPIMAGE_NAME }}
+
 
 
   # build-macos:
