@@ -1,15 +1,15 @@
 name: Iris Wallet Desktop CI
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - "*" # Trigger workflow on any tag
 
 jobs:
-  build-linux:
+  setup:
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        network: [regtest, testnet] # Define the networks you want to build for
-
+    outputs:
+      ln_node_artifact: ln_node_artifact
     steps:
       - name: Checkout code with submodules
         uses: actions/checkout@v3
@@ -40,7 +40,7 @@ jobs:
 
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node
-        run: cargo install --locked --debug --path . 
+        run: cargo install --locked --debug --path .
 
       - name: Copy rgb-lightning-node binary to root directory
         run: |
@@ -73,17 +73,48 @@ jobs:
         run: |
           poetry run pyside6-rcc src/resources.qrc -o src/resources_rc.py
 
-      - name: Create AppImage
+      - name: Upload environment as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ln_node_artifact
+          path: |
+            ln_node_binary
+            src/resources_rc.py
+            src/utils/config.py
+
+  build-linux:
+    runs-on: ubuntu-22.04
+    needs: setup
+    strategy:
+      matrix:
+        network: [regtest, testnet]
+    steps:
+      - name: Download environment artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ln_node_artifact
+          path: .
+
+      - name: Create AppImage for ${{ matrix.network }}
         run: |
           sudo apt-get update && sudo apt-get install -y libfuse2
           poetry run build-iris-wallet --network=${{ matrix.network }} --distribution=appimage
           ARCH=$(uname -m)
           VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
-          NETWORK=${{ matrix.network }}
-          APPIMAGE_NAME="iriswallet${NETWORK}-${VERSION}-${ARCH}.AppImage"
+          APPIMAGE_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
           echo "APPIMAGE_NAME=${APPIMAGE_NAME}" >> $GITHUB_ENV
           echo "Generated file: $APPIMAGE_NAME"
         shell: bash
+
+      - name: Rename AppImage for ${{ matrix.network }}
+        run: |
+          ARCH=$(uname -m)
+          VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
+          NETWORK=${{ matrix.network }}
+          ORIGINAL_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
+          RENAMED_NAME="iriswallet-${NETWORK}-${VERSION}-${ARCH}.AppImage"
+          mv ./uploads/${ORIGINAL_NAME} ./uploads/${RENAMED_NAME}
+          echo "RENAMED_NAME=${RENAMED_NAME}" >> $GITHUB_ENV
 
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v4
@@ -92,19 +123,13 @@ jobs:
           path: ${{ env.APPIMAGE_NAME }}
 
   upload-release:
-    if: needs.build-linux.result == 'success'
+    needs: build-linux
     runs-on: ubuntu-latest
-    needs: [build-linux]
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Read version from VERSION.py
-        run: |
-          VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
-          echo "TAG_NAME=v${VERSION}" >> $GITHUB_ENV
-          echo "RELEASE_NAME=Release v${VERSION}" >> $GITHUB_ENV
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Create GitHub Release
         id: create_release
@@ -112,24 +137,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "${{ env.TAG_NAME }}"
-          release_name: "${{ env.RELEASE_NAME }}"
+          tag_name: ${{ github.ref_name }}
+          release_name: "Release ${{ github.ref_name }}"
           draft: false
           prerelease: false
-
-      - name: Create uploads folder
-        run: mkdir -p ./uploads
 
       - name: Download Linux AppImage artifacts
         uses: actions/download-artifact@v4
         with:
-          name: linux_appimage_regtest # First network artifact
-          path: ./uploads/regtest
-      - name: Download Linux AppImage artifacts for testnet
-        uses: actions/download-artifact@v4
-        with:
-          name: linux_appimage_testnet # Second network artifact
-          path: ./uploads/testnet
+          name: |
+            linux_appimage_regtest
+            linux_appimage_testnet
+          path: ./uploads
 
       - name: Upload Release Artifacts
         uses: actions/upload-release-asset@v1
@@ -137,31 +156,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./uploads/regtest/${{ env.APPIMAGE_NAME }}
-          asset_name: iris-wallet-desktop-"regtest-${{ env.TAG_NAME }}".AppImage
+          asset_path: ./uploads/${{ env.RENAMED_NAME }}
+          asset_name: ${{ env.RENAMED_NAME }}
           asset_content_type: application/octet-stream
-
-      - name: Upload Release Artifacts for Testnet
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./uploads/testnet/${{ env.APPIMAGE_NAME }}
-          asset_name: iris-wallet-desktop-"testnet-${{ env.TAG_NAME }}".AppImage
-          asset_content_type: application/octet-stream
-
-  cleanup:
-    if: always()
-    runs-on: ubuntu-latest
-    needs: [build-linux, upload-release]
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Cleanup Artifacts
-        uses: geekyeggo/delete-artifact@v5
-        with:
-          name: |
-            linux_appimage_regtest
-            linux_appimage_testnet
-          failOnError: false
