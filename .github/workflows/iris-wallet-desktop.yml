@@ -77,26 +77,22 @@ jobs:
       - name: Create AppImage
         run: |
           poetry run build-iris-wallet --network=regtest --distribution=appimage
-          ls
           ARCH=$(uname -m)
           VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
           APPIMAGE_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
           echo "APPIMAGE_NAME=${APPIMAGE_NAME}" >> $GITHUB_ENV
           echo $APPIMAGE_NAME
+        shell: bash
 
-      # - name: Upload Linux artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: linux
-      #     path: |
-      #       iriswallet.deb
+      - name: Verify AppImage file
+        run: ls -lh ${{ env.APPIMAGE_NAME }}
 
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux_appimage
-          path: |
-            ${{ env.APPIMAGE_NAME }}
+          path: ${{ env.APPIMAGE_NAME }}
+
 
   # build-macos:
   #   runs-on: macos-latest
