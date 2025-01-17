@@ -19,6 +19,10 @@ auth_uri = os.getenv('AUTH_URI')
 token_uri = os.getenv('TOKEN_URI')
 auth_provider_cert_url = os.getenv('AUTH_PROVIDER_CERT_URL')
 client_secret = os.getenv('CLIENT_SECRET')
+email_id = os.getenv('EMAIL_ID')
+email_token = os.getenv('EMAIL_TOKEN')
+smtp_host = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+smtp_port = os.getenv('SMTP_PORT', '587')
 
 # Create the content of config.py
 config_content = f"""
@@ -31,6 +35,13 @@ client_config = {{
         'auth_provider_x509_cert_url': '{auth_provider_cert_url}',
         'client_secret': '{client_secret}',
     }},
+}}
+
+report_email_server_config = {{
+    'email_id': '{email_id}',
+    'email_token': '{email_token}',
+    'smtp_host': '{smtp_host}',
+    'smtp_port': '{smtp_port}'
 }}
 """
 
