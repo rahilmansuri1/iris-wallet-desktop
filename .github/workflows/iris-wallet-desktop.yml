@@ -6,7 +6,7 @@ on:
       - '*' # Trigger this workflow on any tag push
 
 jobs:
-  build-linux-artifacts:
+  build-iris-wallet-desktop:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository with submodules
@@ -109,9 +109,9 @@ jobs:
           path: ${{ env.RENAME_TESTNET_APPIMAGE_NAME }}
 
   release-artifacts:
-    if: needs.build-linux-artifacts.result == 'success'
+    if: needs.build-iris-wallet-desktop.result == 'success'
     runs-on: ubuntu-latest
-    needs: [build-linux-artifacts]
+    needs: [build-iris-wallet-desktop]
     permissions:
       contents: write
     steps:
@@ -183,7 +183,7 @@ jobs:
   cleanup-artifacts:
     if: always()
     runs-on: ubuntu-latest
-    needs: [build-linux-artifacts, release-artifacts]
+    needs: [build-iris-wallet-desktop, release-artifacts]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
