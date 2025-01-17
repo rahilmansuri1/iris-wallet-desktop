@@ -95,6 +95,12 @@ jobs:
           name: ln_node_artifact
           path: .
 
+      - name: Install python dependencies
+        run: |
+          pip install poetry
+          pip install pyinstaller
+          poetry install
+
       - name: Create AppImage for ${{ matrix.network }}
         run: |
           sudo apt-get update && sudo apt-get install -y libfuse2
