@@ -77,6 +77,7 @@ jobs:
       - name: Create AppImage
         run: |
           poetry run build-iris-wallet --network=regtest --distribution=appimage
+          ls
           ARCH=$(uname -m)
           VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
           APPIMAGE_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
