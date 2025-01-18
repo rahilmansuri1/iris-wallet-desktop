@@ -99,7 +99,7 @@ class ErrorReportDialog(QMessageBox):
             subject = f"Iris Wallet Error Report - Version {__version__}"
             title = 'Error Report for Iris Wallet Desktop'
             body = generate_error_report_email(url=self.url, title=title)
-            email_id = report_email_server_config['email_id']
+            email_id = report_email_server_config['support_email']
 
             send_crash_report_async(email_id, subject, body, zip_file_path)
         elif button == self.button(QMessageBox.No):

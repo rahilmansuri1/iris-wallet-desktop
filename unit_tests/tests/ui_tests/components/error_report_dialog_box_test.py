@@ -55,7 +55,13 @@ def test_send_report_on_yes_button(error_report_dialog):
             patch('src.views.components.error_report_dialog_box.shutil.make_archive') as mock_archive, \
             patch('src.views.components.error_report_dialog_box.generate_error_report_email') as mock_generate_email, \
             patch('src.views.components.error_report_dialog_box.send_crash_report_async') as mock_send_email, \
-            patch('src.views.components.error_report_dialog_box.report_email_server_config', {'email_id': 'dummy_email_id'}):  # Mock email config dictionary
+            patch(
+                'src.views.components.error_report_dialog_box.report_email_server_config',
+                {
+                    'smtp_email_id': 'dummy_email_id',
+                    'support_email': 'dummy_support_email',
+                },
+    ):
 
         # Mock return values for external functions
         mock_zip.return_value = ('dummy_dir', 'output_dir')
@@ -82,7 +88,7 @@ def test_send_report_on_yes_button(error_report_dialog):
 
         # Verify that the email sending function was called with correct parameters
         mock_send_email.assert_called_once_with(
-            'dummy_email_id',  # The mocked email ID
+            'dummy_support_email',
             f"Iris Wallet Error Report - Version {__version__}",
             'dummy email body',
             'dummy_path.zip',

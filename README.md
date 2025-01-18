@@ -94,8 +94,9 @@ client_config = {
 
 # Config for the error report email server
 report_email_server_config = {
-    'email_id': 'your_email_id',
-    'email_token': 'your_email_token',
+    'smtp_email_id': 'smtp_server_email_id',
+    'smtp_email_token': 'smtp_server_email_token',
+    'support_email': 'support_email_id',
     'smtp_host': 'smtp.gmail.com',
     'smtp_port': '587'
 }

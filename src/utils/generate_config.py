@@ -12,13 +12,38 @@ from __future__ import annotations
 
 import os
 
+
+def get_env_var(key, default=None):
+    """
+    Returns the value of an environment variable, or a default value if the variable
+    is not set or is an empty string.
+
+    Args:
+        key (str): The name of the environment variable.
+        default (Any): The fallback value if the variable is not set or is empty.
+
+    Returns:
+        Any: The environment variable's value or the default.
+    """
+    value = os.getenv(key, default)
+    # If the value is an empty string, return the default
+    return value if value else default
+
+
 # Read environment variables
-client_id = os.getenv('CLIENT_ID')
-project_id = os.getenv('PROJECT_ID')
-auth_uri = os.getenv('AUTH_URI')
-token_uri = os.getenv('TOKEN_URI')
-auth_provider_cert_url = os.getenv('AUTH_PROVIDER_CERT_URL')
-client_secret = os.getenv('CLIENT_SECRET')
+client_id = get_env_var('CLIENT_ID')
+project_id = get_env_var('PROJECT_ID')
+auth_uri = get_env_var('AUTH_URI', 'https://accounts.google.com/o/oauth2/auth')
+token_uri = get_env_var('TOKEN_URI', 'https://oauth2.googleapis.com/token')
+auth_provider_cert_url = get_env_var(
+    'AUTH_PROVIDER_CERT_URL', 'https://www.googleapis.com/oauth2/v1/certs',
+)
+client_secret = get_env_var('CLIENT_SECRET')
+smtp_email_id = get_env_var('SMTP_EMAIL_ID')
+smtp_email_token = get_env_var('SMTP_EMAIL_TOKEN')
+support_email = get_env_var('SUPPORT_EMAIL')
+smtp_host = get_env_var('SMTP_HOST', 'smtp.gmail.com')
+smtp_port = get_env_var('SMTP_PORT', '587')
 
 # Create the content of config.py
 config_content = f"""
@@ -31,6 +56,14 @@ client_config = {{
         'auth_provider_x509_cert_url': '{auth_provider_cert_url}',
         'client_secret': '{client_secret}',
     }},
+}}
+
+report_email_server_config = {{
+    'smtp_email_id': '{smtp_email_id}',
+    'smtp_email_token': '{smtp_email_token}',
+    'support_email': '{support_email}',
+    'smtp_host': '{smtp_host}',
+    'smtp_port': '{smtp_port}'
 }}
 """
 

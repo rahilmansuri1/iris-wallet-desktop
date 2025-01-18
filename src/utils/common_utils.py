@@ -524,8 +524,8 @@ def send_crash_report_async(email_to, subject, body, zip_file_path):
         - Connects to the SMTP server using TLS, authenticates with the email ID and token, and sends the email.
         - Handles any exceptions that occur during the email sending process by showing an error toast message.
         """
-        email_id = report_email_server_config['email_id']
-        email_token = report_email_server_config['email_token']
+        email_id = report_email_server_config['smtp_email_id']
+        email_token = report_email_server_config['smtp_email_token']
 
         # Create a multipart message
         msg = MIMEMultipart()
