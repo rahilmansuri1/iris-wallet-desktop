@@ -1,106 +1,235 @@
-"""
-This module defines the ErrorReportDialog class, which represents a message box
-for sending error reports with translations and error details.
-"""
+# pylint: disable=too-many-instance-attributes, too-many-statements
+"""This module contains the ErrorReportDialog class which contains the UI for the error report dialog box"""
 from __future__ import annotations
 
-import shutil
-
 from PySide6.QtCore import QCoreApplication
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtCore import QSize
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QCursor
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QDialog
+from PySide6.QtWidgets import QDialogButtonBox
+from PySide6.QtWidgets import QFileDialog
+from PySide6.QtWidgets import QGridLayout
+from PySide6.QtWidgets import QHBoxLayout
+from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QPushButton
+from PySide6.QtWidgets import QSizePolicy
+from PySide6.QtWidgets import QSpacerItem
+from PySide6.QtWidgets import QVBoxLayout
 
-from config import report_email_server_config
-from src.utils.common_utils import generate_error_report_email
-from src.utils.common_utils import send_crash_report_async
+from src.utils.common_utils import copy_text
+from src.utils.common_utils import download_file
 from src.utils.common_utils import zip_logger_folder
-from src.utils.error_message import ERROR_OPERATION_CANCELLED
-from src.utils.info_message import INFO_SENDING_ERROR_REPORT
+from src.utils.constant import CONTACT_EMAIL
+from src.utils.constant import GITHUB_ISSUE_LINK
+from src.utils.helpers import load_stylesheet
 from src.utils.local_store import local_store
-from src.version import __version__
-from src.views.components.toast import ToastManager
 
 
-class ErrorReportDialog(QMessageBox):
-    """This class represents the error report dialog in the application."""
+class ErrorReportDialog(QDialog):
+    """This class represents the UI elements of the error report dialog"""
 
-    def __init__(self, url, parent=None):
-        """Initialize the ErrorReportDialog message box with translated strings and error details."""
-        super().__init__(parent)
-        self.url = url
-        self.setWindowTitle('Send Error Report')
-        # Create the message box
-        self.setIcon(QMessageBox.Critical)
+    def __init__(self):
+        super().__init__()
+
+        self.setObjectName('error_report_dialog_box')
+        self.setStyleSheet(
+            load_stylesheet(
+                'views/qss/error_report_dialog.qss',
+            ),
+        )
+        self.grid_layout = QGridLayout(self)
+        self.grid_layout.setObjectName('grid_layout')
+        self.grid_layout.setContentsMargins(-1, -1, 33, 25)
+        self.icon_label = QLabel(self)
+        self.icon_label.setObjectName('icon_label')
+        icon = QIcon.fromTheme('dialog-error')
+        self.icon_label.setPixmap(icon.pixmap(70, 70))
+
+        self.grid_layout.addWidget(
+            self.icon_label, 0, 0, 1, 1, Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignHCenter,
+        )
+
+        self.were_sorry_label = QLabel(self)
+        self.were_sorry_label.setObjectName('were_sorry_label')
+        self.were_sorry_label.setContentsMargins(0, 15, 2, 0)
+        self.grid_layout.addWidget(self.were_sorry_label, 0, 1, 1, 2)
+
+        self.help_us_label = QLabel(self)
+        self.help_us_label.setObjectName('help_us_label')
+        self.help_us_label.setWordWrap(True)
+
+        self.grid_layout.addWidget(self.help_us_label, 1, 1, 1, 2)
+
+        self.open_issue_label = QLabel(self)
+        self.open_issue_label.setObjectName('open_issue_label')
+
+        self.grid_layout.addWidget(self.open_issue_label, 2, 1, 1, 1)
+
+        self.github_issue_label = QLabel(self)
+        self.github_issue_label.setObjectName('github_issue_label')
+
+        self.github_issue_label.setOpenExternalLinks(True)
+
+        self.grid_layout.addWidget(self.github_issue_label, 2, 2, 1, 1)
+
+        self.vertical_layout = QVBoxLayout()
+        self.vertical_layout.setObjectName('vertical_layout')
+        self.vertical_layout.setSpacing(0)
+        self.horizontal_layout = QHBoxLayout()
+        self.horizontal_layout.setObjectName('horizontal_layout')
+        self.horizontal_layout.setContentsMargins(-1, -1, 10, -1)
+        self.email_us_label = QLabel(self)
+        self.email_us_label.setObjectName('email_us_label')
+        self.email_us_label.setMaximumSize(QSize(100, 16777215))
+
+        self.horizontal_layout.addWidget(self.email_us_label)
+
+        self.email_label = QLabel(self)
+        self.email_label.setObjectName('email_label')
+        self.email_label.setText(CONTACT_EMAIL)
+
+        self.horizontal_layout.addWidget(
+            self.email_label, Qt.AlignmentFlag.AlignHCenter,
+        )
+
+        self.copy_button = QPushButton(self)
+        self.copy_button.setObjectName('copy_button')
+        self.copy_button.setMaximumSize(QSize(16, 16))
+        self.copy_button.setStyleSheet('background:none')
+        icon = QIcon()
+        icon.addFile(
+            ':/assets/copy.png', QSize(),
+            QIcon.Mode.Normal, QIcon.State.Off,
+        )
+        self.copy_button.setIcon(icon)
+        self.copy_button.setFlat(True)
+        self.copy_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+
+        self.horizontal_layout.addWidget(
+            self.copy_button, Qt.AlignmentFlag.AlignLeft,
+        )
+
+        self.horizontal_spacer = QSpacerItem(
+            20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed,
+        )
+
+        self.horizontal_layout.addItem(self.horizontal_spacer)
+
+        self.vertical_layout.addLayout(self.horizontal_layout)
+
+        self.no_reply_label = QLabel(self)
+        self.no_reply_label.setObjectName('no_reply_label')
+        self.vertical_layout.addWidget(
+            self.no_reply_label, Qt.AlignmentFlag.AlignTop,
+        )
+
+        self.grid_layout.addLayout(self.vertical_layout, 3, 1, 1, 2)
+
+        self.vertical_spacer = QSpacerItem(
+            20, 20, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum,
+        )
+
+        self.grid_layout.addItem(self.vertical_spacer, 4, 1)
+
+        self.thank_you_label = QLabel(self)
+        self.thank_you_label.setObjectName('thank_you_label')
+
+        self.grid_layout.addWidget(self.thank_you_label, 5, 1, 1, 2)
+
+        self.vertical_spacer_2 = QSpacerItem(
+            20, 20, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum,
+        )
+
+        self.grid_layout.addItem(self.vertical_spacer_2, 6, 1)
+        self.button_box = QDialogButtonBox(self)
+        self.button_box.setObjectName('buttonBox')
+        self.button_box.setOrientation(Qt.Orientation.Horizontal)
+
+        self.download_debug_logs = QPushButton(self)
+        self.download_debug_logs.setObjectName('download_debug_logs')
+        self.download_debug_logs.setMinimumSize(QSize(120, 40))
+        self.download_debug_logs.setCursor(
+            QCursor(Qt.CursorShape.PointingHandCursor),
+        )
+        self.button_box.addButton(
+            self.download_debug_logs, QDialogButtonBox.ActionRole,
+        )
+
+        self.grid_layout.addWidget(self.button_box, 7, 1, 1, 2)
+
+        self.retranslate_ui()
+        self.setup_ui()
+
+    def retranslate_ui(self):
+        """translations for the error report dialog"""
         self.setWindowTitle(
             QCoreApplication.translate(
                 'iris_wallet_desktop', 'error_report', None,
             ),
         )
-
-        # Fetch translations
-        self.text_sorry = QCoreApplication.translate(
-            'iris_wallet_desktop', 'something_went_wrong_mb', None,
+        self.were_sorry_label.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'something_went_wrong_mb', None,
+            ),
         )
-        self.text_help = QCoreApplication.translate(
-            'iris_wallet_desktop', 'error_description_mb', None,
+        self.help_us_label.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'please_help_us', None,
+            ),
         )
-        self.text_included = QCoreApplication.translate(
-            'iris_wallet_desktop', 'what_will_be_included', None,
+        self.open_issue_label.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'open_an_issue', None,
+            ),
         )
-        self.text_error_details = QCoreApplication.translate(
-            'iris_wallet_desktop', 'error_details_title', None,
+        self.github_issue_label.setText(
+            f"""<a href="{GITHUB_ISSUE_LINK}" style="text-decoration:underline;color:green;">
+                    {
+                QCoreApplication.translate(
+                    "iris_wallet_desktop", "github_issue_label", None
+                )
+            }</a>
+                    """,
         )
-        self.text_app_version = QCoreApplication.translate(
-            'iris_wallet_desktop', 'application_version', None,
+        self.email_us_label.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'email_us_at', None,
+            ),
         )
-        self.text_os_info = QCoreApplication.translate(
-            'iris_wallet_desktop', 'os_info', None,
+        self.no_reply_label.setText(f"({
+            QCoreApplication.translate(
+                "iris_wallet_desktop", "do_not_expect_reply", None
+            )
+        })")
+        self.thank_you_label.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'thank_you_for_your_support', None,
+            ),
         )
-        self.text_send_report = QCoreApplication.translate(
-            'iris_wallet_desktop', 'error_report_permission', None,
+        self.download_debug_logs.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'download_debug_log', None,
+            ),
         )
 
-        # Set the text for the message box
-        self.setText(self.text_sorry)
-        self.setInformativeText(
-            f"{self.text_help}\n\n"
-            f"{self.text_included}\n"
-            f"{self.text_error_details}\n"
-            f"{self.text_app_version}\n"
-            f"{self.text_os_info}\n\n"
-            f"{self.text_send_report}",
+    def setup_ui(self):
+        """Ui connections for error report dialog"""
+        self.copy_button.clicked.connect(lambda: copy_text(self.email_label))
+        self.download_debug_logs.clicked.connect(
+            self.on_click_download_debug_log,
         )
-        self.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        self.setDefaultButton(QMessageBox.Yes)
 
-        # Connect the buttonClicked signal to a custom slot
-        self.buttonClicked.connect(self.on_button_clicked)
+    def on_click_download_debug_log(self):
+        """This method opens the file dialog box and saves the debug logs to the selected path"""
 
-    def on_button_clicked(self, button):
-        """
-        Handles the button click event to either send an error report or cancel the operation.
+        path = local_store.get_path()
+        zip_filename, output_dir = zip_logger_folder(path)
 
-        If the 'Yes' button is clicked:
-        - Shows an info toast notification indicating the report is being sent.
-        - Compresses the log files into a ZIP archive.
-        - Prepares an error report email with the appropriate subject and body.
-        - Sends the error report asynchronously to the specified email ID.
+        save_path, _ = QFileDialog.getSaveFileName(
+            self, 'Save logs File', zip_filename, 'Zip Files (*.zip)',
+        )
 
-        If the 'No' button is clicked:
-        - Shows a warning toast notification indicating the operation was cancelled.
-        """
-        if button == self.button(QMessageBox.Yes):
-            ToastManager.info(INFO_SENDING_ERROR_REPORT)
-
-            base_path = local_store.get_path()
-            _, output_dir = zip_logger_folder(base_path)
-            zip_file_path = shutil.make_archive(output_dir, 'zip', output_dir)
-
-            # Set the subject and formatted body
-            subject = f"Iris Wallet Error Report - Version {__version__}"
-            title = 'Error Report for Iris Wallet Desktop'
-            body = generate_error_report_email(url=self.url, title=title)
-            email_id = report_email_server_config['email_id']
-
-            send_crash_report_async(email_id, subject, body, zip_file_path)
-        elif button == self.button(QMessageBox.No):
-            ToastManager.warning(ERROR_OPERATION_CANCELLED)
+        if save_path:
+            download_file(save_path, output_dir)

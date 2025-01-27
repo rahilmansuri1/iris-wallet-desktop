@@ -411,7 +411,7 @@ class PageNavigation:
         """This method return the sidebar objects."""
         return self._ui.sidebar
 
-    def error_report_dialog_box(self, url):
+    def error_report_dialog_box(self):
         """This method display the error report dialog box"""
-        error_report_dialog = ErrorReportDialog(url=url)
+        error_report_dialog = ErrorReportDialog()
         error_report_dialog.exec()

@@ -8,20 +8,21 @@ from unittest.mock import patch
 
 import pytest
 from PySide6.QtCore import QCoreApplication
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QPushButton
 
-from src.utils.error_message import ERROR_OPERATION_CANCELLED
-from src.utils.info_message import INFO_SENDING_ERROR_REPORT
 from src.utils.local_store import local_store
 from src.version import __version__
 from src.views.components.error_report_dialog_box import ErrorReportDialog
+from src.views.components.toast import ToastManager
 
 
 @pytest.fixture
 def error_report_dialog(qtbot):
     """Fixture to create and return an instance of ErrorReportDialog."""
-    url = 'http://example.com/error_report'
-    dialog = ErrorReportDialog(url)
+    dialog = ErrorReportDialog()
+    qtbot.addWidget(dialog)
     return dialog
 
 
@@ -29,99 +30,78 @@ def test_dialog_initialization(error_report_dialog):
     """Test if the ErrorReportDialog initializes with correct properties."""
     dialog = error_report_dialog
 
+    # Test window title
     expected_title = QCoreApplication.translate(
         'iris_wallet_desktop', 'error_report', None,
     )
     assert dialog.windowTitle() == expected_title
-    # Test the text in the dialog
-    assert 'something_went_wrong_mb' in dialog.text_sorry
-    assert 'error_description_mb' in dialog.text_help
-    assert 'what_will_be_included' in dialog.text_included
 
-    # Verify the dialog has 'Yes' and 'No' buttons
-    buttons = dialog.buttons()
-    assert len(buttons) == 2
-    assert buttons[0].text().replace('&', '') == 'Yes'
-    assert buttons[1].text().replace('&', '') == 'No'
+    # Test if main components exist
+    assert isinstance(dialog.were_sorry_label, QLabel)
+    assert isinstance(dialog.help_us_label, QLabel)
+    assert isinstance(dialog.download_debug_logs, QPushButton)
+    assert isinstance(dialog.copy_button, QPushButton)
+
+    # Test labels content
+    assert QCoreApplication.translate(
+        'iris_wallet_desktop', 'something_went_wrong_mb', None,
+    ) == dialog.were_sorry_label.text()
+
+    # Test button properties
+    assert dialog.download_debug_logs.minimumSize().width() == 120
+    assert dialog.download_debug_logs.minimumSize().height() == 40
 
 
-def test_send_report_on_yes_button(error_report_dialog):
-    """Test behavior when the 'Yes' button is clicked."""
+def test_download_debug_logs(error_report_dialog, qtbot):
+    """Test the download debug logs functionality."""
     dialog = error_report_dialog
 
-    # Mock external functions to prevent actual side effects during testing
-    with patch('src.views.components.error_report_dialog_box.ToastManager.info') as mock_info, \
+    with patch('src.views.components.error_report_dialog_box.QFileDialog.getSaveFileName') as mock_file_dialog, \
             patch('src.views.components.error_report_dialog_box.zip_logger_folder') as mock_zip, \
-            patch('src.views.components.error_report_dialog_box.shutil.make_archive') as mock_archive, \
-            patch('src.views.components.error_report_dialog_box.generate_error_report_email') as mock_generate_email, \
-            patch('src.views.components.error_report_dialog_box.send_crash_report_async') as mock_send_email, \
-            patch('src.views.components.error_report_dialog_box.report_email_server_config', {'email_id': 'dummy_email_id'}):  # Mock email config dictionary
+            patch('src.views.components.error_report_dialog_box.download_file') as mock_download:
 
-        # Mock return values for external functions
-        mock_zip.return_value = ('dummy_dir', 'output_dir')
-        mock_archive.return_value = 'dummy_path.zip'
-        mock_generate_email.return_value = 'dummy email body'
+        # Mock return values
+        mock_zip.return_value = ('test.zip', 'output_dir')
+        mock_file_dialog.return_value = ('save_path.zip', 'selected_filter')
 
-        # Simulate a button click on "Yes"
-        dialog.buttonClicked.emit(dialog.button(QMessageBox.Yes))
+        # Click download button
+        qtbot.mouseClick(dialog.download_debug_logs, Qt.LeftButton)
 
-        # Verify that the correct toast message is shown
-        mock_info.assert_called_once_with(INFO_SENDING_ERROR_REPORT)
-
-        # Verify that the zip logger folder was called
+        # Verify zip_logger_folder was called with correct path
         mock_zip.assert_called_once_with(local_store.get_path())
 
-        # Verify that make_archive was called to create the ZIP file
-        # Corrected the argument order to match the actual function call
-        mock_archive.assert_called_once_with('output_dir', 'zip', 'output_dir')
-
-        # Verify the email generation
-        mock_generate_email.assert_called_once_with(
-            url='http://example.com/error_report', title='Error Report for Iris Wallet Desktop',
-        )
-
-        # Verify that the email sending function was called with correct parameters
-        mock_send_email.assert_called_once_with(
-            'dummy_email_id',  # The mocked email ID
-            f"Iris Wallet Error Report - Version {__version__}",
-            'dummy email body',
-            'dummy_path.zip',
-        )
+        # Verify download_file was called with correct parameters
+        mock_download.assert_called_once_with('save_path.zip', 'output_dir')
 
 
-def test_cancel_report_on_no_button(error_report_dialog):
-    """Test behavior when the 'No' button is clicked."""
+def test_download_debug_logs_cancelled(error_report_dialog, qtbot):
+    """Test when debug logs download is cancelled."""
     dialog = error_report_dialog
 
-    # Mock ToastManager to avoid actual toast notifications
-    with patch('src.views.components.error_report_dialog_box.ToastManager.warning') as mock_warning:
-        # Simulate a button click on "No"
-        dialog.buttonClicked.emit(dialog.button(QMessageBox.No))
+    with patch('src.views.components.error_report_dialog_box.QFileDialog.getSaveFileName') as mock_file_dialog, \
+            patch('src.views.components.toast.ToastManager.show_toast') as mock_toast:
 
-        # Verify the correct warning toast message is shown
-        mock_warning.assert_called_once_with(ERROR_OPERATION_CANCELLED)
+        # Mock cancelled file dialog
+        mock_file_dialog.return_value = ('', '')
+
+        # Click download button
+        qtbot.mouseClick(dialog.download_debug_logs, Qt.LeftButton)
+
+        # Verify toast was shown with correct message
+        mock_toast.assert_not_called()
 
 
-def test_dialog_buttons_functionality(error_report_dialog):
-    """Test if the 'Yes' and 'No' buttons work correctly."""
+def test_copy_button(error_report_dialog, qtbot):
+    """Test if the copy button copies email to clipboard."""
     dialog = error_report_dialog
 
-    # Mock ToastManager methods to prevent actual toasts from being shown
-    with patch('src.views.components.error_report_dialog_box.ToastManager.info') as mock_info, \
-            patch('src.views.components.error_report_dialog_box.ToastManager.warning') as mock_warning:
+    with patch('src.views.components.error_report_dialog_box.copy_text') as mock_copy_text, \
+            patch.object(ToastManager, 'success', return_value=None):
+        # Click copy button
+        qtbot.mouseClick(dialog.copy_button, Qt.LeftButton)
 
-        # Check 'Yes' button functionality
-        yes_button = dialog.button(QMessageBox.Yes)
-        assert yes_button.text().replace('&', '') == 'Yes'
-        dialog.buttonClicked.emit(yes_button)
+        # Process events to allow click to propagate
+        qtbot.wait(100)
 
-        # Verify that the info toast was shown
-        mock_info.assert_called_once_with(INFO_SENDING_ERROR_REPORT)
-
-        # Check 'No' button functionality
-        no_button = dialog.button(QMessageBox.No)
-        assert no_button.text().replace('&', '') == 'No'
-        dialog.buttonClicked.emit(no_button)
-
-        # Verify that the warning toast was shown
-        mock_warning.assert_called_once_with(ERROR_OPERATION_CANCELLED)
+        # Verify copy_text was called with correct label
+        mock_copy_text.assert_called_once_with(dialog.email_label)

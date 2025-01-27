@@ -1,6 +1,6 @@
 # Disable the redefined-outer-name warning as
 # it's normal to pass mocked object in tests function
-# pylint: disable=redefined-outer-name,unused-argument, too-many-lines, no-value-for-parameter
+# pylint: disable=redefined-outer-name,unused-argument, too-many-lines, no-value-for-parameter, use-implicit-booleaness-not-comparison
 """unit tests for common utils"""
 from __future__ import annotations
 
@@ -26,14 +26,12 @@ from src.flavour import __network__
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import TokenSymbol
 from src.model.selection_page_model import SelectionPageModel
-from src.utils.constant import DEFAULT_LOCALE
 from src.utils.common_utils import close_button_navigation
 from src.utils.common_utils import convert_hex_to_image
 from src.utils.common_utils import convert_timestamp
 from src.utils.common_utils import copy_text
 from src.utils.common_utils import download_file
 from src.utils.common_utils import find_files_with_name
-from src.utils.common_utils import generate_error_report_email
 from src.utils.common_utils import generate_identicon
 from src.utils.common_utils import get_bitcoin_info_by_network
 from src.utils.common_utils import load_translator
@@ -44,6 +42,7 @@ from src.utils.common_utils import sigterm_handler
 from src.utils.common_utils import translate_value
 from src.utils.common_utils import zip_logger_folder
 from src.utils.constant import APP_NAME
+from src.utils.constant import DEFAULT_LOCALE
 from src.utils.constant import LOG_FOLDER_NAME
 from src.utils.custom_exception import CommonException
 from src.version import __version__
@@ -258,10 +257,6 @@ def test_convert_hex_to_image_valid_data():
             patch('PySide6.QtGui.QPixmap.fromImage', return_value=QPixmap()):
         pixmap = convert_hex_to_image(valid_hex)
         assert isinstance(pixmap, QPixmap)
-
-# import time
-# from unittest.mock import  patch
-# import os
 
 
 def test_zip_logger_folder():
@@ -941,52 +936,6 @@ def test_resize_image_file_not_found(mock_exists):
     assert str(
         exc_info.value,
     ) == 'The file /mock/path/nonexistent.png does not exist.'
-
-
-def test_generate_error_report_email(mocker):
-    """Test generate_error_report_email function"""
-    # Mock all dependencies
-    mocker.patch(
-        'src.data.repository.setting_repository.SettingRepository.get_wallet_network',
-        return_value=mocker.MagicMock(value='Mainnet'),
-    )
-    mocker.patch('platform.system', return_value='Linux')
-    mocker.patch('platform.version', return_value='5.4.0-104-generic')
-    mocker.patch('platform.machine', return_value='x86_64')
-    mocker.patch(
-        'platform.processor',
-        return_value='Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz',
-    )
-    mocker.patch('src.version.__version__', '0.0.6')
-
-    # Mock inputs
-    url = 'http://example.com/error'
-    title = 'Error Report'
-
-    # Call the function
-    result = generate_error_report_email(url, title)
-
-    # Assert the result matches the expected format
-    expected_system_info = (
-        f"System Information Report:\n"
-        f"-------------------------\n"
-        f"URL: {url}\n"
-        f"Operating System: Linux\n"
-        f"OS Version: 5.4.0-104-generic\n"
-        f"Wallet Version: 0.0.6\n"
-        f"Wallet Network: Mainnet\n"
-        f"Architecture: x86_64\n"
-        f"Processor: Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz\n"
-    )
-
-    expected_email_body = (
-        f"{title}\n"
-        f"{'=' * len(title)}\n\n"
-        f"{expected_system_info}\n"
-        f"Attached logs can be found in the provided ZIP file for further details."
-    )
-
-    assert result == expected_email_body
 
 
 @patch('PySide6.QtWidgets.QMessageBox.warning')

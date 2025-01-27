@@ -91,14 +91,6 @@ client_config = {
         'client_secret': 'your_client_secret',
     },
 }
-
-# Config for the error report email server
-report_email_server_config = {
-    'email_id': 'your_email_id',
-    'email_token': 'your_email_token',
-    'smtp_host': 'smtp.gmail.com',
-    'smtp_port': '587'
-}
 ```
 
 #### 8.2 Create Google Drive Credentials
@@ -137,9 +129,6 @@ report_email_server_config = {
 
 6. **Update Your Configuration:**
    - Save the modified JSON file and add it to your `config.py` file.
-
-#### 8.3 Create Email Server Configuration
-Search for **App Passwords** in your Gmail account to create an app password for email access.
 
 ### 9. Start the Application
 You can now start the Iris Wallet application using:

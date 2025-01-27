@@ -66,10 +66,10 @@ PING_DNS_SERVER_CALL_INTERVAL = 5000
 
 BITCOIND_RPC_USER_REGTEST = 'user'
 BITCOIND_RPC_PASSWORD_REGTEST = 'password'
-BITCOIND_RPC_HOST_REGTEST = 'localhost'
-BITCOIND_RPC_PORT_REGTEST = 18443
-INDEXER_URL_REGTEST = '127.0.0.1:50001'
-PROXY_ENDPOINT_REGTEST = 'rpc://127.0.0.1:3000/json-rpc'
+BITCOIND_RPC_HOST_REGTEST = 'regtest-bitcoind.rgbtools.org'
+BITCOIND_RPC_PORT_REGTEST = 80
+INDEXER_URL_REGTEST = 'electrum.rgbtools.org:50041'
+PROXY_ENDPOINT_REGTEST = 'rpcs://proxy.iriswallet.com/0.2/json-rpc'
 LDK_DATA_NAME_REGTEST = 'dataldkregtest'
 
 BITCOIND_RPC_USER_TESTNET = 'user'
@@ -118,3 +118,7 @@ BITCOIN_EXPLORER_URL = 'https://mempool.space'
 
 # Syncing chain info label timer in milliseconds
 SYNCING_CHAIN_LABEL_TIMER = 5000
+
+# Email and github issue url for error report
+CONTACT_EMAIL = 'iriswalletdesktop@gmail.com'
+GITHUB_ISSUE_LINK = 'https://github.com/RGB-Tools/iris-wallet-desktop/issues/new?template=Blank+issue'

@@ -7,17 +7,10 @@ from __future__ import annotations
 import base64
 import binascii
 import os
-import platform
 import shutil
-import smtplib
 import time
 import zipfile
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from email import encoders
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from io import BytesIO
 
 import pydenticon
@@ -42,7 +35,6 @@ from PySide6.QtWidgets import QMessageBox
 from PySide6.QtWidgets import QPlainTextEdit
 from PySide6.QtWidgets import QWidget
 
-from config import report_email_server_config
 from src.data.repository.setting_repository import SettingRepository
 from src.data.service.helpers.main_asset_page_helper import get_offline_asset_ticker
 from src.model.enums.enums_model import AssetType
@@ -61,9 +53,7 @@ from src.utils.constant import MEDIUM_TRANSACTION_FEE_BLOCKS
 from src.utils.constant import SLOW_TRANSACTION_FEE_BLOCKS
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SAVE_LOGS
-from src.utils.error_message import ERROR_SEND_REPORT_EMAIL
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
-from src.utils.error_message import ERROR_TITLE
 from src.utils.info_message import INFO_COPY_MESSAGE
 from src.utils.info_message import INFO_LOG_SAVE_DESCRIPTION
 from src.utils.ln_node_manage import LnNodeServerManager
@@ -470,108 +460,6 @@ def close_button_navigation(parent, back_page_navigation=None):
 
     if parent.originating_page == 'settings_page':
         parent.view_model.page_navigation.settings_page()
-
-
-def generate_error_report_email(url, title):
-    """Collect system info, format it, and generate the email body."""
-    # Collect system information
-    network = SettingRepository.get_wallet_network()
-    system_info = {
-        'URL': url,
-        'OS': platform.system(),
-        'OS Version': platform.version(),
-        'Wallet Version': __version__,
-        'Wallet Network': network.value,
-        'Architecture': platform.machine(),
-        'Processor': platform.processor(),
-    }
-
-    # Format system information for the email report
-    system_info_formatted = (
-        f"System Information Report:\n"
-        f"-------------------------\n"
-        f"URL: {system_info['URL']}\n"
-        f"Operating System: {system_info['OS']}\n"
-        f"OS Version: {system_info['OS Version']}\n"
-        f"Wallet Version: {system_info['Wallet Version']}\n"
-        f"Wallet Network: {system_info['Wallet Network']}\n"
-        f"Architecture: {system_info['Architecture']}\n"
-        f"Processor: {system_info['Processor']}\n"
-    )
-
-    # Generate the email body
-    email_body = (
-        f"{title}\n"
-        f"{'=' * len(title)}\n\n"
-        f"{system_info_formatted}\n"
-        f"Attached logs can be found in the provided ZIP file for further details."
-    )
-
-    return email_body
-
-
-def send_crash_report_async(email_to, subject, body, zip_file_path):
-    """
-    Asynchronously sends a crash report email with a ZIP attachment.
-    - Initializes a thread pool to run the email sending task asynchronously.
-    """
-
-    def send_crash_report(email_to, subject, body, zip_file_path):
-        """
-        - Retrieves the email server configuration (email ID and token).
-        - Creates a multipart email message with the subject, sender, and recipient.
-        - Attaches the email body and the ZIP file (if it exists).
-        - Connects to the SMTP server using TLS, authenticates with the email ID and token, and sends the email.
-        - Handles any exceptions that occur during the email sending process by showing an error toast message.
-        """
-        email_id = report_email_server_config['email_id']
-        email_token = report_email_server_config['email_token']
-
-        # Create a multipart message
-        msg = MIMEMultipart()
-        msg['Subject'] = subject
-        msg['From'] = email_id
-        msg['To'] = email_to
-
-        # Attach the body text
-        msg.attach(MIMEText(body))
-
-        # Attach the ZIP file
-        if zip_file_path and os.path.exists(zip_file_path):
-            with open(zip_file_path, 'rb') as attachment:
-                part = MIMEBase('application', 'octet-stream')
-                part.set_payload(attachment.read())
-
-            # Encode the attachment
-            encoders.encode_base64(part)
-
-            # Add headers
-            part.add_header(
-                'Content-Disposition',
-                f'attachment; filename="{os.path.basename(zip_file_path)}"',
-            )
-
-            # Attach the part to the message
-            msg.attach(part)
-
-        try:
-            # Connect to the SMTP server
-            smtp_host = report_email_server_config.get(
-                'smtp_host', 'smtp.gmail.com',
-            )
-            smtp_port = report_email_server_config.get('smtp_port', 587)
-            with smtplib.SMTP(smtp_host, smtp_port) as server:
-                server.starttls()
-                server.login(email_id, email_token)
-                server.sendmail(email_id, [email_to], msg.as_string())
-        except CommonException as e:
-            ToastManager.error(
-                parent=None, title=ERROR_TITLE,
-                description=ERROR_SEND_REPORT_EMAIL.format(e),
-            )
-
-    executor = ThreadPoolExecutor(max_workers=1)
-    executor.submit(send_crash_report, email_to, subject, body, zip_file_path)
 
 
 def find_files_with_name(path, keyword):

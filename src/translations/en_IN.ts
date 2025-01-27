@@ -1510,5 +1510,29 @@ If you understand the above remarks and wish to proceed, press the button below 
         <source>set_minimum_confirmation_desc</source>
         <translation>Set a minimum confirmation for RGB operation</translation>
     </message>
+    <message>
+        <source>github_issue_label</source>
+        <translation>GitHub Issue</translation>
+    </message>
+    <message>
+        <source>email_us_at</source>
+        <translation>Email us at:</translation>
+    </message>
+    <message>
+        <source>do_not_expect_reply</source>
+        <translation>Note: do not expect a reply.</translation>
+    </message>
+    <message>
+        <source>thank_you_for_your_support</source>
+        <translation>Thank you for your support!</translation>
+    </message>
+    <message>
+        <source>open_an_issue</source>
+        <translation>Open an issue on GitHub (preferred):</translation>
+    </message>
+    <message>
+        <source>please_help_us</source>
+        <translation>Please help us improve by sharing the logs. You can report the issue in one of the following ways:</translation>
+    </message>
 </context>
 </TS>
