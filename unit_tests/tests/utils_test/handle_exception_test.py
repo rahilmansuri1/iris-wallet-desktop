@@ -49,13 +49,13 @@ def test_http_error_500_with_error_report():
     with patch('src.utils.handle_exception.PageNavigationEventManager') as mock_manager:
         mock_instance = MagicMock()
         mock_manager.get_instance.return_value = mock_instance
+        mock_instance.error_report_signal = MagicMock()
 
         with pytest.raises(CommonException) as exc_info:
             handle_exceptions(exc)
 
-        mock_instance.error_report_signal.emit.assert_called_once_with(
-            'http://test.url',
-        )
+        # Verify error_report_signal.emit() was called with no arguments
+        mock_instance.error_report_signal.emit.assert_called_once_with()
         assert str(exc_info.value) == 'Server error'
 
 

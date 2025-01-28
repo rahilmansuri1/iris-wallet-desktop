@@ -93,6 +93,7 @@ class TransactionDetailFrame(QFrame):
         )
 
         self.transaction_amount = QLabel(self)
+        self.transaction_amount.setFixedHeight(18)
         self.transaction_amount.setObjectName('label_15')
         self.transaction_amount.setStyleSheet(
             'font: 15px "Inter";\n'

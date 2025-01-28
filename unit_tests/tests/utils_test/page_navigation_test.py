@@ -301,16 +301,15 @@ def test_sidebar(page_navigation, mock_ui):
 
 def test_error_report_dialog_box(page_navigation):
     """Test error_report_dialog_box method."""
-    url = 'test_url'
     with patch('src.utils.page_navigation.ErrorReportDialog') as mock_dialog:
         mock_dialog_instance = MagicMock()
         mock_dialog.return_value = mock_dialog_instance
 
         # Call the method we're testing
-        page_navigation.error_report_dialog_box(url)
+        page_navigation.error_report_dialog_box()
 
-        # Verify the dialog was created with correct URL
-        mock_dialog.assert_called_once_with(url=url)
+        # Verify the dialog was created
+        mock_dialog.assert_called_once()
 
         # Verify the dialog was shown
         mock_dialog_instance.exec.assert_called_once()

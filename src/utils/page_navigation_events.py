@@ -1,3 +1,4 @@
+# pylint: disable = too-few-public-methods
 """Make page navigation global"""
 from __future__ import annotations
 
@@ -45,7 +46,7 @@ class PageNavigationEventManager(QObject):
     about_page_signal = Signal()
     faucets_page_signal = Signal()
     help_page_signal = Signal()
-    error_report_signal = Signal(str)
+    error_report_signal = Signal()
 
     def __init__(self):
         super().__init__()

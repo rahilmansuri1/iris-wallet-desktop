@@ -38,7 +38,7 @@ def handle_exceptions(exc):
             )
 
             if exc.response.status_code == 500:
-                PageNavigationEventManager.get_instance().error_report_signal.emit(exc.response.url)
+                PageNavigationEventManager.get_instance().error_report_signal.emit()
             raw_exc = exc.response.json()
             raise CommonException(error_message, raw_exc) from exc
 
