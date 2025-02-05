@@ -22,6 +22,9 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from accessible_constant import OPTION_1_FRAME
+from accessible_constant import OPTION_2_FRAME
+from accessible_constant import WALLET_OR_TRANSFER_SELECTION_CLOSE_BUTTON
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import LoaderDisplayModel
@@ -94,6 +97,9 @@ class WalletOrTransferSelectionWidget(QWidget):
 
         self.close_button = QPushButton(self.widget_page)
         self.close_button.setObjectName('close_button')
+        self.close_button.setAccessibleName(
+            WALLET_OR_TRANSFER_SELECTION_CLOSE_BUTTON,
+        )
         self.close_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.close_button.setMinimumSize(QSize(24, 24))
         self.close_button.setMaximumSize(QSize(50, 65))
@@ -133,6 +139,7 @@ class WalletOrTransferSelectionWidget(QWidget):
             self._params.logo_1_title, self._params.callback,
         )
         self.option_1_frame.setObjectName('option_1_frame')
+        self.option_1_frame.setAccessibleName(OPTION_1_FRAME)
         self.option_1_frame.setMinimumSize(QSize(220, 200))
         self.option_1_frame.setMaximumSize(QSize(220, 200))
 
@@ -168,6 +175,7 @@ class WalletOrTransferSelectionWidget(QWidget):
             self._params.logo_2_title, self.widget_page, self._params.callback,
         )
         self.option_2_frame.setObjectName('frame_8')
+        self.option_2_frame.setAccessibleName(OPTION_2_FRAME)
         self.option_2_frame.setMinimumSize(QSize(220, 200))
         self.option_2_frame.setMaximumSize(QSize(220, 200))
 

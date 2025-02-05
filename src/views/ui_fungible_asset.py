@@ -23,6 +23,7 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from accessible_constant import ISSUE_RGB20_ASSET
 from src.data.repository.setting_repository import SettingRepository
 from src.data.service.common_operation_service import CommonOperationService
 from src.model.enums.enums_model import AssetType
@@ -81,6 +82,7 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         self.title_frame = HeaderFrame(
             title_logo_path=':/assets/my_asset.png', title_name='fungibles',
         )
+        self.title_frame.action_button.setAccessibleName(ISSUE_RGB20_ASSET)
         self.fungible_frame = None
         self.vertical_layout_fungible_frame = None
         self.grid_layout_fungible_frame = None

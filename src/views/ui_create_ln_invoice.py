@@ -21,6 +21,9 @@ from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
+from accessible_constant import ASSET_AMOUNT_LN
+from accessible_constant import EXPIRY_TIME
+from accessible_constant import EXPIRY_TIME_COMBO_BOX
 from src.data.repository.setting_card_repository import SettingCardRepository
 from src.model.common_operation_model import NodeInfoResponseModel
 from src.model.enums.enums_model import AssetType
@@ -173,6 +176,7 @@ class CreateLnInvoiceWidget(QWidget):
         self.amount_input = QLineEdit(self.ln_invoice_card)
         self.amount_input.setObjectName('amount_input')
         self.amount_input.setMinimumSize(QSize(370, 40))
+        self.amount_input.setAccessibleName(ASSET_AMOUNT_LN)
 
         self.amount_input.setValidator(QIntValidator())
 
@@ -238,6 +242,8 @@ class CreateLnInvoiceWidget(QWidget):
         self.expiry_input.setObjectName('expiry_input')
         self.expiry_input.setMinimumSize(QSize(250, 40))
         self.expiry_input.setMaximumSize(QSize(370, 40))
+        self.expiry_input.setAccessibleName(EXPIRY_TIME)
+        self.expiry_input.setAccessibleDescription(self.expiry_input.text())
 
         self.expiry_input.setValidator(QIntValidator())
         self.expiry_time_grid_layout.addWidget(
@@ -249,6 +255,7 @@ class CreateLnInvoiceWidget(QWidget):
         self.time_unit_combobox = QComboBox()
         self.time_unit_combobox.setMinimumSize(QSize(100, 40))
         self.time_unit_combobox.setMaximumSize(QSize(160, 40))
+        self.time_unit_combobox.setAccessibleDescription(EXPIRY_TIME_COMBO_BOX)
 
         self.expiry_time_grid_layout.addWidget(
             self.time_unit_combobox, 0, 1, Qt.AlignHCenter,

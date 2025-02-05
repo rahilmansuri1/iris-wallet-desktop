@@ -17,6 +17,12 @@ from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
+from accessible_constant import ANNOUNCE_ADDRESS_ACCESSIBLE_DESCRIPTION
+from accessible_constant import ANNOUNCE_ALIAS_ACCESSIBLE_DESCRIPTION
+from accessible_constant import INDEXER_URL_ACCESSIBLE_DESCRIPTION
+from accessible_constant import LN_PEER_LISTENING_PORT_COPY_BUTTON
+from accessible_constant import NODE_PUBKEY_COPY_BUTTON
+from accessible_constant import RGB_PROXY_URL_ACCESSIBLE_DESCRIPTION
 from src.data.repository.setting_repository import SettingRepository
 from src.model.common_operation_model import NodeInfoResponseModel
 from src.model.common_operation_model import UnlockRequestModel
@@ -88,13 +94,18 @@ class AboutWidget(QWidget):
         self.node_pub_key_frame = NodeInfoWidget(
             translation_key='node_pubkey', value=self.node_info.pubkey, v_layout=self.about_vertical_layout,
         )
-
+        self.node_pub_key_frame.node_pub_key_copy_button.setAccessibleName(
+            NODE_PUBKEY_COPY_BUTTON,
+        )
         self.get_bitcoin_config: UnlockRequestModel = get_bitcoin_config(
             self.network, password='',
         )
         if wallet_type.value == WalletType.EMBEDDED_TYPE_WALLET.value:
             self.ldk_port_frame = NodeInfoWidget(
                 translation_key='ln_ldk_port', value=self.ldk_port, v_layout=self.about_vertical_layout,
+            )
+            self.ldk_port_frame.node_pub_key_copy_button.setAccessibleName(
+                LN_PEER_LISTENING_PORT_COPY_BUTTON,
             )
         self.bitcoind_host_frame = NodeInfoWidget(
             translation_key='bitcoind_host', value=self.get_bitcoin_config.bitcoind_rpc_host, v_layout=self.about_vertical_layout,
@@ -107,10 +118,17 @@ class AboutWidget(QWidget):
         self.indexer_url_frame = NodeInfoWidget(
             translation_key='indexer_url', value=self.get_bitcoin_config.indexer_url, v_layout=self.about_vertical_layout,
         )
+        self.indexer_url_frame.value_label.setAccessibleDescription(
+            INDEXER_URL_ACCESSIBLE_DESCRIPTION,
+        )
 
         self.proxy_url_frame = NodeInfoWidget(
             translation_key='proxy_url', value=self.get_bitcoin_config.proxy_endpoint, v_layout=self.about_vertical_layout,
         )
+        self.proxy_url_frame.value_label.setAccessibleDescription(
+            RGB_PROXY_URL_ACCESSIBLE_DESCRIPTION,
+        )
+
         if self.get_bitcoin_config.announce_addresses[0] != ANNOUNCE_ADDRESS:
             if isinstance(self.get_bitcoin_config.announce_addresses, list):
                 value = ', '.join(
@@ -119,11 +137,17 @@ class AboutWidget(QWidget):
             self.announce_address_frame = NodeInfoWidget(
                 translation_key='announce_address', value=value, v_layout=self.about_vertical_layout,
             )
+            self.announce_address_frame.value_label.setAccessibleDescription(
+                ANNOUNCE_ADDRESS_ACCESSIBLE_DESCRIPTION,
+            )
         if self.get_bitcoin_config.announce_alias != ANNOUNCE_ALIAS:
             self.announce_alias_frame = NodeInfoWidget(
                 translation_key='announce_alias', value=self.get_bitcoin_config.announce_alias, v_layout=self.about_vertical_layout,
             )
 
+            self.announce_alias_frame.value_label.setAccessibleDescription(
+                ANNOUNCE_ALIAS_ACCESSIBLE_DESCRIPTION,
+            )
         self.privacy_policy_label = QLabel(self.about_widget)
         self.privacy_policy_label.setObjectName('privacy_policy_label')
         self.privacy_policy_label.setTextInteractionFlags(

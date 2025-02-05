@@ -30,3 +30,10 @@ build_info.json
 settings.json
 /appimages/
 temp_build_constant.py
+datacore
+dataindex
+dataldk0
+dataldk1
+dataldk2
+allure-results
+.pytest_cache

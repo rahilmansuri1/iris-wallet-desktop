@@ -19,6 +19,8 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from accessible_constant import BITCOIN_TX_ID
+from accessible_constant import BITCOIN_TX_PAGE_CLOSE_BUTTON
 from src.model.enums.enums_model import TransferStatusEnumModel
 from src.model.transaction_detail_page_model import TransactionDetailPageModel
 from src.utils.common_utils import get_bitcoin_explorer_url
@@ -105,6 +107,7 @@ class BitcoinTransactionDetail(QWidget):
         self.bitcoin_tx_id_value = QLabel(self.transaction_detail_frame)
         self.bitcoin_tx_id_value.setWordWrap(True)
         self.bitcoin_tx_id_value.setObjectName('tx_id_value')
+        self.bitcoin_tx_id_value.setAccessibleDescription(BITCOIN_TX_ID)
         self.bitcoin_tx_id_value.setTextInteractionFlags(
             Qt.TextBrowserInteraction,
         )
@@ -154,6 +157,9 @@ class BitcoinTransactionDetail(QWidget):
             self.bitcoin_single_transaction_detail_widget,
         )
         self.close_btn_bitcoin_tx_page.setObjectName('close_btn')
+        self.close_btn_bitcoin_tx_page.setAccessibleName(
+            BITCOIN_TX_PAGE_CLOSE_BUTTON,
+        )
         self.close_btn_bitcoin_tx_page.setMinimumSize(QSize(24, 24))
         self.close_btn_bitcoin_tx_page.setMaximumSize(QSize(50, 65))
         self.close_btn_bitcoin_tx_page.setAutoFillBackground(False)

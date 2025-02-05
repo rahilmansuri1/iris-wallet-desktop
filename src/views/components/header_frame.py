@@ -152,6 +152,7 @@ class HeaderFrame(QFrame, QObject):
         self.title_frame_main_horizontal_layout.addWidget(self.action_button)
 
         self.refresh_page_button = QPushButton(self)
+        self.refresh_page_button.setAccessibleName('refresh_button')
         self.refresh_page_button.setCursor(
             QCursor(Qt.CursorShape.PointingHandCursor),
         )

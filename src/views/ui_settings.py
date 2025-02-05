@@ -19,6 +19,20 @@ from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
+from accessible_constant import ASK_AUTH_FOR_APP_LOGIN
+from accessible_constant import ASK_AUTH_FOR_IMPORTANT_QUESTION
+from accessible_constant import EXPIRY_TIME_COMBO_BOX
+from accessible_constant import HIDE_EXHAUSTED_ASSETS
+from accessible_constant import KEYRING_STORAGE
+from accessible_constant import SET_DEFAULT_EXP_TIME
+from accessible_constant import SET_DEFAULT_FEE_RATE
+from accessible_constant import SET_DEFAULT_MIN_EXPIRATION
+from accessible_constant import SPECIFY_ANNOUNCE_ADD
+from accessible_constant import SPECIFY_ANNOUNCE_ALIAS
+from accessible_constant import SPECIFY_BITCOIND_HOST
+from accessible_constant import SPECIFY_BITCOIND_PORT
+from accessible_constant import SPECIFY_INDEXER_URL
+from accessible_constant import SPECIFY_RGB_PROXY_URL
 from src.data.repository.setting_repository import SettingRepository
 from src.model.common_operation_model import ConfigurableCardModel
 from src.model.enums.enums_model import NetworkEnumModel
@@ -109,6 +123,9 @@ class SettingsWidget(QWidget):
 
         self.imp_operation_frame = QFrame(self.settings_widget)
         self.imp_operation_frame.setObjectName('imp_operation_frame')
+        self.imp_operation_frame.setAccessibleName(
+            ASK_AUTH_FOR_IMPORTANT_QUESTION,
+        )
         self.imp_operation_frame.setMinimumSize(QSize(492, 92))
         self.imp_operation_frame.setMaximumWidth(492)
         self.imp_operation_frame.setFrameShape(QFrame.StyledPanel)
@@ -157,6 +174,7 @@ class SettingsWidget(QWidget):
 
         self.ask_auth_login_frame = QFrame(self.settings_widget)
         self.ask_auth_login_frame.setObjectName('ask_auth_login_frame')
+        self.ask_auth_login_frame.setAccessibleName(ASK_AUTH_FOR_APP_LOGIN)
         self.ask_auth_login_frame.setMinimumSize(QSize(492, 92))
         self.ask_auth_login_frame.setMaximumWidth(492)
         self.ask_auth_login_frame.setStyleSheet('')
@@ -197,9 +215,13 @@ class SettingsWidget(QWidget):
         self.login_auth_toggle_button.setStyleSheet('border: 1px solid white')
 
         self.grid_layout_5.addWidget(self.login_auth_toggle_button, 0, 1, 1, 1)
+
         self.hide_exhausted_asset_frame = QFrame(self.settings_widget)
         self.hide_exhausted_asset_frame.setObjectName(
             'hide_exhausted_asset_frame',
+        )
+        self.hide_exhausted_asset_frame.setAccessibleName(
+            HIDE_EXHAUSTED_ASSETS,
         )
         self.hide_exhausted_asset_frame.setMinimumSize(QSize(492, 92))
         self.hide_exhausted_asset_frame.setMaximumWidth(492)
@@ -251,6 +273,7 @@ class SettingsWidget(QWidget):
         self.keyring_storage_frame.setObjectName(
             'keyring_storage_frame',
         )
+        self.keyring_storage_frame.setAccessibleName(KEYRING_STORAGE)
         self.keyring_storage_frame.setMinimumSize(QSize(492, 79))
         self.keyring_storage_frame.setMaximumWidth(492)
         self.keyring_storage_frame.setFrameShape(QFrame.StyledPanel)
@@ -322,6 +345,7 @@ class SettingsWidget(QWidget):
 
 
         )
+        self.set_fee_rate_frame.setAccessibleName(SET_DEFAULT_FEE_RATE)
         self.set_expiry_time_frame = ConfigurableCardFrame(
             self,
             ConfigurableCardModel(
@@ -342,6 +366,7 @@ class SettingsWidget(QWidget):
             ),
 
         )
+        self.set_expiry_time_frame.setAccessibleName(SET_DEFAULT_EXP_TIME)
         self.set_indexer_url_frame = ConfigurableCardFrame(
             self,
             ConfigurableCardModel(
@@ -356,6 +381,7 @@ class SettingsWidget(QWidget):
                 placeholder_value=self.indexer_url,
             ),
         )
+        self.set_indexer_url_frame.setAccessibleName(SPECIFY_INDEXER_URL)
         self.set_proxy_endpoint_frame = ConfigurableCardFrame(
             self,
             ConfigurableCardModel(
@@ -370,6 +396,7 @@ class SettingsWidget(QWidget):
                 placeholder_value=self.proxy_endpoint,
             ),
         )
+        self.set_proxy_endpoint_frame.setAccessibleName(SPECIFY_RGB_PROXY_URL)
         self.set_bitcoind_rpc_host_frame = ConfigurableCardFrame(
             self,
             ConfigurableCardModel(
@@ -383,6 +410,9 @@ class SettingsWidget(QWidget):
                 ),
                 placeholder_value=self.bitcoind_host,
             ),
+        )
+        self.set_bitcoind_rpc_host_frame.setAccessibleName(
+            SPECIFY_BITCOIND_HOST,
         )
         self.set_bitcoind_rpc_port_frame = ConfigurableCardFrame(
             self,
@@ -398,6 +428,9 @@ class SettingsWidget(QWidget):
                 placeholder_value=self.bitcoind_port,
             ),
         )
+        self.set_bitcoind_rpc_port_frame.setAccessibleName(
+            SPECIFY_BITCOIND_PORT,
+        )
         self.set_announce_address_frame = ConfigurableCardFrame(
             self,
             ConfigurableCardModel(
@@ -412,6 +445,7 @@ class SettingsWidget(QWidget):
                 placeholder_value=self.announce_address,
             ),
         )
+        self.set_announce_address_frame.setAccessibleName(SPECIFY_ANNOUNCE_ADD)
         self.set_announce_alias_frame = ConfigurableCardFrame(
             self,
             ConfigurableCardModel(
@@ -426,6 +460,7 @@ class SettingsWidget(QWidget):
                 placeholder_value=self.announce_alias,
             ),
         )
+        self.set_announce_alias_frame.setAccessibleName(SPECIFY_ANNOUNCE_ALIAS)
         self.set_minimum_confirmation_frame = ConfigurableCardFrame(
             self,
             ConfigurableCardModel(
@@ -439,6 +474,9 @@ class SettingsWidget(QWidget):
                 ),
                 placeholder_value=self.min_confirmation,
             ),
+        )
+        self.set_minimum_confirmation_frame.setAccessibleName(
+            SET_DEFAULT_MIN_EXPIRATION,
         )
 
         stack_1_widgets = [
@@ -534,7 +572,6 @@ class SettingsWidget(QWidget):
                 None,
             ),
         )
-
         self.keyring_label.setText(
             QCoreApplication.translate(
                 'iris_wallet_desktop', 'keyring_label', 'Keyring storage',

@@ -17,6 +17,8 @@ from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from accessible_constant import ACCEPT_BUTTON
+from accessible_constant import DECLINE_BUTTON
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.buttons import PrimaryButton
@@ -118,12 +120,14 @@ class TermConditionWidget(QWidget):
         self.tnc_horizontal_layout.setContentsMargins(8, -1, 8, -1)
 
         self.decline_btn = SecondaryButton()
+        self.decline_btn.setAccessibleName(DECLINE_BUTTON)
         self.decline_btn.setMinimumSize(QSize(318, 40))
         self.decline_btn.setMaximumSize(QSize(318, 40))
 
         self.tnc_horizontal_layout.addWidget(self.decline_btn)
 
         self.accept_btn = PrimaryButton()
+        self.accept_btn.setAccessibleName(ACCEPT_BUTTON)
         self.accept_btn.setMinimumSize(QSize(318, 40))
         self.accept_btn.setMaximumSize(QSize(318, 40))
 
