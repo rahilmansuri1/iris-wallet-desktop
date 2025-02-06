@@ -232,6 +232,14 @@ class ReceiveAssetWidget(QWidget):
             ),
         )
 
+        self.copy_button.clicked.connect(
+            lambda: self.copy_button.setText(
+                QCoreApplication.translate(
+                    'iris_wallet_desktop', 'copied', None,
+                ),
+            ),
+        )
+
     def update_qr_and_address(self, address: str):
         """This method used to set qr and address"""
         qr_image = set_qr_code(str(address))

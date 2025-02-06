@@ -478,6 +478,8 @@ class CreateLnInvoiceWidget(QWidget):
             params=AssetDataModel(
                 asset_type='create_invoice',
                 close_page_navigation=self.asset_type,
+                expiry_time=int(self.expiry_input.text()),
+                expiry_unit=self.time_unit_combobox.currentText(),
             ),
         )
 

@@ -4,6 +4,7 @@
  """
 from __future__ import annotations
 
+from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
@@ -31,6 +32,8 @@ class ReceiveRGBAssetWidget(QWidget):
         self.originating_page = params.asset_type
         self.asset_id = params.asset_id
         self.close_page_navigation = params.close_page_navigation
+        self.expiry_time = params.expiry_time
+        self.expiry_unit = params.expiry_unit
         self.default_min_confirmation = SettingCardRepository.get_default_min_confirmation()
         self.receive_rgb_asset_page = ReceiveAssetWidget(
             self._view_model,
@@ -69,6 +72,16 @@ class ReceiveRGBAssetWidget(QWidget):
     def setup_ui_connection(self):
         """Set up connections for UI elements."""
         self.show_receive_rgb_loading()
+        self.receive_rgb_asset_page.copy_button.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'copy_rgb_invoice', None,
+            ),
+        )
+        self.receive_rgb_asset_page.address_label.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'rgb_invoice_label', None,
+            ),
+        )
         self.receive_rgb_asset_page.copy_button.clicked.connect(
             lambda: copy_text(self.receive_rgb_asset_page.receiver_address),
         )
@@ -82,7 +95,7 @@ class ReceiveRGBAssetWidget(QWidget):
             self.update_address,
         )
         self._view_model.ln_offchain_view_model.invoice_get_event.connect(
-            self.update_address,
+            lambda address: self.update_address(address, ln_invoice=True),
         )
         self._view_model.receive_rgb25_view_model.message.connect(
             self.handle_message,
@@ -130,9 +143,25 @@ class ReceiveRGBAssetWidget(QWidget):
                     }',
                 )
 
-    def update_address(self, address: str):
+    def update_address(self, address: str, ln_invoice: bool = False):
         """This method used to update new address"""
         self.receive_rgb_asset_page.update_qr_and_address(address)
+        if ln_invoice:
+            self.receive_rgb_asset_page.copy_button.setText(
+                QCoreApplication.translate(
+                    'iris_wallet_desktop', 'copy_ln_invoice', None,
+                ),
+            )
+            self.receive_rgb_asset_page.address_label.setText(
+                QCoreApplication.translate(
+                    'iris_wallet_desktop', 'ln_invoice_label', None,
+                ),
+            )
+            self.receive_rgb_asset_page.wallet_address_description_text.setText(
+                QCoreApplication.translate('iris_wallet_desktop', 'ln_invoice_info', None).format(
+                    self.expiry_time, self.expiry_unit,
+                ),
+            )
 
     def handle_message(self, msg_type: int, message: str):
         """This method handled to show message."""
