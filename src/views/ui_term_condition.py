@@ -7,16 +7,18 @@ from __future__ import annotations
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QTextOption
 from PySide6.QtWidgets import QFrame
 from PySide6.QtWidgets import QGridLayout
 from PySide6.QtWidgets import QHBoxLayout
 from PySide6.QtWidgets import QLabel
-from PySide6.QtWidgets import QPlainTextEdit
 from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtWidgets import QSpacerItem
+from PySide6.QtWidgets import QTextBrowser
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from src.utils.constant import PRIVACY_POLICY_URL
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.buttons import PrimaryButton
@@ -85,14 +87,28 @@ class TermConditionWidget(QWidget):
 
         self.grid_layout_10_tnc.addWidget(self.tnc_line_tnc, 1, 0, 1, 1)
 
-        self.tnc_text_desc = QPlainTextEdit(self.tnc_widget)
+        self.tnc_text_desc = QTextBrowser(self.tnc_widget)
         self.tnc_text_desc.setObjectName('TnC_Text_Desc')
         self.tnc_text_desc.setMinimumSize(QSize(644, 348))
         self.tnc_text_desc.setMaximumSize(QSize(644, 348))
         self.tnc_text_desc.setStyleSheet(
-            load_stylesheet('views/qss/q_label.qss'),
+            load_stylesheet('views/qss/scrollbar.qss') +
+            """
+            QTextBrowser {
+                background-color: rgb(21, 28, 52);
+                color: white;
+                font: 14px"Inter";
+                line-height: 1.5;
+                border: none;
+                padding: 10px;
+            }
+            """,
         )
         self.tnc_text_desc.setReadOnly(True)
+        self.tnc_text_desc.verticalScrollBar().valueChanged.connect(
+            self.check_scroll_completion,
+        )
+        self.tnc_text_desc.setOpenExternalLinks(True)
 
         self.grid_layout_10_tnc.addWidget(
             self.tnc_text_desc, 2, 0, 1, 1, Qt.AlignHCenter,
@@ -126,6 +142,7 @@ class TermConditionWidget(QWidget):
         self.accept_btn = PrimaryButton()
         self.accept_btn.setMinimumSize(QSize(318, 40))
         self.accept_btn.setMaximumSize(QSize(318, 40))
+        self.accept_btn.setDisabled(True)
 
         self.tnc_horizontal_layout.addWidget(self.accept_btn)
 
@@ -179,13 +196,8 @@ class TermConditionWidget(QWidget):
                 None,
             ),
         )
-        self.tnc_text_desc.setPlainText(
-            QCoreApplication.translate(
-                'iris_wallet_desktop',
-                'terms_and_conditions_content',
-                None,
-            ),
-        )
+
+        self.load_terms_conditions()
         self.decline_btn.setText(
             QCoreApplication.translate(
                 'iris_wallet_desktop',
@@ -199,4 +211,54 @@ class TermConditionWidget(QWidget):
                 'accept',
                 None,
             ),
+        )
+
+    def check_scroll_completion(self):
+        """Enable the Accept button when the user scrolls to the end."""
+        scrollbar = self.tnc_text_desc.verticalScrollBar()
+        if scrollbar.value() == scrollbar.maximum():
+            self.accept_btn.setEnabled(True)
+
+    def load_terms_conditions(self):
+        """Load Terms & Conditions text and format 'Privacy Policy' as a hyperlink while preserving formatting."""
+        get_translated_privacy_policy = QCoreApplication.translate(
+            'iris_wallet_desktop',
+            'privacy_policy_tnc',
+            None,
+        )
+        terms_text = QCoreApplication.translate(
+            'iris_wallet_desktop',
+            'terms_and_conditions_content',
+            None,
+        ).format(get_translated_privacy_policy)
+
+        terms_text = terms_text.replace(
+            get_translated_privacy_policy, f'<a href="{
+                PRIVACY_POLICY_URL
+            }" style="color:rgb(1, 167, 129); font-weight: 400">{get_translated_privacy_policy}</a>',
+        )
+
+        # Add CSS for line-height
+        formatted_text = f'''
+        <html>
+            <head>
+                <style>
+                pre {{
+                    white-space: pre-wrap; /* Enables word wrapping */
+                    word-wrap: break-word;  /* Ensures long words break */
+                    line-height: 1.5;  /* Adjust line height as needed */
+                    font-family: Inter;
+                }}
+            </style>
+            </head>
+            <body>
+                <pre>{terms_text.replace('\n\n', '</p><p>').replace('\n', '<br>')}</pre>
+            </body>
+        </html>
+        '''
+
+        self.tnc_text_desc.setHtml(formatted_text)
+
+        self.tnc_text_desc.setWordWrapMode(
+            QTextOption.WrapAtWordBoundaryOrAnywhere,
         )

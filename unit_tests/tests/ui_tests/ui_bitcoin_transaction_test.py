@@ -11,6 +11,7 @@ import pytest
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtGui import QTextDocument
 
+from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import TransferStatusEnumModel
 from src.model.transaction_detail_page_model import TransactionDetailPageModel
 from src.utils.common_utils import network_info
@@ -57,17 +58,44 @@ def bitcoin_transaction_detail_widget(mock_bitcoin_transaction_detail_view_model
 
 def test_retranslate_ui(bitcoin_transaction_detail_widget, qtbot):
     """Test the retranslate_ui method."""
-    bitcoin_transaction_detail_widget.network = 'mainnet'
-    bitcoin_transaction_detail_widget.retranslate_ui()
+    # Set up initial state
+    with patch('src.data.repository.setting_repository.SettingRepository.get_wallet_network') as mock_network:
+        mock_network.return_value = NetworkEnumModel.MAINNET
+        bitcoin_transaction_detail_widget.network = 'mainnet'
+        bitcoin_transaction_detail_widget.tx_id = 'test_tx_id'
+        bitcoin_transaction_detail_widget.params.tx_id = 'test_tx_id'
+        bitcoin_transaction_detail_widget.retranslate_ui()
 
-    expected_bitcoin_text = f'{
-        QCoreApplication.translate(
-            "iris_wallet_desktop", "bitcoin", None
-        )
-    } (mainnet)'
-    assert bitcoin_transaction_detail_widget.bitcoin_text == expected_bitcoin_text
-    assert bitcoin_transaction_detail_widget.tx_id_label.text(
-    ) == QCoreApplication.translate('iris_wallet_desktop', 'transaction_id', None)
+        # Test bitcoin_text construction
+        expected_bitcoin_text = f'{
+            QCoreApplication.translate(
+                "iris_wallet_desktop", "bitcoin", None
+            )
+        } (mainnet)'
+        assert bitcoin_transaction_detail_widget.bitcoin_text == expected_bitcoin_text
+
+        # Test URL construction
+        assert bitcoin_transaction_detail_widget.url == 'https://mempool.space/tx/test_tx_id'
+
+        # Test all label texts
+        assert bitcoin_transaction_detail_widget.tx_id_label.text(
+        ) == QCoreApplication.translate('iris_wallet_desktop', 'transaction_id', None)
+        assert bitcoin_transaction_detail_widget.btc_amount_label.text(
+        ) == QCoreApplication.translate('iris_wallet_desktop', 'amount', None)
+        assert bitcoin_transaction_detail_widget.date_label.text(
+        ) == QCoreApplication.translate('iris_wallet_desktop', 'date', None)
+        assert bitcoin_transaction_detail_widget.bitcoin_title_value.text() == expected_bitcoin_text
+
+        # Test tx_id_value text for mainnet
+        expected_tx_link = f"<a style='color: #03CA9B;' href='{bitcoin_transaction_detail_widget.url}'>" \
+            f"{bitcoin_transaction_detail_widget.tx_id}</a>"
+        assert bitcoin_transaction_detail_widget.bitcoin_tx_id_value.text() == expected_tx_link
+
+        # Test for REGTEST network
+        mock_network.return_value = NetworkEnumModel.REGTEST
+        bitcoin_transaction_detail_widget.retranslate_ui()
+        assert bitcoin_transaction_detail_widget.bitcoin_tx_id_value.text(
+        ) == bitcoin_transaction_detail_widget.tx_id
 
 
 def test_set_btc_tx_value_sent_status(bitcoin_transaction_detail_widget, qtbot):

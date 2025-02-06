@@ -224,7 +224,7 @@ class LnEndpointWidget(QWidget):
         """Set up connections for UI elements."""
         self.close_button.clicked.connect(
             lambda: close_button_navigation(
-                self, self._view_model.page_navigation.term_and_condition_page,
+                self, self.view_model.page_navigation.term_and_condition_page,
             ),
         )
         self.proceed_button.clicked.connect(self.set_ln_url)

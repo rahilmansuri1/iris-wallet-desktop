@@ -19,6 +19,8 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from src.data.repository.setting_repository import SettingRepository
+from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import TransferStatusEnumModel
 from src.model.transaction_detail_page_model import TransactionDetailPageModel
 from src.utils.common_utils import get_bitcoin_explorer_url
@@ -238,10 +240,13 @@ class BitcoinTransactionDetail(QWidget):
                 'iris_wallet_desktop', 'transaction_id', None,
             ),
         )
-        self.bitcoin_tx_id_value.setText(
-            f"<a style='color: #03CA9B;' href='{self.url}'>"
-            f"{self.tx_id}</a>",
-        )
+        if SettingRepository.get_wallet_network() != NetworkEnumModel.REGTEST:
+            self.bitcoin_tx_id_value.setText(
+                f"<a style='color: #03CA9B;' href='{self.url}'>"
+                f"{self.tx_id}</a>",
+            )
+        else:
+            self.bitcoin_tx_id_value.setText(self.tx_id)
         self.btc_amount_label.setText(
             QCoreApplication.translate(
                 'iris_wallet_desktop', 'amount', None,

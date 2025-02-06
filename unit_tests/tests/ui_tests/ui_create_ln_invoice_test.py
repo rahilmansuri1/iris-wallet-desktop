@@ -109,15 +109,21 @@ def test_get_ln_invoice(mock_create_ln_invoice_view_model, create_ln_invoice_wid
     widget.msat_amount_value = MagicMock()
     widget.amount_input = MagicMock()
     widget.expiry_input = MagicMock()
+    widget.time_unit_combobox = MagicMock()
+    widget.render_timer = MagicMock()
     widget.amt_msat_value = 'amt_msat'
 
     # Set up mock return values
     widget.amount_input.text.return_value = '1000'
     widget.expiry_input.text.return_value = '3600'
+    widget.time_unit_combobox.currentText.return_value = 'minutes'
 
     # Mock the view model method to check if it was called correctly
     mock_method = MagicMock()
     mock_create_ln_invoice_view_model.ln_offchain_view_model.get_invoice = mock_method
+
+    # Mock get_expiry_time_in_seconds
+    widget.get_expiry_time_in_seconds = MagicMock(return_value=216000)
 
     # Test case when asset_id is Bitcoin
     widget.asset_id = AssetType.BITCOIN.value
@@ -138,7 +144,9 @@ def test_get_ln_invoice(mock_create_ln_invoice_view_model, create_ln_invoice_wid
     # Check non-Bitcoin case with empty msat uses amount_input converted to msat
     _, kwargs = mock_method.call_args
     assert 'amount_msat' in kwargs
-    assert kwargs['amount_msat'] == 3000000  # 1000 * 3000 conversion to msat
+    assert kwargs['amount'] == '1000'
+    assert kwargs['asset_id'] == 'OTHER'
+    assert kwargs['expiry'] == 216000
 
     # Test case when asset_id is not Bitcoin and msat_amount_value is set
     widget.msat_amount_value.text.return_value = '2000'  # Set MSAT value

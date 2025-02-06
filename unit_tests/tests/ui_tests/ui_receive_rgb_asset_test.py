@@ -8,6 +8,7 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 import pytest
+from PySide6.QtCore import QCoreApplication
 
 from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import ToastPreset
@@ -45,6 +46,10 @@ def test_setup_ui_connection(receive_rgb_asset_widget: ReceiveRGBAssetWidget):
         with patch('src.views.components.toast.ToastManager._create_toast', MagicMock()):
             with patch.object(receive_rgb_asset_widget, 'show_receive_rgb_loading', MagicMock()):
                 # Emit the signal to simulate a button click
+                # Verify copy button text is set correctly
+                assert receive_rgb_asset_widget.receive_rgb_asset_page.copy_button.text() == QCoreApplication.translate(
+                    'iris_wallet_desktop', 'copy_rgb_invoice', None,
+                )
                 receive_rgb_asset_widget.receive_rgb_asset_page.copy_button.clicked.emit()
 
                 # Verify UI connections are set up
@@ -52,6 +57,11 @@ def test_setup_ui_connection(receive_rgb_asset_widget: ReceiveRGBAssetWidget):
                 receive_rgb_asset_widget._view_model.ln_offchain_view_model.invoice_get_event.connect.assert_called()
                 receive_rgb_asset_widget._view_model.receive_rgb25_view_model.message.connect.assert_called()
                 receive_rgb_asset_widget._view_model.receive_rgb25_view_model.hide_loading.connect.assert_called()
+
+                # Verify address label text is set correctly
+                assert receive_rgb_asset_widget.receive_rgb_asset_page.address_label.text() == QCoreApplication.translate(
+                    'iris_wallet_desktop', 'rgb_invoice_label', None,
+                )
 
 
 def test_close_button_navigation(receive_rgb_asset_widget):
@@ -125,10 +135,35 @@ def test_close_button_navigation(receive_rgb_asset_widget):
 def test_update_address(receive_rgb_asset_widget: ReceiveRGBAssetWidget):
     """Test that the address is updated correctly."""
 
-    with patch.object(receive_rgb_asset_widget.receive_rgb_asset_page, 'update_qr_and_address', MagicMock()) as mock_update_qr_and_address:
+    with patch.object(receive_rgb_asset_widget.receive_rgb_asset_page, 'update_qr_and_address', MagicMock()) as mock_update_qr_and_address, \
+            patch.object(receive_rgb_asset_widget.receive_rgb_asset_page.wallet_address_description_text, 'setText', MagicMock()) as mock_set_text:
+
+        # Test case 1: Regular address update
         receive_rgb_asset_widget.update_address('new_address')
 
         mock_update_qr_and_address.assert_called_once_with('new_address')
+        mock_set_text.assert_not_called()
+        mock_update_qr_and_address.reset_mock()
+
+        # Test case 2: Lightning invoice update
+        receive_rgb_asset_widget.expiry_time = 24
+        receive_rgb_asset_widget.expiry_unit = 'hours'
+        receive_rgb_asset_widget.update_address(
+            'ln_invoice_address', ln_invoice=True,
+        )
+        mock_update_qr_and_address.assert_called_once_with(
+            'ln_invoice_address',
+        )
+        mock_set_text.assert_called_once_with(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'ln_invoice_info', None,
+            ).format('24', 'hours'),
+        )
+
+        # Test case 3: Copy Lightning invoice translation
+        assert QCoreApplication.translate(
+            'iris_wallet_desktop', 'copy_ln_invoice', None,
+        )
 
 
 def test_show_receive_rgb_loading(receive_rgb_asset_widget: ReceiveRGBAssetWidget):

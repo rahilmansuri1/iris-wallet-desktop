@@ -584,11 +584,15 @@ class SendLnInvoiceWidget(QWidget):
 
     def _update_max_asset_local_balance(self, detail):
         """Updates the maximum asset local balance for the given asset_id."""
-        max_balance = None
-        for channel in self._view_model.channel_view_model.channels:
-            if channel.asset_id == detail.asset_id and channel.is_usable and channel.ready:
-                max_balance = max(max_balance or 0, channel.asset_local_amount)
-        self.max_asset_local_balance = max_balance
+        if detail.asset_id:
+            max_balance = None
+            for channel in self._view_model.channel_view_model.channels:
+                if channel.asset_id == detail.asset_id and channel.is_usable and channel.ready:
+                    max_balance = max(
+                        max_balance or 0,
+                        channel.asset_local_amount,
+                    )
+            self.max_asset_local_balance = max_balance
 
     def _validate_asset_amount(self, detail):
         """Validates the asset amount and updates the UI accordingly."""
