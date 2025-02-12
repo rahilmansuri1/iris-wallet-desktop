@@ -1663,10 +1663,22 @@ If you understand the above remarks and wish to proceed, press the button below 
     <message>
         <source>rgb_invoice_label</source>
         <translation>RGB invoice</translation>
-  </message>
-  <message>
+    </message>
+    <message>
         <source>copied</source>
         <translation>Copied!</translation>
-  </message>
+    </message>
+    <message>
+        <source>local_balance</source>
+        <translation>Local Balance</translation>
+    </message>
+    <message>
+        <source>remote_balance</source>
+        <translation>Remote Balance</translation>
+    </message>
+    <message>
+        <source>asset</source>
+        <translation>Asset</translation>
+    </message>
 </context>
 </TS>
