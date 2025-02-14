@@ -19,7 +19,7 @@ class SendOperation(MainPageObjects, BaseOperations):
         """
         super().__init__(application)
 
-    def send(self, application, receiver_invoice, amount, transfer_type=None):
+    def send(self, application, receiver_invoice, amount=None, transfer_type=None):
         """
         Send assets using Bitcoin or Lightning transfer.
 

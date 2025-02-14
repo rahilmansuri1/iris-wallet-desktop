@@ -26,6 +26,7 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from accessible_constant import CHANNEL_STATUS
 from accessible_constant import CREATE_CHANNEL_BUTTON
 from src.model.channels_model import ChannelDetailDialogModel
 from src.utils.clickable_frame import ClickableFrame
@@ -321,6 +322,7 @@ class ChannelManagement(QWidget):
             )
             self.status = QLabel(self.list_frame)
             self.status.setObjectName('status')
+            self.status.setAccessibleName(CHANNEL_STATUS)
             self.status.setMaximumSize(QSize(40, 40))
             color = (
                 QColor(235, 90, 90) if channel.status == 'Closing' else

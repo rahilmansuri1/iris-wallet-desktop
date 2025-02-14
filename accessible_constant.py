@@ -3,10 +3,14 @@
 from __future__ import annotations
 FIRST_APPLICATION = 'Iris Wallet Regtest'
 SECOND_APPLICATION = 'Iris Wallet Regtest app_1'
+FIRST_APPLICATION_URL = 'http://127.0.0.1:3001'
+SECOND_APPLICATION_URL = 'http://127.0.0.1:3002'
+LN_PORT = '9736'
 
 # Term and Condition Page
 ACCEPT_BUTTON = 'accept_button'
 DECLINE_BUTTON = 'decline_button'
+TNC_TXT_DESCRIPTION = 'tnc_txt_description'
 
 # Wallet or Transfer Selection Page
 OPTION_1_FRAME = 'option_1_frame'
@@ -90,6 +94,7 @@ FILE_CHOOSER = 'file chooser'
 SEND_LN_INVOICE_CLOSE_BUTTON = 'send_ln_invoice_close_button'
 LN_INVOICE_INPUT = 'ln_invoice_input'
 SEND_LN_INVOICE_BUTTON = 'send_ln_invoice_button'
+AMOUNT_VALIDATION_ERROR_LABEL = 'amount_validation_error_label'
 
 # Asset Details Page
 ASSET_SEND_BUTTON = 'asset_send_button'
@@ -99,13 +104,22 @@ ASSET_ON_CHAIN_TOTAL_BALANCE = 'asset_on_chain_total_balance'
 ASSET_ON_CHAIN_SPENDABLE_BALANCE = 'asset_on_chain_spendable_balance'
 ASSET_LIGHTNING_TOTAL_BALANCE = 'asset_lightning_total_balance'
 ASSET_LIGHTNING_SPENDABLE_BALANCE = 'asset_lightning_spendable_balance'
+ASSET_RECEIVE_BUTTON = 'asset_receive_button'
+ASSET_AMOUNT_VALIDATION = 'asset_amount_validation'
+ASSET_ID_COPY_BUTTON = 'asset_id_copy_button'
+
+
+# Asset Transaction Details Page
+AMOUNT_VALUE = 'amount_value'
+ASSET_TRANSACTION_DETAIL_CLOSE_BUTTON = 'asset_transaction_detail_close_button'
 
 # Create LN Invoice
 ASSET_AMOUNT_LN = 'asset_amount_ln'
 EXPIRY_TIME = 'expiry_time_ln'
 MSAT_AMOUNT = 'msat_amount'
 CREATE_LN_INVOICE_BUTTON = 'create_ln_invoice_button'
-ASSET_AMOUNT_VALIDATION = 'asset_amount_validation'
+CREATE_LN_INVOICE_AMOUNT_VALIDATION = 'create_ln_invoice_amount_validation'
+CREATE_LN_INVOICE_CLOSE_BUTTON = 'create_ln_invoice_close_button'
 
 # Fee rate
 SLOW_CHECKBOX = 'slow_checkbox'
@@ -120,7 +134,8 @@ BITCOIN_TX_PAGE_CLOSE_BUTTON = 'bitcoin_tx_page_close_button'
 
 # Transaction detail page
 BITCOIN_TRANSACTION_DETAIL_FRAME = 'bitcoin_transaction_detail_frame'
-RGB_TRANSACTION_DETAIL_FRAME = 'rgb_transaction_detail_frame'
+RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME = 'rgb_transaction_detail_on_chain_frame'
+RGB_TRANSACTION_DETAIL_LIGHTNING_FRAME = 'rgb_transaction_detail_lightning_frame'
 TRANSFER_STATUS = 'transfer_status'
 
 # Channel management page
@@ -134,6 +149,17 @@ CHANNEL_COMBOBOX = 'channel_combo_box'
 CHANNEL_CAPACITY_SAT = 'channel_capacity_sat'
 CHANNEL_ASSET_AMOUNT = 'channel_asset_amount'
 PUSH_MSAT_VALUE = 'push_msat_value'
+CHANNEL_STATUS = 'channel_status'
+
+# Channel detail page
+CHANNEL_DETAIL_DIALOG = 'channel_detail_dialog'
+CHANNEL_DETAIL_CLOSE_BUTTON = 'channel_detail_close_button'
+CLOSE_CHANNEL_BUTTON = 'close_channel_button'
+CHANNEL_PEER_PUBKEY_COPY_BUTTON = 'channel_peer_pubkey_copy_button'
+CLOSE_CHANNEL_CONTINUE_BUTTON = 'close_channel_continue_button'
+CLOSE_CHANNEL_DIALOG = 'close_channel_dialog'
+BTC_LOCAL_VALUE_LABEL = 'btc_local_value_label'
+BTC_REMOTE_VALUE_LABEL = 'btc_remote_value_label'
 
 
 # About page
@@ -161,3 +187,20 @@ SPECIFY_ANNOUNCE_ADD = 'specify_announce_add'
 SPECIFY_ANNOUNCE_ALIAS = 'specify_announce_alias'
 EXPIRY_TIME_COMBO_BOX = 'expiry_time_combo_box'
 INPUT_BOX_NAME = 'input_box'
+
+# View Unspent List Page
+UNSPENT_UTXO_ASSET_ID = 'unspent_utxo_asset_id'
+UNSPENT_WIDGET = 'unspent_widget'
+UNSPENT_CLICKABLE_FRAME = 'unspent_clickable_frame'
+UNSPENT_UTXO_OUTPOINT = 'unspent_utxo_outpoint'
+
+# LN endpoint Page
+LN_NODE_URL = 'ln_node_url'
+PROCEED_BUTTON = 'proceed_button'
+LN_ENDPOINT_CLOSE_BUTTON = 'ln_endpoint_close_button'
+
+# Backup Page
+BACKUP_CLOSE_BUTTON = 'backup_close_button'
+SHOW_MNEMONIC_BUTTON = 'show_mnemonic_button'
+CONFIGURE_BACKUP_BUTTON = 'configure_backup_button'
+BACKUP_WINDOW = 'backup_window'

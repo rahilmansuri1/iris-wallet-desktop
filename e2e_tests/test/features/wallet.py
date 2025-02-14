@@ -7,6 +7,7 @@ from e2e_tests.test.pageobjects.main_page_objects import MainPageObjects
 from e2e_tests.test.utilities.base_operation import BaseOperations
 from e2e_tests.test.utilities.executable_shell_script import mine
 from e2e_tests.test.utilities.executable_shell_script import send_to_address
+from src.model.enums.enums_model import WalletType
 
 
 class Wallet(MainPageObjects, BaseOperations):
@@ -24,6 +25,10 @@ class Wallet(MainPageObjects, BaseOperations):
         Creates an embedded wallet.
         """
         self.do_focus_on_application(application)
+
+        if self.do_is_displayed(self.term_and_condition_page_objects.tnc_scrollbar()):
+            self.term_and_condition_page_objects.scroll_to_end()
+
         if self.do_is_displayed(self.term_and_condition_page_objects.accept_button()):
             self.term_and_condition_page_objects.click_accept_button()
 
@@ -78,3 +83,46 @@ class Wallet(MainPageObjects, BaseOperations):
 
         if self.do_is_displayed(self.fungible_page_objects.refresh_button()):
             self.fungible_page_objects.click_refresh_button()
+
+    def connect_wallet(self, application, url):
+        """
+        Connect an external wallet.
+        """
+        self.do_focus_on_application(application)
+
+        if self.do_is_displayed(self.term_and_condition_page_objects.tnc_scrollbar()):
+            self.term_and_condition_page_objects.scroll_to_end()
+
+        if self.do_is_displayed(self.term_and_condition_page_objects.accept_button()):
+            self.term_and_condition_page_objects.click_accept_button()
+
+        if self.do_is_displayed(self.wallet_selection_page_objects.embedded_button()):
+            self.wallet_selection_page_objects.click_connect_button()
+
+        if self.do_is_displayed(self.ln_endpoint_page_objects.ln_node_url()):
+            self.ln_endpoint_page_objects.enter_ln_node_url(url=url)
+
+        if self.do_is_displayed(self.ln_endpoint_page_objects.proceed_button()):
+            self.ln_endpoint_page_objects.click_proceed_button()
+
+        if self.do_is_displayed(self.set_password_page_objects.password_input()):
+            self.set_password_page_objects.enter_password('nodepassword')
+
+        if self.do_is_displayed(self.set_password_page_objects.confirm_password_input()):
+            self.set_password_page_objects.enter_confirm_password(
+                'nodepassword',
+            )
+
+        if self.do_is_displayed(self.set_password_page_objects.proceed_button()):
+            self.set_password_page_objects.click_proceed_button()
+
+    def create_and_fund_wallet(self, wallets_and_operations, application, application_url):
+        """
+        Create a new wallet and fund it.
+        """
+        if wallets_and_operations.wallet_mode == WalletType.EMBEDDED_TYPE_WALLET.value:
+            self.create_embedded_wallet(application)
+        else:
+            self.connect_wallet(application=application, url=application_url)
+
+        self.fund_wallet(application)

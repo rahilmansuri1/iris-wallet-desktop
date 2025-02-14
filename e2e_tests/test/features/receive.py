@@ -68,3 +68,25 @@ class ReceiveOperation(MainPageObjects, BaseOperations):
         if self.do_is_displayed(self.sidebar_page_objects.fungibles_button()):
             self.sidebar_page_objects.click_fungibles_button()
         return invoice
+
+    def create_wrong_ln_invoice(self, application, amount):
+        """
+        Sends assets using Lightning transfer with a wrong invoice.
+        """
+        error_label = None
+
+        self.do_focus_on_application(application)
+
+        if self.do_is_displayed(self.wallet_transfer_page_objects.lightning_button()):
+            self.wallet_transfer_page_objects.click_lightning_button()
+
+        if self.do_is_displayed(self.create_ln_invoice_page_objects.asset_amount()):
+            self.create_ln_invoice_page_objects.enter_asset_amount(amount)
+
+        if self.do_is_displayed(self.create_ln_invoice_page_objects.error_label()):
+            error_label = self.create_ln_invoice_page_objects.get_error_label()
+
+        if self.do_is_displayed(self.create_ln_invoice_page_objects.close_button()):
+            self.create_ln_invoice_page_objects.click_close_button()
+
+        return error_label

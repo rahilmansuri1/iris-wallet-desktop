@@ -106,3 +106,14 @@ def test_set_ln_placeholder_text_other_page(ln_endpoint_widget: LnEndpointWidget
     ln_endpoint_widget.originating_page = 'other_page'
     ln_endpoint_widget.set_ln_placeholder_text()
     assert ln_endpoint_widget.enter_ln_node_url_input.text() == BACKED_URL_LIGHTNING_NETWORK
+
+
+def test_close_button_navigation(ln_endpoint_widget: LnEndpointWidget):
+    """Test the close button navigation behavior."""
+    # Mock the page navigation methods
+    ln_endpoint_widget.view_model.page_navigation.wallet_method_page = MagicMock()
+
+    # Test wallet selection page navigation
+    ln_endpoint_widget.originating_page = 'wallet_selection_page'
+    ln_endpoint_widget.close_button.clicked.emit()
+    ln_endpoint_widget.view_model.page_navigation.wallet_method_page.assert_called_once()

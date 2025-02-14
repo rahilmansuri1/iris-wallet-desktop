@@ -8,10 +8,13 @@ import allure
 import pytest
 
 from accessible_constant import FIRST_APPLICATION
+from accessible_constant import FIRST_APPLICATION_URL
 from e2e_tests.test.utilities.app_setup import test_environment
 from e2e_tests.test.utilities.app_setup import wallets_and_operations
+from e2e_tests.test.utilities.app_setup import WalletTestSetup
+from src.model.enums.enums_model import WalletType
 
-ASSET_NAME = 'Rgb25'
+RGB25_ASSET_NAME = 'Rgb25'
 ASSET_DESCRIPTION = 'This is Rgb25 asset'
 ASSET_AMOUNT = '2000'
 ISSUE_RGB25_TOASTER_MESSAGE = 'You have insufficient funds'
@@ -20,20 +23,25 @@ ISSUE_RGB25_TOASTER_MESSAGE = 'You have insufficient funds'
 @pytest.mark.parametrize('test_environment', [False], indirect=True)
 @allure.feature('Issue rgb25 asset without sufficient sats')
 @allure.story('Issue rgb25 asset without sufficient sats which will produce error toaster')
-def test_issue_rgb25_without_sufficient_sats(wallets_and_operations):
+def test_issue_rgb25_without_sufficient_sats(wallets_and_operations: WalletTestSetup):
     """
     Test issuing rgb25 asset without sufficient sats.
     """
-    first_page_features, _, _, _, _, _ = wallets_and_operations
 
-    with allure.step('Create embedded wallet'):
-        first_page_features.wallet_features.create_embedded_wallet(
-            FIRST_APPLICATION,
-        )
+    if wallets_and_operations.wallet_mode == WalletType.EMBEDDED_TYPE_WALLET.value:
+        with allure.step('Create embedded wallet for issue RGB25 asset'):
+            wallets_and_operations.first_page_features.wallet_features.create_embedded_wallet(
+                FIRST_APPLICATION,
+            )
+    else:
+        with allure.step('Connect to external wallet for issue RGB25 asset'):
+            wallets_and_operations.first_page_features.wallet_features.connect_wallet(
+                application=FIRST_APPLICATION, url=FIRST_APPLICATION_URL,
+            )
 
     with allure.step('Issue rgb25 asset without sat'):
-        description = first_page_features.issue_rgb25_features.issue_rgb25_asset_without_sat(
-            FIRST_APPLICATION, ASSET_NAME, ASSET_DESCRIPTION, ASSET_AMOUNT,
+        description = wallets_and_operations.first_page_features.issue_rgb25_features.issue_rgb25_asset_without_sat(
+            FIRST_APPLICATION, RGB25_ASSET_NAME, ASSET_DESCRIPTION, ASSET_AMOUNT,
         )
 
     with allure.step('Verify toaster title and message'):
@@ -43,43 +51,62 @@ def test_issue_rgb25_without_sufficient_sats(wallets_and_operations):
 @pytest.mark.parametrize('test_environment', [False], indirect=True)
 @allure.feature('Issue rgb25 asset with sufficient sats but no utxo')
 @allure.story('Issue rgb25 asset with sufficient sats and no utxo which will first create utxo and then create asset')
-def test_issue_rgb25_with_sufficient_sats_and_no_utxo(wallets_and_operations):
+def test_issue_rgb25_with_sufficient_sats_and_no_utxo(wallets_and_operations: WalletTestSetup):
     """
     Test issuing rgb25 asset with sufficient sats but no utxo.
     """
-    first_page_features, _, first_page_objects, _, _, _ = wallets_and_operations
 
-    with allure.step('Fund wallet'):
-        first_page_features.wallet_features.fund_wallet(FIRST_APPLICATION)
+    with allure.step('Fund wallet for issue rgb25 asset'):
+        wallets_and_operations.first_page_features.wallet_features.fund_wallet(
+            FIRST_APPLICATION,
+        )
+
+    with allure.step('Verifies there is no utxo for issue rgb25 asset'):
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_view_unspents_button()
+        count = wallets_and_operations.first_page_objects.view_unspent_list_page_objects.get_unspent_widget()
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
+        assert count == 1
 
     with allure.step('Issue rgb25 with sufficient sats and no utxo'):
-        first_page_features.issue_rgb25_features.issue_rgb25_with_sufficient_sats_and_no_utxo(
-            FIRST_APPLICATION, ASSET_NAME, ASSET_DESCRIPTION, ASSET_AMOUNT,
+        wallets_and_operations.first_page_features.issue_rgb25_features.issue_rgb25_with_sufficient_sats_and_no_utxo(
+            FIRST_APPLICATION, RGB25_ASSET_NAME, ASSET_DESCRIPTION, ASSET_AMOUNT,
         )
 
     with allure.step('Verify asset name'):
-        asset_name = first_page_objects.collectible_page_objects.get_rgb25_asset_name(
-            ASSET_NAME,
+        asset_name = wallets_and_operations.first_page_objects.collectible_page_objects.get_rgb25_asset_name(
+            RGB25_ASSET_NAME,
         )
-        assert asset_name == ASSET_NAME
+        assert asset_name == RGB25_ASSET_NAME
 
 
 @pytest.mark.parametrize('test_environment', [False], indirect=True)
 @allure.feature('Issue rgb25 asset with sufficient sats and utxo')
 @allure.story('Issue rgb25 asset with sufficient sats and utxo which will create asset')
-def test_issue_rgb25_with_sufficient_sats_and_utxo(wallets_and_operations):
+def test_issue_rgb25_with_sufficient_sats_and_utxo(wallets_and_operations: WalletTestSetup):
     """
     Test issuing rgb25 asset with sufficient sats and utxo.
     """
-    first_page_features, _, first_page_objects, _, _, _ = wallets_and_operations
+
+    with allure.step('Verified that one utxo exists for issue rgb25 asset'):
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_view_unspents_button()
+
+        count = wallets_and_operations.first_page_objects.view_unspent_list_page_objects.get_unspent_widget()
+
+        asset_id = wallets_and_operations.first_page_objects.view_unspent_list_page_objects.get_unspent_utxo_asset_id(
+            'NA',
+        )
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
+
+        assert count == 3
+        assert asset_id == 'NA'
 
     with allure.step('Issue rgb25 with sufficient sats and utxo'):
-        first_page_features.issue_rgb25_features.issue_rgb25_with_sufficient_sats_and_utxo(
-            FIRST_APPLICATION, ASSET_NAME, ASSET_DESCRIPTION, ASSET_AMOUNT,
+        wallets_and_operations.first_page_features.issue_rgb25_features.issue_rgb25_with_sufficient_sats_and_utxo(
+            FIRST_APPLICATION, RGB25_ASSET_NAME, ASSET_DESCRIPTION, ASSET_AMOUNT,
         )
 
     with allure.step('Verify asset name'):
-        asset_name = first_page_objects.collectible_page_objects.get_rgb25_asset_name(
-            ASSET_NAME,
+        asset_name = wallets_and_operations.first_page_objects.collectible_page_objects.get_rgb25_asset_name(
+            RGB25_ASSET_NAME,
         )
-        assert asset_name == ASSET_NAME
+        assert asset_name == RGB25_ASSET_NAME

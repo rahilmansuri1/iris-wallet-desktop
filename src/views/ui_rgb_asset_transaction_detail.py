@@ -19,6 +19,10 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from accessible_constant import AMOUNT_VALUE
+from accessible_constant import ASSET_TRANSACTION_DETAIL_CLOSE_BUTTON
+from src.data.repository.setting_repository import SettingRepository
+from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import PaymentStatus
 from src.model.enums.enums_model import TransferStatusEnumModel
 from src.model.rgb_model import RgbAssetPageLoadModel
@@ -243,6 +247,9 @@ class RGBAssetTransactionDetail(QWidget):
             self.rgb_asset_single_transaction_detail_widget,
         )
         self.close_btn_rgb_asset_tx_page.setObjectName('close_btn')
+        self.close_btn_rgb_asset_tx_page.setAccessibleName(
+            ASSET_TRANSACTION_DETAIL_CLOSE_BUTTON,
+        )
         self.close_btn_rgb_asset_tx_page.setMinimumSize(QSize(24, 24))
         self.close_btn_rgb_asset_tx_page.setMaximumSize(QSize(50, 65))
         self.close_btn_rgb_asset_tx_page.setAutoFillBackground(False)
@@ -274,6 +281,7 @@ class RGBAssetTransactionDetail(QWidget):
             self.rgb_asset_single_transaction_detail_widget,
         )
         self.amount_value.setObjectName('amount_value')
+        self.amount_value.setAccessibleDescription(AMOUNT_VALUE)
         self.amount_value.setMinimumSize(QSize(0, 60))
 
         self.amount_layout.addWidget(self.amount_value, 0, Qt.AlignHCenter)
@@ -377,10 +385,6 @@ class RGBAssetTransactionDetail(QWidget):
         else:
             unblinded_and_change_utxo_value = None
             self.url = get_bitcoin_explorer_url(self.params.tx_id)
-            self.tx_id_value.setText(
-                f"<a style='color: #03CA9B;' href='{self.url}'>"
-                f"{self.tx_id}</a>",
-            )
             if self.params.receive_utxo is not None:
                 self.url = get_bitcoin_explorer_url(self.params.receive_utxo)
                 unblinded_and_change_utxo_value = insert_zero_width_spaces(
@@ -391,10 +395,20 @@ class RGBAssetTransactionDetail(QWidget):
                 unblinded_and_change_utxo_value = insert_zero_width_spaces(
                     self.params.change_utxo,
                 )
-            self.unblinded_and_change_utxo_value.setText(
-                f"<a style='color: #03CA9B;' href='{self.url}'>"
-                f"{unblinded_and_change_utxo_value}</a>",
-            )
+            if SettingRepository.get_wallet_network() != NetworkEnumModel.REGTEST:
+                self.unblinded_and_change_utxo_value.setText(
+                    f"<a style='color: #03CA9B;' href='{self.url}'>"
+                    f"{unblinded_and_change_utxo_value}</a>",
+                )
+                self.tx_id_value.setText(
+                    f"<a style='color: #03CA9B;' href='{self.url}'>"
+                    f"{self.tx_id}</a>",
+                )
+            else:
+                self.unblinded_and_change_utxo_value.setText(
+                    unblinded_and_change_utxo_value,
+                )
+                self.tx_id_value.setText(self.tx_id)
             self.blinded_utxo_value.setText(self.params.recipient_id)
             if self.params.consignment_endpoints:
                 consignment_endpoint = self.params.consignment_endpoints[0].endpoint or 'N/A'

@@ -3,6 +3,7 @@ SendLnInvoicePageObjects class for interacting with send ln invoice page element
 """
 from __future__ import annotations
 
+from accessible_constant import AMOUNT_VALIDATION_ERROR_LABEL
 from accessible_constant import LN_INVOICE_INPUT
 from accessible_constant import SEND_LN_INVOICE_BUTTON
 from accessible_constant import SEND_LN_INVOICE_CLOSE_BUTTON
@@ -34,6 +35,9 @@ class SendLnInvoicePageObjects(BaseOperations):
         self.send_button = lambda: self.perform_action_on_element(
             role_name='push button', name=SEND_LN_INVOICE_BUTTON,
         )
+        self.error_label = lambda: self.perform_action_on_element(
+            role_name='label', description=AMOUNT_VALIDATION_ERROR_LABEL,
+        )
 
     def click_close_button(self):
         """
@@ -61,3 +65,12 @@ class SendLnInvoicePageObjects(BaseOperations):
         bool: True if the button is clicked successfully, None otherwise.
         """
         return self.do_click(self.send_button()) if self.do_is_displayed(self.send_button()) else None
+
+    def get_error_label(self):
+        """
+        Retrieves the error label text if it is displayed.
+
+        Returns:
+            str: The error label text, or None if it is not displayed.
+        """
+        return self.do_get_text(self.error_label()) if self.do_is_displayed(self.error_label()) else None

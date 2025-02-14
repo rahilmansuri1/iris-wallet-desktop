@@ -3,6 +3,7 @@ Channel Management Page Objects Module.
 """
 from __future__ import annotations
 
+from accessible_constant import CHANNEL_STATUS
 from accessible_constant import CREATE_CHANNEL_BUTTON
 from e2e_tests.test.utilities.base_operation import BaseOperations
 
@@ -25,6 +26,9 @@ class ChannelManagementPageObjects(BaseOperations):
 
         self.create_channel_button = lambda: self.perform_action_on_element(
             role_name='push button', name=CREATE_CHANNEL_BUTTON,
+        )
+        self.channel_status = lambda: self.perform_action_on_element(
+            role_name='image', name=CHANNEL_STATUS,
         )
 
     def click_create_channel_button(self):
@@ -50,3 +54,13 @@ class ChannelManagementPageObjects(BaseOperations):
             role_name='label', name=asset_id,
         )
         return self.do_click(self.asset_id()) if self.do_is_displayed(self.asset_id()) else None
+
+    def get_channel_status(self):
+        """
+        Clicks the channel status.
+
+        Returns:
+            The result of the click action if the status is displayed, otherwise None.
+        """
+        self.channel_status().grabFocus()
+        return self.channel_status().description if self.do_is_displayed(self.channel_status()) else None

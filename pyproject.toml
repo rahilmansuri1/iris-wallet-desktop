@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iris-wallet-desktop"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 readme = "README.md"
 license = ""
@@ -49,6 +49,7 @@ allure-pytest = "^2.13.5"
 pyperclip = "^1.9.0"
 pygobject = "^3.50.0"
 psutil = "^6.1.1"
+pyotp = "^2.9.0"
 [tool.poetry.dev-dependencies]
 black = "24.4.1"
 bump2version = "1.0.1"
@@ -66,6 +67,11 @@ iris-wallet = "src.main:main"
 unit-test = "pytest tests --cov=src --cov-report=html:coverage-report --html=coverage-report/pytest_report.html"
 reset-app = "src.utils.reset_app:main"
 build-iris-wallet = "build_script:main"
+single-test = "e2e_tests.e2e_runner:single_test"
+e2e-test = "e2e_tests.e2e_runner:e2e_test"
+result-embedded = "e2e_tests.e2e_runner:result_embedded"
+result-connect = "e2e_tests.e2e_runner:result_connect"
+regtest-start = "e2e_tests.e2e_runner:run_regtest"
 
 # Build system
 

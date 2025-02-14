@@ -21,7 +21,6 @@ from PySide6.QtWidgets import QWidget
 
 from accessible_constant import ASK_AUTH_FOR_APP_LOGIN
 from accessible_constant import ASK_AUTH_FOR_IMPORTANT_QUESTION
-from accessible_constant import EXPIRY_TIME_COMBO_BOX
 from accessible_constant import HIDE_EXHAUSTED_ASSETS
 from accessible_constant import KEYRING_STORAGE
 from accessible_constant import SET_DEFAULT_EXP_TIME
@@ -36,9 +35,7 @@ from accessible_constant import SPECIFY_RGB_PROXY_URL
 from src.data.repository.setting_repository import SettingRepository
 from src.model.common_operation_model import ConfigurableCardModel
 from src.model.enums.enums_model import NetworkEnumModel
-from src.model.enums.enums_model import WalletType
 from src.model.setting_model import SettingPageLoadModel
-from src.utils.common_utils import translate_value
 from src.utils.constant import ANNOUNCE_ADDRESS
 from src.utils.constant import ANNOUNCE_ALIAS
 from src.utils.constant import BITCOIND_RPC_HOST_MAINNET
@@ -161,6 +158,9 @@ class SettingsWidget(QWidget):
         )
         self.imp_operation_auth_toggle_button.setObjectName(
             'imp_operation_auth_toggle_button',
+        )
+        self.imp_operation_auth_toggle_button.setAccessibleName(
+            'toggle_switch',
         )
         self.imp_operation_auth_toggle_button.setMinimumSize(QSize(50, 35))
         self.imp_operation_auth_toggle_button.setMaximumSize(QSize(50, 35))

@@ -4,7 +4,9 @@ CreateLnInvoicePageObjects class provides methods to interact with the Create LN
 from __future__ import annotations
 
 from accessible_constant import ASSET_AMOUNT_LN
+from accessible_constant import CREATE_LN_INVOICE_AMOUNT_VALIDATION
 from accessible_constant import CREATE_LN_INVOICE_BUTTON
+from accessible_constant import CREATE_LN_INVOICE_CLOSE_BUTTON
 from accessible_constant import EXPIRY_TIME
 from accessible_constant import EXPIRY_TIME_COMBO_BOX
 from accessible_constant import MSAT_AMOUNT
@@ -37,6 +39,12 @@ class CreateLnInvoicePageObjects(BaseOperations):
         )
         self.combo_box = lambda: self.perform_action_on_element(
             role_name='combo box', description=EXPIRY_TIME_COMBO_BOX,
+        )
+        self.error_label = lambda: self.perform_action_on_element(
+            role_name='label', description=CREATE_LN_INVOICE_AMOUNT_VALIDATION,
+        )
+        self.close_button = lambda: self.perform_action_on_element(
+            role_name='push button', name=CREATE_LN_INVOICE_CLOSE_BUTTON,
         )
 
     def get_expiry_time_unit(self):
@@ -83,3 +91,21 @@ class CreateLnInvoicePageObjects(BaseOperations):
             The result of clicking the button if it is displayed, otherwise None.
         """
         return self.do_click(self.create_button()) if self.do_is_displayed(self.create_button()) else None
+
+    def get_error_label(self):
+        """
+        Retrieves the error label text if it is displayed.
+
+        Returns:
+            str: The error label text, or None if it is not displayed.
+        """
+        return self.do_get_text(self.error_label()) if self.do_is_displayed(self.error_label()) else None
+
+    def click_close_button(self):
+        """
+        Clicks the close button on the send ln invoice page.
+
+        Returns:
+            bool: True if the button is clicked successfully, None otherwise.
+        """
+        return self.do_click(self.close_button()) if self.do_is_displayed(self.close_button()) else None

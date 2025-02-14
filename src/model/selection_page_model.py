@@ -1,3 +1,4 @@
+# pylint: disable=too-few-public-methods
 """
 Module containing models related to the wallet method and transfer type widget.
 """
@@ -29,3 +30,5 @@ class AssetDataModel(BaseModel):
     asset_type: str
     asset_id: str | None = None
     close_page_navigation: str | None = None
+    expiry_time: int | None = None
+    expiry_unit: str | None = None

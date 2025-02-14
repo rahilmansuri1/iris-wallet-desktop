@@ -1,16 +1,20 @@
+# pylint: disable=too-many-instance-attributes
 """
 This file contains the AssetDetailPageObjects class, which provides methods for interacting with the asset detail page.
 """
 from __future__ import annotations
 
 from accessible_constant import ASSET_CLOSE_BUTTON
+from accessible_constant import ASSET_ID_COPY_BUTTON
 from accessible_constant import ASSET_LIGHTNING_SPENDABLE_BALANCE
 from accessible_constant import ASSET_LIGHTNING_TOTAL_BALANCE
 from accessible_constant import ASSET_ON_CHAIN_SPENDABLE_BALANCE
 from accessible_constant import ASSET_ON_CHAIN_TOTAL_BALANCE
+from accessible_constant import ASSET_RECEIVE_BUTTON
 from accessible_constant import ASSET_REFRESH_BUTTON
 from accessible_constant import ASSET_SEND_BUTTON
-from accessible_constant import RGB_TRANSACTION_DETAIL_FRAME
+from accessible_constant import RGB_TRANSACTION_DETAIL_LIGHTNING_FRAME
+from accessible_constant import RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME
 from accessible_constant import TRANSFER_STATUS
 from e2e_tests.test.utilities.base_operation import BaseOperations
 
@@ -49,11 +53,20 @@ class AssetDetailPageObjects(BaseOperations):
         self.lightning_spendable_balance = lambda: self.perform_action_on_element(
             role_name='label', description=ASSET_LIGHTNING_SPENDABLE_BALANCE,
         )
-        self.rgb_transaction_frame = lambda: self.get_first_element(
-            role_name='panel', name=RGB_TRANSACTION_DETAIL_FRAME,
+        self.rgb_transaction_on_chain_frame = lambda: self.get_first_element(
+            role_name='panel', name=RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME,
+        )
+        self.rgb_transaction_lightning_frame = lambda: self.get_first_element(
+            role_name='panel', name=RGB_TRANSACTION_DETAIL_LIGHTNING_FRAME,
         )
         self.transfer_status = lambda: self.get_first_element(
             role_name='label', description=TRANSFER_STATUS,
+        )
+        self.receive_button = lambda: self.perform_action_on_element(
+            role_name='push button', name=ASSET_RECEIVE_BUTTON,
+        )
+        self.copy_button = lambda: self.perform_action_on_element(
+            role_name='push button', name=ASSET_ID_COPY_BUTTON,
         )
 
     def click_close_button(self):
@@ -73,6 +86,15 @@ class AssetDetailPageObjects(BaseOperations):
             bool: True if the button is clicked successfully, None otherwise.
         """
         return self.do_click(self.send_button()) if self.do_is_displayed(self.send_button()) else None
+
+    def click_receive_button(self):
+        """
+        Clicks the receive button on the asset detail page.
+
+        Returns:
+            bool: True if the button is clicked successfully, None otherwise.
+        """
+        return self.do_click(self.receive_button()) if self.do_is_displayed(self.receive_button()) else None
 
     def click_refresh_button(self):
         """
@@ -119,14 +141,26 @@ class AssetDetailPageObjects(BaseOperations):
         """
         return self.do_get_text(self.lightning_spendable_balance()) if self.do_is_displayed(self.lightning_spendable_balance()) else None
 
-    def click_rgb_transaction_frame(self):
+    def click_rgb_transaction_on_chain_frame(self):
         """
         Clicks the bitcoin transaction frame on the asset detail page.
         """
-        return self.do_click(self.rgb_transaction_frame()) if self.do_is_displayed(self.rgb_transaction_frame()) else None
+        return self.do_click(self.rgb_transaction_on_chain_frame()) if self.do_is_displayed(self.rgb_transaction_on_chain_frame()) else None
+
+    def click_rgb_transaction_lightning_frame(self):
+        """
+        Clicks the bitcoin transaction frame on the asset detail page.
+        """
+        return self.do_click(self.rgb_transaction_lightning_frame()) if self.do_is_displayed(self.rgb_transaction_lightning_frame()) else None
 
     def get_transfer_status(self):
         """
         Retrieves the transfer status from the asset detail page.
         """
         return self.do_get_text(self.transfer_status()) if self.do_is_displayed(self.transfer_status()) else None
+
+    def click_copy_button(self):
+        """
+        Clicks the copy button on the asset detail page.
+        """
+        return self.do_click(self.copy_button()) if self.do_is_displayed(self.copy_button()) else None

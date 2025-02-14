@@ -26,13 +26,16 @@ from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
 from accessible_constant import ASSET_CLOSE_BUTTON
+from accessible_constant import ASSET_ID_COPY_BUTTON
 from accessible_constant import ASSET_LIGHTNING_SPENDABLE_BALANCE
 from accessible_constant import ASSET_LIGHTNING_TOTAL_BALANCE
 from accessible_constant import ASSET_ON_CHAIN_SPENDABLE_BALANCE
 from accessible_constant import ASSET_ON_CHAIN_TOTAL_BALANCE
+from accessible_constant import ASSET_RECEIVE_BUTTON
 from accessible_constant import ASSET_REFRESH_BUTTON
 from accessible_constant import ASSET_SEND_BUTTON
-from accessible_constant import RGB_TRANSACTION_DETAIL_FRAME
+from accessible_constant import RGB_TRANSACTION_DETAIL_LIGHTNING_FRAME
+from accessible_constant import RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import NetworkEnumModel
@@ -129,7 +132,6 @@ class RGBAssetDetailWidget(QWidget):
         self.rgb_asset_detail_widget_layout.addWidget(
             self.top_line, 1, 0, 1, 1,
         )
-
         self.send_receive_button_layout = QHBoxLayout()
         self.send_receive_button_layout.setSpacing(18)
         self.send_receive_button_layout.setObjectName('horizontal_layout_11')
@@ -138,15 +140,14 @@ class RGBAssetDetailWidget(QWidget):
             40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum,
         )
         self.send_receive_button_layout.addItem(self.horizontal_spacer)
-
         self.receive_rgb_asset = AssetTransferButton(
             'receive_assets', ':/assets/bottom_left.png',
         )
+        self.receive_rgb_asset.setAccessibleName(ASSET_RECEIVE_BUTTON)
         self.receive_rgb_asset.setCursor(
             QCursor(Qt.CursorShape.PointingHandCursor),
         )
         self.send_receive_button_layout.addWidget(self.receive_rgb_asset)
-
         self.send_asset = AssetTransferButton(
             'send_assets', ':/assets/top_right.png',
         )
@@ -238,6 +239,7 @@ class RGBAssetDetailWidget(QWidget):
         self.asset_id_frame_layout.addWidget(self.asset_id_detail, 1, 0, 1, 1)
         self.copy_button = QPushButton(self.asset_id_frame)
         self.copy_button.setObjectName('copy_button')
+        self.copy_button.setAccessibleName(ASSET_ID_COPY_BUTTON)
         self.copy_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.copy_button.setStyleSheet('border:none;')
         icon2 = QIcon()
@@ -329,7 +331,6 @@ class RGBAssetDetailWidget(QWidget):
         self.vertical_layout_lightning_frame.addWidget(
             self.lightning_spendable_balance_label,
         )
-
         self.lightning_spendable_balance = QLabel(self.lightning_balance_frame)
         self.lightning_spendable_balance.setObjectName(
             'lightning_spendable_balance',
@@ -347,7 +348,6 @@ class RGBAssetDetailWidget(QWidget):
         self.rgb_asset_detail_widget_layout.addLayout(
             self.vertical_layout, 3, 0, 1, 1,
         )
-
         self.rgb_asset_detail_title_layout = QHBoxLayout()
         self.rgb_asset_detail_title_layout.setSpacing(0)
         self.rgb_asset_detail_title_layout.setObjectName('horizontal_layout_1')
@@ -364,7 +364,6 @@ class RGBAssetDetailWidget(QWidget):
         self.rgb_asset_detail_title_layout.addWidget(
             self.widget_title_asset_name,
         )
-
         self.asset_refresh_button = QPushButton(
             self.rgb_asset_detail_widget,
         )
@@ -584,9 +583,6 @@ class RGBAssetDetailWidget(QWidget):
             transaction_detail_frame = TransactionDetailFrame(
                 self.scroll_area_widget_contents,
             )
-            transaction_detail_frame.setAccessibleName(
-                RGB_TRANSACTION_DETAIL_FRAME,
-            )
             self.transactions_label.hide()
             no_transaction_widget = transaction_detail_frame.no_transaction_frame()
             transaction_detail_frame.setCursor(
@@ -624,7 +620,6 @@ class RGBAssetDetailWidget(QWidget):
                 self.set_lightning_transaction_frame(
                     transaction, asset_name, asset_type,
                 )
-
             self.transaction_detail_frame.click_frame.connect(
                 self.handle_asset_frame_click,
             )
@@ -834,6 +829,9 @@ class RGBAssetDetailWidget(QWidget):
                 receive_utxo=transaction.receive_utxo,
             ),
         )
+        self.transaction_detail_frame.setAccessibleName(
+            RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME,
+        )
         self.transaction_date = str(transaction.updated_at_date)
         self.transaction_time = str(transaction.created_at_time)
         self.transfer_status = str(
@@ -937,6 +935,9 @@ class RGBAssetDetailWidget(QWidget):
                 updated_date=transaction.updated_at_date,
                 updated_time=transaction.updated_at_time,
             ),
+        )
+        self.transaction_detail_frame.setAccessibleName(
+            RGB_TRANSACTION_DETAIL_LIGHTNING_FRAME,
         )
         self.transfer_amount = amount
         self.transaction_date = str(transaction.updated_at_date)

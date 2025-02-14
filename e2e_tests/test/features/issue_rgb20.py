@@ -23,8 +23,6 @@ class IssueRgb20(MainPageObjects, BaseOperations):
         Issues an RGB20 asset with sufficient sats and no UTXO.
         """
         self.do_focus_on_application(application)
-        if self.do_is_displayed(self.sidebar_page_objects.view_unspents_button()):
-            self.sidebar_page_objects.click_view_unspents_button()
 
         if self.do_is_displayed(self.sidebar_page_objects.fungibles_button()):
             self.sidebar_page_objects.click_fungibles_button()
