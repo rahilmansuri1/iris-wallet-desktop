@@ -1,0 +1,82 @@
+name: "Bug Report"
+description: "Create a report to help us improve"
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thank you for reporting a bug!** Please fill out the following sections as completely as possible.
+
+  - type: textarea
+    id: bug_description
+    attributes:
+      label: "Bug Description"
+      description: "Provide a clear and concise description of the issue, including steps to reproduce it."
+      placeholder: "What happened? What did you expect to happen?"
+    validations:
+      required: true
+
+  - type: input
+    id: os_version
+    attributes:
+      label: "OS Version"
+      description: "Example: Ubuntu 22.04, macOS 14.0, Windows 11"
+    validations:
+      required: true
+
+  - type: input
+    id: app_version
+    attributes:
+      label: "App Version"
+      description: "Find this in the About section or GitHub releases."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: "Mode"
+      options:
+        - Embedded
+        - Connect
+    validations:
+      required: true
+
+  - type: dropdown
+    id: network
+    attributes:
+      label: "Network"
+      options:
+        - Regtest
+        - Testnet
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation_method
+    attributes:
+      label: "Installation Method"
+      options:
+        - AppImage/DMG
+        - From Source
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs & Debug Data"
+      description: "Attach any relevant console logs or debug files. Please provide the full data directory. You can download the debug logs from the About page of the application."
+      placeholder: "Drag and drop logs or paste relevant log snippets."
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: "Additional Context"
+      description: "Any other details that might help debugging."
+      placeholder: "Screenshots, error messages, or any other useful info."
+    validations:
+      required: false
