@@ -518,7 +518,3 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         ToastManager.info(
             description=INFO_FAUCET_NOT_AVAILABLE,
         )
-
-    def set_bitcoin_address(self, label: QLabel, address: str):
-        """Set the Bitcoin address in the provided QLabel."""
-        label.setText(address)
