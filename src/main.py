@@ -71,7 +71,7 @@ class IrisWalletMainWindow(QMainWindow):
         if cache is not None:
             cache.invalidate_cache()
         wallet_type: WalletType = SettingRepository.get_wallet_type()
-        if wallet_type.value == WalletType.CONNECT_TYPE_WALLET.value or page_name in excluded_page:
+        if wallet_type.value == WalletType.REMOTE_TYPE_WALLET.value or page_name in excluded_page:
             QApplication.instance().quit()
         else:
             self.show_backup_progress()

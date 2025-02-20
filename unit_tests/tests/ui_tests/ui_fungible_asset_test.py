@@ -398,7 +398,7 @@ def test_handle_backup_visibility(create_fungible_asset_widget):
     # Mock the SettingRepository to return CONNECT_TYPE_WALLET
     with patch('src.views.ui_fungible_asset.SettingRepository.get_wallet_type') as mock_get_wallet_type:
         # Test for CONNECT_TYPE_WALLET
-        mock_get_wallet_type.return_value = WalletType.CONNECT_TYPE_WALLET
+        mock_get_wallet_type.return_value = WalletType.REMOTE_TYPE_WALLET
 
         # Call the method
         widget.handle_backup_visibility()

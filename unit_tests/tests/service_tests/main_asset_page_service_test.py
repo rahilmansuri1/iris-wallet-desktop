@@ -110,7 +110,7 @@ def test_get_asset_when_wallet_type_connect(
     mock_is_exhausted_asset_enabled,
 ):
     """Test case  for main asset page service when wallet type connect"""
-    wallet_type = mock_get_wallet_type(WalletType.CONNECT_TYPE_WALLET)
+    wallet_type = mock_get_wallet_type(WalletType.REMOTE_TYPE_WALLET)
     get_btc_balance = mock_get_btc_balance(mock_balance_response_data)
     refresh_asset = mock_refresh_transfer(
         RefreshTransferResponseModel(status=True),

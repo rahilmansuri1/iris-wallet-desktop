@@ -1,18 +1,12 @@
-name: "Bug Report"
+name: "Bug report"
 description: "Create a report to help us improve"
-title: "[Bug]: "
 labels: ["bug"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        **Thank you for reporting a bug!** Please fill out the following sections as completely as possible.
-
   - type: textarea
     id: bug_description
     attributes:
-      label: "Bug Description"
-      description: "Provide a clear and concise description of the issue, including steps to reproduce it."
+      label: "Bug description"
+      description: "Describe the issue, including steps to reproduce it. Add screenshots if useful."
       placeholder: "What happened? What did you expect to happen?"
     validations:
       required: true
@@ -20,7 +14,7 @@ body:
   - type: input
     id: os_version
     attributes:
-      label: "OS Version"
+      label: "OS version"
       description: "Example: Ubuntu 22.04, macOS 14.0, Windows 11"
     validations:
       required: true
@@ -28,25 +22,25 @@ body:
   - type: input
     id: app_version
     attributes:
-      label: "App Version"
-      description: "Find this in the About section or GitHub releases."
+      label: "App version"
+      description: "Find this in the About page of the app."
     validations:
       required: true
 
   - type: dropdown
     id: mode
     attributes:
-      label: "Mode"
+      label: "RLN node connection type"
       options:
         - Embedded
-        - Connect
+        - Remote
     validations:
       required: true
 
   - type: dropdown
     id: network
     attributes:
-      label: "Network"
+      label: "Bitcoin network"
       options:
         - Regtest
         - Testnet
@@ -56,27 +50,18 @@ body:
   - type: dropdown
     id: installation_method
     attributes:
-      label: "Installation Method"
+      label: "Installation method"
       options:
         - AppImage/DMG
-        - From Source
+        - From source
     validations:
       required: true
 
   - type: textarea
     id: logs
     attributes:
-      label: "Logs & Debug Data"
-      description: "Attach any relevant console logs or debug files. Please provide the full data directory. You can download the debug logs from the About page of the application."
-      placeholder: "Drag and drop logs or paste relevant log snippets."
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional_context
-    attributes:
-      label: "Additional Context"
-      description: "Any other details that might help debugging."
-      placeholder: "Screenshots, error messages, or any other useful info."
+      label: "Logs and debug data"
+      description: "Attach the app data directory (location can be found in the About page) and any relevant console logs."
+      placeholder: "Drag and drop data directory and paste relevant console logs if any."
     validations:
       required: false

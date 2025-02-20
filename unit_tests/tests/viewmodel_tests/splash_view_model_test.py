@@ -300,7 +300,7 @@ def test_handle_application_open_keyring_enabled(mock_qapp, mock_toast_manager, 
     # Arrange
     page_navigation = Mock()
     view_model = SplashViewModel(page_navigation)
-    mock_setting_repo.get_wallet_type.return_value = WalletType.CONNECT_TYPE_WALLET
+    mock_setting_repo.get_wallet_type.return_value = WalletType.REMOTE_TYPE_WALLET
     mock_setting_repo.get_keyring_status.return_value = True
 
     # Act
@@ -324,7 +324,7 @@ def test_handle_application_open_keyring_disabled(mock_common_repo, mock_bitcoin
     view_model = SplashViewModel(page_navigation)
     view_model.splash_screen_message = Mock()
     view_model.sync_chain_info_label = Mock()
-    mock_setting_repo.get_wallet_type.return_value = WalletType.CONNECT_TYPE_WALLET
+    mock_setting_repo.get_wallet_type.return_value = WalletType.REMOTE_TYPE_WALLET
     mock_setting_repo.get_keyring_status.return_value = False
     mock_wallet_password = 'test_password'
     mock_get_value.return_value = mock_wallet_password

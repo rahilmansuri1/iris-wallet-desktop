@@ -26,7 +26,7 @@ LDK_PORT_KEY = 'ldk_port'
 NODE_PUB_KEY = 'node_pub_key'
 NETWORK_KET = 'network'
 IS_EMBEDDED_KEY = 'embedded'
-IS_CONNECT_KEY = 'connect'
+IS_REMOTE_KEY = 'remote'
 CACHE_FILE_NAME = {
     NetworkEnumModel.MAINNET: 'iris-wallet-catch-mainnet',
     NetworkEnumModel.TESTNET: 'iris-wallet-catch-testnet',

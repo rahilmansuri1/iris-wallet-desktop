@@ -66,7 +66,7 @@ class PaymentStatus(str, Enum):
 class WalletType(str, Enum):
     """Enum for wallet type"""
     EMBEDDED_TYPE_WALLET = 'embedded'
-    CONNECT_TYPE_WALLET = 'connect'
+    REMOTE_TYPE_WALLET = 'remote'
 
 
 class AssetType(str, Enum):

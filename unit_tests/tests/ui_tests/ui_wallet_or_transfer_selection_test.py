@@ -25,8 +25,8 @@ def wallet_or_transfer_selection_widget(qtbot):
         title='connection_type',
         logo_1_title='embedded',
         logo_1_path=':/assets/embedded.png',
-        logo_2_title='connect',
-        logo_2_path=':/assets/connect.png',
+        logo_2_title='remote',
+        logo_2_path=':/assets/remote.png',
         callback='None',
         asset_id='None',
     )
@@ -42,7 +42,7 @@ def test_retranslate_ui(wallet_or_transfer_selection_widget: WalletOrTransferSel
     wallet_or_transfer_selection_widget.retranslate_ui()
 
     assert wallet_or_transfer_selection_widget.option_1_text_label.text() == 'embedded'
-    assert wallet_or_transfer_selection_widget.option_2_text_label.text() == 'connect'
+    assert wallet_or_transfer_selection_widget.option_2_text_label.text() == 'remote'
 
 
 def test_handle_frame_click_embedded_wallet(wallet_or_transfer_selection_widget: WalletOrTransferSelectionWidget, mocker):
@@ -80,12 +80,12 @@ def test_handle_frame_click_connect_wallet(wallet_or_transfer_selection_widget: 
 
     # Call the method with the connect wallet ID
     wallet_or_transfer_selection_widget.handle_frame_click(
-        WalletType.CONNECT_TYPE_WALLET.value,
+        WalletType.REMOTE_TYPE_WALLET.value,
     )
 
     # Assertions
     mock_set_wallet_type.assert_called_once_with(
-        WalletType.CONNECT_TYPE_WALLET,
+        WalletType.REMOTE_TYPE_WALLET,
     )
     mock_ln_endpoint_page.assert_called_once_with('wallet_selection_page')
 

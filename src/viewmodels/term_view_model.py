@@ -26,8 +26,8 @@ class TermsViewModel(QObject):
         title = 'connection_type'
         embedded_logo = ':/assets/embedded.png'
         logo_1_title = WalletType.EMBEDDED_TYPE_WALLET.value
-        connect_logo = ':/assets/connect.png'
-        logo_2_title = WalletType.CONNECT_TYPE_WALLET.value
+        connect_logo = ':/assets/remote.png'
+        logo_2_title = WalletType.REMOTE_TYPE_WALLET.value
         params = SelectionPageModel(
             title=title,
             logo_1_path=embedded_logo,

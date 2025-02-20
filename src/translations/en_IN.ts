@@ -377,7 +377,7 @@ If you understand the above remarks and wish to proceed, press the button below 
     </message>
     <message>
         <source>connection_type</source>
-        <translation>Select wallet connection type</translation>
+        <translation>RLN node connection type</translation>
     </message>
     <message>
         <source>embedded</source>
@@ -1663,10 +1663,18 @@ If you understand the above remarks and wish to proceed, press the button below 
     <message>
         <source>rgb_invoice_label</source>
         <translation>RGB invoice</translation>
-  </message>
-  <message>
-        <source>copied</source>
-        <translation>Copied!</translation>
-  </message>
+    </message>
+    <message>
+            <source>copied</source>
+            <translation>Copied!</translation>
+    </message>
+    <message>
+            <source>data_directory_path_label</source>
+            <translation>Data directory path:</translation>
+    </message>
+    <message>
+            <source>remote</source>
+            <translation>Remote</translation>
+    </message>
 </context>
 </TS>

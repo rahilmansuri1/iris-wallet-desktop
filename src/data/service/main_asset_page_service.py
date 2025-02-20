@@ -78,7 +78,7 @@ class MainAssetPageDataService:
                         asset for asset in asset_detail.cfa if has_non_zero_balance(asset)
                     ]
 
-            if WalletType.CONNECT_TYPE_WALLET.value == wallet_type.value and asset_detail.cfa is not None:
+            if WalletType.REMOTE_TYPE_WALLET.value == wallet_type.value and asset_detail.cfa is not None:
                 for asset in asset_detail.cfa:
                     if asset is None:
                         continue
