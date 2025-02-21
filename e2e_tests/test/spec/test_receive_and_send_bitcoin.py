@@ -29,16 +29,10 @@ FEE_RATE = '8'
 def test_send_bitcoin_with_zero_balance(wallets_and_operations: WalletTestSetup):
     """Test sending bitcoin with zero balance."""
 
-    if wallets_and_operations.wallet_mode == WalletType.EMBEDDED_TYPE_WALLET.value:
-        with allure.step('Create First embedded wallet for bitcoin tx'):
-            wallets_and_operations.first_page_features.wallet_features.create_embedded_wallet(
-                FIRST_APPLICATION,
-            )
-    else:
-        with allure.step('Connect to First external wallet for bitcoin tx'):
-            wallets_and_operations.first_page_features.wallet_features.connect_wallet(
-                application=FIRST_APPLICATION, url=FIRST_APPLICATION_URL,
-            )
+    with allure.step('Create and fund first wallet for send and receive bitcoin'):
+        wallets_and_operations.first_page_features.wallet_features.create_and_fund_wallet(
+            wallets_and_operations=wallets_and_operations, application=FIRST_APPLICATION, application_url=FIRST_APPLICATION_URL, fund=False,
+        )
 
     with allure.step('Get bitcoin address'):
         wallets_and_operations.first_page_objects.fungible_page_objects.click_bitcoin_frame()

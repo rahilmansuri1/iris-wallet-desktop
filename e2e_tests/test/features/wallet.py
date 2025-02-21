@@ -116,7 +116,7 @@ class Wallet(MainPageObjects, BaseOperations):
         if self.do_is_displayed(self.set_password_page_objects.proceed_button()):
             self.set_password_page_objects.click_proceed_button()
 
-    def create_and_fund_wallet(self, wallets_and_operations, application, application_url):
+    def create_and_fund_wallet(self, wallets_and_operations, application, application_url, fund=True):
         """
         Create a new wallet and fund it.
         """
@@ -124,5 +124,5 @@ class Wallet(MainPageObjects, BaseOperations):
             self.create_embedded_wallet(application)
         else:
             self.connect_wallet(application=application, url=application_url)
-
-        self.fund_wallet(application)
+        if fund:
+            self.fund_wallet(application)

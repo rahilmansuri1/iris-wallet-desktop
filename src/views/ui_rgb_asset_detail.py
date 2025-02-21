@@ -470,7 +470,7 @@ class RGBAssetDetailWidget(QWidget):
         rgb_on_chain_logo_path = ':/assets/on_chain.png'
         rgb_on_chain_logo_title = TransferType.ON_CHAIN.value
         rgb_off_chain_logo_path = ':/assets/off_chain.png'
-        rgb_of_chain_logo_title = TransferType.LIGHTNING.value
+        rgb_off_chain_logo_title = TransferType.LIGHTNING.value
         rgb_asset_page_load_model = RgbAssetPageLoadModel(
             asset_type=self.asset_type, asset_id=self.asset_id_detail.toPlainText(), asset_name=self.asset_name, image_path=self.image_path,
         )
@@ -479,7 +479,7 @@ class RGBAssetDetailWidget(QWidget):
             logo_1_path=rgb_on_chain_logo_path,
             logo_1_title=rgb_on_chain_logo_title,
             logo_2_path=rgb_off_chain_logo_path,
-            logo_2_title=rgb_of_chain_logo_title,
+            logo_2_title=rgb_off_chain_logo_title,
             asset_id=self.asset_id_detail.toPlainText(),
             asset_name=self.asset_name,
             callback=navigation,

@@ -5,6 +5,7 @@ Backup Page Objects class for interacting with the backup page.
 from __future__ import annotations
 
 import os
+import re
 import time
 
 import pyotp
@@ -12,8 +13,10 @@ from dogtail.tree import root
 from dotenv import load_dotenv
 
 from accessible_constant import BACKUP_CLOSE_BUTTON
+from accessible_constant import BACKUP_NODE_DATA_BUTTON
 from accessible_constant import BACKUP_WINDOW
 from accessible_constant import CONFIGURE_BACKUP_BUTTON
+from accessible_constant import MNEMONIC_FRAME
 from accessible_constant import SHOW_MNEMONIC_BUTTON
 from e2e_tests.test.utilities.base_operation import BaseOperations
 
@@ -69,6 +72,16 @@ class BackupPageObjects(BaseOperations):
         self.continue_button = lambda: self.backup_window().child(
             roleName='push button', name='Continue',
         )
+        self.backup_node_data_button = lambda: self.perform_action_on_element(
+            role_name='push button', name=BACKUP_NODE_DATA_BUTTON,
+        )
+        self.mnemonic_frame = lambda: self.perform_action_on_element(
+            role_name='panel', name=MNEMONIC_FRAME,
+        )
+
+    def click_show_mnemonic_button(self):
+        """Clicks the mnemonic button."""
+        return self.do_click(self.show_mnemonic_button()) if self.do_is_displayed(self.show_mnemonic_button()) else None
 
     def click_configurable_button(self):
         """
@@ -194,3 +207,25 @@ class BackupPageObjects(BaseOperations):
         """
         self.continue_button().grabFocus()
         return self.do_click(self.continue_button()) if self.do_is_displayed(self.continue_button()) else None
+
+    def click_backup_node_data_button(self):
+        """
+        Clicks the backup node data button.
+        """
+        return self.do_click(self.backup_node_data_button()) if self.do_is_displayed(self.backup_node_data_button()) else None
+
+    def get_mnemonic(self):
+        """
+        Gets the mnemonic as a formatted string.
+        """
+        children = self.mnemonic_frame().children
+        mnemonic_parts = [child.name for child in children if child.name]
+
+        # Remove numerical prefixes like '1.', '2.', etc.
+        cleaned_mnemonic = [
+            re.sub(r'^\d+\.\s*', '', word)
+            for word in mnemonic_parts
+        ]
+
+        # Join words into a single string
+        return ' '.join(cleaned_mnemonic)

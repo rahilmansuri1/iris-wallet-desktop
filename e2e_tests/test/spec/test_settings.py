@@ -7,10 +7,15 @@ import pytest
 
 from accessible_constant import FIRST_APPLICATION
 from accessible_constant import FIRST_APPLICATION_URL
+from e2e_tests.test.utilities.app_setup import load_qm_translation
 from e2e_tests.test.utilities.app_setup import test_environment
 from e2e_tests.test.utilities.app_setup import wallets_and_operations
 from e2e_tests.test.utilities.app_setup import WalletTestSetup
-from src.model.enums.enums_model import WalletType
+from e2e_tests.test.utilities.translation_utils import TranslationManager
+from src.utils.error_message import ERROR_UNABLE_TO_SET_INDEXER_URL
+from src.utils.error_message import ERROR_UNABLE_TO_SET_PROXY_ENDPOINT
+from src.utils.info_message import INFO_SET_ENDPOINT_SUCCESSFULLY
+from src.utils.info_message import INFO_SET_EXPIRY_TIME_SUCCESSFULLY
 
 TEST_ANNOUNCE_ADDRESS = 'example.url.com:2222'
 TEST_ANNOUNCE_ALIAS = 'testAlias'
@@ -23,6 +28,9 @@ TEST_INVALID_BITCOIND_HOST = 'test.bitcoind.host'
 TEST_INVALID_BITCOIND_PORT = '42069'
 TEST_FEE_RATE = '20'
 TEST_FEE_RATE_TOAST_DESC_SUCCESS = 'Fee rate set successfully'
+TEST_EXPIRY_MINUTES = '1440'
+TEST_EXPIRY_HOURS = '24'
+TEST_EXPIRY_DAYS = '1'
 
 
 @pytest.mark.parametrize('test_environment', [False], indirect=True)
@@ -36,18 +44,10 @@ def test_set_default_fee_rate(wallets_and_operations: WalletTestSetup):
     2. Set a new default fee rate
     3. Verify the fee rate is saved and applied
     """
-    with allure.step('Launching app and initializing the wallet'):
-
-        if wallets_and_operations.wallet_mode == WalletType.EMBEDDED_TYPE_WALLET.value:
-            with allure.step('Create First embedded wallet for setting page'):
-                wallets_and_operations.first_page_features.wallet_features.create_embedded_wallet(
-                    FIRST_APPLICATION,
-                )
-        else:
-            with allure.step('Connect to First external wallet for setting page'):
-                wallets_and_operations.first_page_features.wallet_features.connect_wallet(
-                    application=FIRST_APPLICATION, url=FIRST_APPLICATION_URL,
-                )
+    with allure.step('Create and fund first wallet for setting'):
+        wallets_and_operations.first_page_features.wallet_features.create_and_fund_wallet(
+            wallets_and_operations=wallets_and_operations, application=FIRST_APPLICATION, application_url=FIRST_APPLICATION_URL, fund=False,
+        )
 
     with allure.step('Navigating to set default fee rate frame in settings'):
         wallets_and_operations.first_page_operations.do_focus_on_application(
@@ -57,8 +57,8 @@ def test_set_default_fee_rate(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.settings_page_objects.click_default_fee_rate_frame()
 
     with allure.step('Entering a new default fee rate and saving'):
-        wallets_and_operations.first_page_objects.settings_page_objects.clear_default_fee_rate()
-        wallets_and_operations.first_page_objects.settings_page_objects.enter_new_default_fee_rate(
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
             TEST_FEE_RATE,
         )
         wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
@@ -102,8 +102,8 @@ def test_set_valid_announce_address(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.settings_page_objects.click_specify_announce_address_frame()
 
     with allure.step('Enter a New Announce Address'):
-        wallets_and_operations.first_page_objects.settings_page_objects.clear_announce_address()
-        wallets_and_operations.first_page_objects.settings_page_objects.enter_new_announce_address(
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
             TEST_ANNOUNCE_ADDRESS,
         )
         wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
@@ -111,7 +111,9 @@ def test_set_valid_announce_address(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
         announce_add_toast_desc = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
 
-    assert announce_add_toast_desc == 'Announce address set successfully.'
+    assert announce_add_toast_desc == INFO_SET_ENDPOINT_SUCCESSFULLY.format(
+        TranslationManager.translate('announce_address_endpoint'),
+    )
 
     with allure.step('Navigating to About page'):
         wallets_and_operations.first_page_objects.sidebar_page_objects.click_about_button()
@@ -143,8 +145,8 @@ def test_set_announce_alias(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.settings_page_objects.click_specify_announce_alias()
 
     with allure.step('Enter a New Announce Alias'):
-        wallets_and_operations.first_page_objects.settings_page_objects.clear_announce_alias()
-        wallets_and_operations.first_page_objects.settings_page_objects.enter_new_announce_alias(
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
             TEST_ANNOUNCE_ALIAS,
         )
         wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
@@ -152,7 +154,9 @@ def test_set_announce_alias(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
         announce_add_toast_desc = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
 
-    assert announce_add_toast_desc == 'Announce alias set successfully.'
+    assert announce_add_toast_desc == INFO_SET_ENDPOINT_SUCCESSFULLY.format(
+        TranslationManager.translate('announce_alias_endpoint'),
+    )
 
     with allure.step('Navigating to About page'):
         wallets_and_operations.first_page_objects.sidebar_page_objects.click_about_button()
@@ -184,8 +188,8 @@ def test_set_valid_electrum_url(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.settings_page_objects.click_set_indexer_url_frame()
 
     with allure.step('Enter a New Electrum URL'):
-        wallets_and_operations.first_page_objects.settings_page_objects.clear_indexer_url()
-        wallets_and_operations.first_page_objects.settings_page_objects.enter_new_indexer_url(
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
             TEST_INDEXER_URL,
         )
         wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
@@ -193,7 +197,9 @@ def test_set_valid_electrum_url(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
         announce_add_toast_desc = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
 
-    assert announce_add_toast_desc == 'Indexer url set successfully.'
+    assert announce_add_toast_desc == INFO_SET_ENDPOINT_SUCCESSFULLY.format(
+        TranslationManager.translate('indexer_endpoint'),
+    )
 
     with allure.step('Navigating to About page'):
         wallets_and_operations.first_page_objects.sidebar_page_objects.click_about_button()
@@ -225,8 +231,8 @@ def test_set_invalid_electrum_url(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.settings_page_objects.click_set_indexer_url_frame()
 
     with allure.step('Enter a New Electrum URL'):
-        wallets_and_operations.first_page_objects.settings_page_objects.clear_indexer_url()
-        wallets_and_operations.first_page_objects.settings_page_objects.enter_new_indexer_url(
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
             TEST_INVALID_INDEXER_URL,
         )
         wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
@@ -234,7 +240,7 @@ def test_set_invalid_electrum_url(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
         announce_add_toast_desc = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
 
-    assert announce_add_toast_desc == 'The indexer is invalid'
+    assert announce_add_toast_desc == ERROR_UNABLE_TO_SET_INDEXER_URL
 
     with allure.step('Navigating to Fungibles page'):
         wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
@@ -260,8 +266,8 @@ def test_set_rgb_proxy_url(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.settings_page_objects.click_set_rgb_proxy_url_frame()
 
     with allure.step('Enter a New RGB Proxy URL'):
-        wallets_and_operations.first_page_objects.settings_page_objects.clear_rgb_proxy_url_frame()
-        wallets_and_operations.first_page_objects.settings_page_objects.enter_new_rgb_proxy_url(
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
             TEST_RGB_PROXY_URL,
         )
         wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
@@ -269,7 +275,9 @@ def test_set_rgb_proxy_url(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
         announce_add_toast_desc = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
 
-    assert announce_add_toast_desc == 'Proxy endpoint set successfully.'
+    assert announce_add_toast_desc == INFO_SET_ENDPOINT_SUCCESSFULLY.format(
+        TranslationManager.translate('proxy_endpoint'),
+    )
 
     with allure.step('Navigating to About page to see the changes'):
         wallets_and_operations.first_page_objects.sidebar_page_objects.click_about_button()
@@ -301,8 +309,8 @@ def test_set_invalid_rgb_proxy_url(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.settings_page_objects.click_set_rgb_proxy_url_frame()
 
     with allure.step('Enter an invalid RGB Proxy URL'):
-        wallets_and_operations.first_page_objects.settings_page_objects.clear_rgb_proxy_url_frame()
-        wallets_and_operations.first_page_objects.settings_page_objects.enter_new_rgb_proxy_url(
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
             TEST_INVALID_RGB_PROXY_URL,
         )
         wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
@@ -310,7 +318,7 @@ def test_set_invalid_rgb_proxy_url(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
         announce_add_toast_desc = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
 
-    assert announce_add_toast_desc == 'The proxy endpoint is invalid'
+    assert announce_add_toast_desc == ERROR_UNABLE_TO_SET_PROXY_ENDPOINT
 
     with allure.step('Navigating to Fungibles page'):
         wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
@@ -336,8 +344,8 @@ def test_set_invalid_bitcoind_host(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.settings_page_objects.click_specify_bitcoind_host_frame()
 
     with allure.step('Enter an invalid bitcoind host'):
-        wallets_and_operations.first_page_objects.settings_page_objects.clear_bitcoind_host()
-        wallets_and_operations.first_page_objects.settings_page_objects.enter_new_bitcoind_host(
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
             TEST_INVALID_BITCOIND_HOST,
         )
         wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
@@ -371,8 +379,8 @@ def test_set_invalid_bitcoind_port(wallets_and_operations: WalletTestSetup):
         wallets_and_operations.first_page_objects.settings_page_objects.click_specify_bitcoind_port_frame()
 
     with allure.step('Enter an invalid bitcoind port'):
-        wallets_and_operations.first_page_objects.settings_page_objects.clear_bitcoind_port()
-        wallets_and_operations.first_page_objects.settings_page_objects.enter_new_bitcoind_port(
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
             TEST_INVALID_BITCOIND_PORT,
         )
         wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
@@ -381,6 +389,160 @@ def test_set_invalid_bitcoind_port(wallets_and_operations: WalletTestSetup):
         announce_add_toast_desc = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
 
     assert announce_add_toast_desc == 'Unlock failed: Unable to connect to the Bitcoin daemon'
+
+    with allure.step('Navigating to Fungibles page'):
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
+
+
+@pytest.mark.parametrize('test_environment', [False], indirect=True)
+@allure.feature('Set Default Expiry Time')
+@allure.story('Sets Default Expiry Time For Lightning Invoice')
+def test_default_expiry_time_minute(wallets_and_operations: WalletTestSetup):
+    """
+    Test setting a default expiry time in minutes for lightning invoices.
+
+    Tests that a user can:
+    1. Navigate to settings
+    2. Set a new default expiry time in minutes
+    3. Verify the expiry time is saved and applied
+    """
+    with allure.step('Create and fund first wallet for setting'):
+        wallets_and_operations.first_page_features.wallet_features.create_and_fund_wallet(
+            wallets_and_operations=wallets_and_operations, application=FIRST_APPLICATION, application_url=FIRST_APPLICATION_URL, fund=False,
+        )
+    with allure.step('Navigating to the Settings page and clearing default fee rate input'):
+        wallets_and_operations.first_page_operations.do_focus_on_application(
+            FIRST_APPLICATION,
+        )
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_settings_button()
+        wallets_and_operations.first_page_objects.settings_page_objects.click_default_exp_time_frame()
+
+    with allure.step('Entering the new value for the expiry time'):
+        wallets_and_operations.first_page_objects.settings_page_objects.click_on_combo_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.click_on_minute()
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
+            TEST_EXPIRY_MINUTES,
+        )
+        wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
+        wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
+        toast_description = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
+
+    assert toast_description == INFO_SET_EXPIRY_TIME_SUCCESSFULLY
+
+    # Checking the changes in create invoice page
+    wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
+    wallets_and_operations.first_page_objects.fungible_page_objects.click_bitcoin_frame()
+    wallets_and_operations.first_page_objects.bitcoin_detail_page_objects.click_receive_bitcoin_button()
+    wallets_and_operations.first_page_objects.wallet_transfer_page_objects.click_lightning_button()
+
+    # Getting the expiry time
+    expiry_time = wallets_and_operations.first_page_objects.create_ln_invoice_page_objects.get_expiry_amount()
+    expiry_time_unit = wallets_and_operations.first_page_objects.create_ln_invoice_page_objects.get_expiry_time_unit()
+    wallets_and_operations.first_page_objects.create_ln_invoice_page_objects.click_close_button()
+
+    assert expiry_time == TEST_EXPIRY_MINUTES
+    assert expiry_time_unit == TranslationManager.translate('minutes')
+
+    with allure.step('Navigating to Fungibles page'):
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
+
+
+@pytest.mark.parametrize('test_environment', [False], indirect=True)
+@allure.feature('Set Default Expiry Time')
+@allure.story('Sets Default Expiry Time For Lightning Invoice')
+def test_default_expiry_time_hour(wallets_and_operations: WalletTestSetup):
+    """
+    Test setting a default expiry time in hours for lightning invoices.
+
+    Tests that a user can:
+    1. Navigate to settings
+    2. Set a new default expiry time in hours
+    3. Verify the expiry time is saved and applied
+    """
+    with allure.step('Navigating to the Settings page and clearing default fee rate input'):
+        wallets_and_operations.first_page_operations.do_focus_on_application(
+            FIRST_APPLICATION,
+        )
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_settings_button()
+        wallets_and_operations.first_page_objects.settings_page_objects.click_default_exp_time_frame()
+
+    with allure.step('Entering the new value for the expiry time'):
+        wallets_and_operations.first_page_objects.settings_page_objects.click_on_combo_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.click_on_hour()
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
+            TEST_EXPIRY_HOURS,
+        )
+        wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
+        wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
+        toast_description = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
+
+    assert toast_description == INFO_SET_EXPIRY_TIME_SUCCESSFULLY
+
+    # Checking the changes in create invoice page
+    wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
+    wallets_and_operations.first_page_objects.fungible_page_objects.click_bitcoin_frame()
+    wallets_and_operations.first_page_objects.bitcoin_detail_page_objects.click_receive_bitcoin_button()
+    wallets_and_operations.first_page_objects.wallet_transfer_page_objects.click_lightning_button()
+
+    # Getting the expiry time
+    expiry_time = wallets_and_operations.first_page_objects.create_ln_invoice_page_objects.get_expiry_amount()
+    expiry_time_unit = wallets_and_operations.first_page_objects.create_ln_invoice_page_objects.get_expiry_time_unit()
+    wallets_and_operations.first_page_objects.create_ln_invoice_page_objects.click_close_button()
+
+    assert expiry_time == TEST_EXPIRY_HOURS
+    assert expiry_time_unit == TranslationManager.translate('hours')
+
+    with allure.step('Navigating back to fungibles page'):
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
+
+
+@pytest.mark.parametrize('test_environment', [False], indirect=True)
+@allure.feature('Set Default Expiry Time')
+@allure.story('Sets Default Expiry Time For Lightning Invoice')
+def test_default_expiry_time_days(wallets_and_operations: WalletTestSetup):
+    """
+    Test setting a default expiry time in days for lightning invoices.
+
+    Tests that a user can:
+    1. Navigate to settings
+    2. Set a new default expiry time in days
+    3. Verify the expiry time is saved and applied
+    """
+    with allure.step('Navigating to the Settings page and clearing default fee rate input'):
+        wallets_and_operations.first_page_operations.do_focus_on_application(
+            FIRST_APPLICATION,
+        )
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_settings_button()
+        wallets_and_operations.first_page_objects.settings_page_objects.click_default_exp_time_frame()
+
+    with allure.step('Entering the new value for the expiry time'):
+        wallets_and_operations.first_page_objects.settings_page_objects.click_on_combo_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.click_on_days()
+        wallets_and_operations.first_page_objects.settings_page_objects.clear_input_box()
+        wallets_and_operations.first_page_objects.settings_page_objects.enter_input_value(
+            TEST_EXPIRY_DAYS,
+        )
+        wallets_and_operations.first_page_objects.settings_page_objects.click_save_button()
+        wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
+        toast_description = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
+
+    assert toast_description == INFO_SET_EXPIRY_TIME_SUCCESSFULLY
+
+    with allure.step('Checking the change in Create Ln Invoice Page'):
+        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
+        wallets_and_operations.first_page_objects.fungible_page_objects.click_bitcoin_frame()
+        wallets_and_operations.first_page_objects.bitcoin_detail_page_objects.click_receive_bitcoin_button()
+        wallets_and_operations.first_page_objects.wallet_transfer_page_objects.click_lightning_button()
+
+    # Getting the expiry time
+    expiry_time = wallets_and_operations.first_page_objects.create_ln_invoice_page_objects.get_expiry_amount()
+    expiry_time_unit = wallets_and_operations.first_page_objects.create_ln_invoice_page_objects.get_expiry_time_unit()
+    wallets_and_operations.first_page_objects.create_ln_invoice_page_objects.click_close_button()
+
+    assert expiry_time == TEST_EXPIRY_DAYS
+    assert expiry_time_unit == TranslationManager.translate('days')
 
     with allure.step('Navigating to Fungibles page'):
         wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()

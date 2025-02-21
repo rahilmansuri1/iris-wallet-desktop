@@ -4,6 +4,7 @@ Fungible Page Objects class for interacting with the application.
 from __future__ import annotations
 
 from accessible_constant import ISSUE_RGB20_ASSET
+from accessible_constant import NETWORK_AND_BACKUP_FRAME
 from e2e_tests.test.utilities.base_operation import BaseOperations
 
 
@@ -26,6 +27,9 @@ class FungiblePageObjects(BaseOperations):
         )
         self.bitcoin_frame = lambda: self.perform_action_on_element(
             role_name='label', name='regtest bitcoin',
+        )
+        self.backup_frame = lambda: self.perform_action_on_element(
+            role_name='panel', name=NETWORK_AND_BACKUP_FRAME,
         )
 
     def click_issue_rgb20_button(self):
@@ -75,3 +79,10 @@ class FungiblePageObjects(BaseOperations):
             role_name='label', name=asset_name,
         )
         return self.do_click(self.rgb_20_asset_name) if self.do_is_displayed(self.rgb_20_asset_name) else None
+
+    def get_backup_tooltip(self):
+        """
+        Retrieves the backup tooltip if it is displayed.
+        """
+        self.backup_frame().point()
+        return self.backup_frame().description if self.do_is_displayed(self.backup_frame()) else None

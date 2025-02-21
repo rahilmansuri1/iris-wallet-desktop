@@ -312,7 +312,6 @@ class BaseOperations:
         """
 
         if self.do_is_displayed(element):
-            # element.click()
 
             for _ in range(len(element.text)):
                 pressKey('backspace')
@@ -322,3 +321,35 @@ class BaseOperations:
         if self.do_is_displayed(element):
             return element.text
         return None
+
+    def wait_for_toaster_message(self, toaster_name, timeout=60, interval=0.5):
+        """
+        Waits until a toaster message appears on the screen.
+
+        Args:
+            toaster_name (str): The accessible name of the toaster message.
+            timeout (int): Maximum time to wait (in seconds). Default is 60 seconds.
+            interval (float): Time interval between checks. Default is 0.5 seconds.
+
+        Raises:
+            TimeoutError: If the toaster message does not appear within the timeout.
+        """
+        start_time = time.time()
+
+        while time.time() - start_time < timeout:
+            try:
+                toaster = self.perform_action_on_element(
+                    role_name='label', description=toaster_name,
+                )
+                if toaster:
+                    return  # Exit function when toaster appears
+            except Exception:
+                pass  # Ignore errors if the element is not found yet
+
+            time.sleep(interval)  # Wait and retry
+
+        raise TimeoutError(
+            f"""Toaster message '{
+                toaster_name
+            }' did not appear within {timeout} seconds.""",
+        )

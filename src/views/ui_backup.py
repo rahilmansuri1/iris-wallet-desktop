@@ -23,7 +23,9 @@ from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
 from accessible_constant import BACKUP_CLOSE_BUTTON
+from accessible_constant import BACKUP_NODE_DATA_BUTTON
 from accessible_constant import CONFIGURE_BACKUP_BUTTON
+from accessible_constant import MNEMONIC_FRAME
 from accessible_constant import SHOW_MNEMONIC_BUTTON
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
@@ -166,6 +168,7 @@ class Backup(QWidget):
 
         self.mnemonic_frame = QFrame(self.show_mnemonic_frame)
         self.mnemonic_frame.setObjectName('mnemonic_frame')
+        self.mnemonic_frame.setAccessibleName(MNEMONIC_FRAME)
         self.mnemonic_frame.setMinimumSize(QSize(354, 157))
         self.mnemonic_frame.setMaximumSize(QSize(354, 157))
         self.mnemonic_frame.setFrameShape(QFrame.StyledPanel)
@@ -332,6 +335,7 @@ class Backup(QWidget):
 
         self.back_node_data_button = PrimaryButton()
         self.back_node_data_button.setObjectName('back_node_data_button')
+        self.back_node_data_button.setAccessibleName(BACKUP_NODE_DATA_BUTTON)
         self.back_node_data_button.setMinimumSize(QSize(354, 40))
         self.back_node_data_button.setMaximumSize(QSize(354, 40))
         self.back_node_data_button.setCursor(

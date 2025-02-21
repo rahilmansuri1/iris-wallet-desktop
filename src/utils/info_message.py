@@ -30,3 +30,4 @@ INFO_FAIL_TRANSFER_SUCCESSFULLY = 'The transfer has been marked as failed succes
 INFO_SET_ENDPOINT_SUCCESSFULLY = '{} set successfully.'
 INFO_SET_MIN_CONFIRMATION_SUCCESSFULLY = 'Minimum confirmation set successfully'
 INFO_ASSET_SENT_SUCCESSFULLY = 'Asset sent successfully'
+INFO_RESTORE_COMPLETED = 'Restore process completed.'

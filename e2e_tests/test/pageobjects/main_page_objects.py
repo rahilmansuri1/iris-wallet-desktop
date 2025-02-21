@@ -17,11 +17,14 @@ from e2e_tests.test.pageobjects.close_channel_dialog_page import CloseChannelDia
 from e2e_tests.test.pageobjects.collectible_page import CollectiblePageObjects
 from e2e_tests.test.pageobjects.create_channel_page import CreateChannelPageObjects
 from e2e_tests.test.pageobjects.create_ln_invoice_page import CreateLnInvoicePageObjects
+from e2e_tests.test.pageobjects.enter_wallet_password_page import EnterWalletPasswordPageObjects
 from e2e_tests.test.pageobjects.fungible_page import FungiblePageObjects
 from e2e_tests.test.pageobjects.issue_rgb20_page import IssueRgb20PageObjects
 from e2e_tests.test.pageobjects.issue_rgb25_page import IssueRgb25PageObjects
+from e2e_tests.test.pageobjects.keyring_dialog_page import KeyringDialogBoxPageObjects
 from e2e_tests.test.pageobjects.ln_endpoint_page import LnEndpointPageObjects
 from e2e_tests.test.pageobjects.receive_asset_page import ReceiveAssetPageObjects
+from e2e_tests.test.pageobjects.restore_mnemonic_page import RestoreWalletPageObjects
 from e2e_tests.test.pageobjects.send_asset_page import SendAssetPageObjects
 from e2e_tests.test.pageobjects.send_ln_invoice_page import SendLnInvoicePageObjects
 from e2e_tests.test.pageobjects.set_password_page import SetPasswordPageObjects
@@ -141,3 +144,15 @@ class MainPageObjects():
         self.ln_endpoint_page_objects = LnEndpointPageObjects(self.application)
 
         self.backup_page_objects = BackupPageObjects(self.application)
+
+        self.keyring_dialog_page_objects = KeyringDialogBoxPageObjects(
+            self.application,
+        )
+
+        self.restore_wallet_page_objects = RestoreWalletPageObjects(
+            self.application,
+        )
+
+        self.enter_wallet_password_page_objects = EnterWalletPasswordPageObjects(
+            self.application,
+        )

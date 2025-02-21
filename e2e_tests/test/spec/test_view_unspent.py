@@ -23,20 +23,9 @@ def test_view_unspent_list(wallets_and_operations: WalletTestSetup):
     Test view unspent list.
     """
 
-    if wallets_and_operations.wallet_mode == WalletType.EMBEDDED_TYPE_WALLET.value:
-        with allure.step('Create embedded wallet'):
-            wallets_and_operations.first_page_features.wallet_features.create_embedded_wallet(
-                FIRST_APPLICATION,
-            )
-    else:
-        with allure.step('Connect to external wallet'):
-            wallets_and_operations.first_page_features.wallet_features.connect_wallet(
-                application=FIRST_APPLICATION, url=FIRST_APPLICATION_URL,
-            )
-
-    with allure.step('Fund the wallet'):
-        wallets_and_operations.first_page_features.wallet_features.fund_wallet(
-            FIRST_APPLICATION,
+    with allure.step('Create and fund first wallet for view unspent'):
+        wallets_and_operations.first_page_features.wallet_features.create_and_fund_wallet(
+            wallets_and_operations=wallets_and_operations, application=FIRST_APPLICATION, application_url=FIRST_APPLICATION_URL,
         )
 
     with allure.step('verifies the outpoint'):

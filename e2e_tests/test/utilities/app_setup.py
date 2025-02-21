@@ -10,18 +10,25 @@ import signal
 import subprocess
 import time
 
+import keyring
 import psutil
 import pytest
 from dogtail.tree import root
 
+from accessible_constant import APP1_NAME
+from accessible_constant import APP2_NAME
 from accessible_constant import FIRST_APPLICATION
+from accessible_constant import FIRST_SERVICE
 from accessible_constant import SECOND_APPLICATION
+from accessible_constant import SECOND_SERVICE
 from e2e_tests.test.features.main_features import MainFeatures
 from e2e_tests.test.pageobjects.main_page_objects import MainPageObjects
 from e2e_tests.test.utilities.base_operation import BaseOperations
 from e2e_tests.test.utilities.model import WalletTestSetup
 from e2e_tests.test.utilities.reset_app import delete_app_data
 from e2e_tests.test.utilities.translation_utils import TranslationManager
+from src.utils.constant import IS_NATIVE_AUTHENTICATION_ENABLED
+from src.utils.constant import NATIVE_LOGIN_ENABLED
 from src.version import __version__
 
 
@@ -30,7 +37,7 @@ class TestEnvironment:
     A class representing the test environment for the Iris Wallet application.
     """
 
-    def __init__(self, wallet_mode, multi_instance=True, skip_reset=False):
+    def __init__(self, wallet_mode, multi_instance=True):
         """
         Initializes the test environment.
 
@@ -40,7 +47,6 @@ class TestEnvironment:
             skip_reset (bool): If True, skips resetting the application data.
         """
         self.multi_instance = multi_instance
-        self.skip_reset = skip_reset
         self.wallet_mode = wallet_mode
 
         # Initialize process attributes
@@ -48,9 +54,9 @@ class TestEnvironment:
         self.second_process = None
         self.rgb_processes = []
 
-        # Reset app data before starting
-        if not self.skip_reset:
-            self.reset_app_data()
+        self.reset_app_data()
+        self.remove_keyring_entries(service=FIRST_SERVICE, app_name=APP1_NAME)
+        self.remove_keyring_entries(service=SECOND_SERVICE, app_name=APP2_NAME)
 
         # Start applications based on wallet mode
         if self.wallet_mode == 'connect':
@@ -58,32 +64,15 @@ class TestEnvironment:
 
         self.launch_applications()
 
-        # Initialize first application
-        self.first_application = root.child(
-            roleName='frame', name=FIRST_APPLICATION,
-        )
-        self.first_page_features = MainFeatures(self.first_application)
-        self.first_page_objects = MainPageObjects(self.first_application)
-        self.first_page_operations = BaseOperations(self.first_application)
-
-        # Initialize second application if multi-instance is enabled
-        if self.multi_instance:
-            self.second_application = root.child(
-                roleName='frame', name=SECOND_APPLICATION,
-            )
-            self.second_page_features = MainFeatures(self.second_application)
-            self.second_page_objects = MainPageObjects(self.second_application)
-            self.second_page_operations = BaseOperations(
-                self.second_application,
-            )
-
     def reset_app_data(self):
         """Resets the app data by deleting relevant directories."""
-        delete_app_data('/home/zoro/.local/share/rgb/iriswallet')
+        delete_app_data(
+            '/home/zoro/.local/share/rgb_test_app_1/iriswallet_test_app_1',
+        )
         delete_app_data('dataldk0')
         if self.multi_instance:
             delete_app_data(
-                '/home/zoro/.local/share/rgb_app_1/iriswallet_app_1',
+                '/home/zoro/.local/share/rgb_test_app_1/iriswallet_test_app_2',
             )
             delete_app_data('dataldk1')
 
@@ -123,7 +112,7 @@ class TestEnvironment:
     def launch_applications(self):
         """Launches the required Iris Wallet applications and maximizes the windows."""
         self.first_process = subprocess.Popen(
-            [f"e2e_tests/applications/iriswallet-{
+            [f"e2e_tests/applications/iriswallet_{APP1_NAME}-{
                 __version__
             }-x86_64.AppImage"],
         )
@@ -137,10 +126,15 @@ class TestEnvironment:
             ],
             check=True,
         )
-
+        self.first_application = root.child(
+            roleName='frame', name=FIRST_APPLICATION,
+        )
+        self.first_page_features = MainFeatures(self.first_application)
+        self.first_page_objects = MainPageObjects(self.first_application)
+        self.first_page_operations = BaseOperations(self.first_application)
         if self.multi_instance:
             self.second_process = subprocess.Popen(
-                [f"e2e_tests/applications/iriswallet_app_1-{
+                [f"e2e_tests/applications/iriswallet_{APP2_NAME}-{
                     __version__
                 }-x86_64.AppImage"],
             )
@@ -153,6 +147,14 @@ class TestEnvironment:
                     'add,maximized_vert,maximized_horz',
                 ],
                 check=True,
+            )
+            self.second_application = root.child(
+                roleName='frame', name=SECOND_APPLICATION,
+            )
+            self.second_page_features = MainFeatures(self.second_application)
+            self.second_page_objects = MainPageObjects(self.second_application)
+            self.second_page_operations = BaseOperations(
+                self.second_application,
             )
 
     def wait_for_application(self, app_name, timeout=10):
@@ -205,6 +207,32 @@ class TestEnvironment:
         for process in self.rgb_processes:
             self.terminate_process(process)
 
+    def restart(self, reset_data=True):
+        """Restarts the application by terminating, optionally resetting data, and relaunching."""
+        self.terminate()
+
+        if reset_data:
+            self.reset_app_data()
+
+        if self.wallet_mode == 'connect':
+            self.start_rgb_lightning_nodes()
+
+        self.launch_applications()
+
+    def remove_keyring_entries(self, service, app_name):
+        """Removes keyring entries for a given service and application name."""
+        keys = [
+            NATIVE_LOGIN_ENABLED,
+            IS_NATIVE_AUTHENTICATION_ENABLED,
+        ]
+
+        for key in keys:
+            try:
+                keyring.delete_password(service, f"{key}_{app_name}")
+                print(f"Removed {key}{app_name} from keyring.")
+            except keyring.errors.PasswordDeleteError:
+                print(f"No entry found for {key}_{app_name}.")
+
 
 @pytest.fixture(scope='module')
 def test_environment(request):
@@ -214,13 +242,12 @@ def test_environment(request):
     Use `request.param` to determine if multi-instance should be enabled.
     """
     multi_instance = getattr(request, 'param', True)
-    skip_reset = request.node.get_closest_marker('skip_reset') is not None
     wallet_mode = request.config.getoption(
         '--wallet-mode',
     )  # Get wallet mode from pytest
 
     env = TestEnvironment(
-        multi_instance=multi_instance, skip_reset=skip_reset, wallet_mode=wallet_mode,
+        multi_instance=multi_instance, wallet_mode=wallet_mode,
     )
     yield env
     env.terminate()

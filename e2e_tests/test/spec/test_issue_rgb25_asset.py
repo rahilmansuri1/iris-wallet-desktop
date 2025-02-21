@@ -28,16 +28,10 @@ def test_issue_rgb25_without_sufficient_sats(wallets_and_operations: WalletTestS
     Test issuing rgb25 asset without sufficient sats.
     """
 
-    if wallets_and_operations.wallet_mode == WalletType.EMBEDDED_TYPE_WALLET.value:
-        with allure.step('Create embedded wallet for issue RGB25 asset'):
-            wallets_and_operations.first_page_features.wallet_features.create_embedded_wallet(
-                FIRST_APPLICATION,
-            )
-    else:
-        with allure.step('Connect to external wallet for issue RGB25 asset'):
-            wallets_and_operations.first_page_features.wallet_features.connect_wallet(
-                application=FIRST_APPLICATION, url=FIRST_APPLICATION_URL,
-            )
+    with allure.step('Create and fund first wallet for issue rgb25'):
+        wallets_and_operations.first_page_features.wallet_features.create_and_fund_wallet(
+            wallets_and_operations=wallets_and_operations, application=FIRST_APPLICATION, application_url=FIRST_APPLICATION_URL, fund=False,
+        )
 
     with allure.step('Issue rgb25 asset without sat'):
         description = wallets_and_operations.first_page_features.issue_rgb25_features.issue_rgb25_asset_without_sat(

@@ -83,7 +83,7 @@ class LnEndpointViewModel(QObject, ThreadManager):
                 )
             elif error.message == QCoreApplication.translate('iris_wallet_desktop', 'wrong_password', None):
                 self._page_navigation.enter_wallet_password_page()
-            elif error.message == QCoreApplication.translate('iris_wallet_desktop', 'unlocked_node', None):
+            elif error.message == QCoreApplication.translate('iris_wallet_desktop', 'already_unlocked', None):
                 self.lock_wallet()
             elif error.message == QCoreApplication.translate('iris_wallet_desktop', 'locked_node', None):
                 self._page_navigation.enter_wallet_password_page()

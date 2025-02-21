@@ -20,9 +20,11 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 from accessible_constant import ASK_AUTH_FOR_APP_LOGIN
+from accessible_constant import ASK_AUTH_FOR_APP_LOGIN_TOGGLE
 from accessible_constant import ASK_AUTH_FOR_IMPORTANT_QUESTION
 from accessible_constant import HIDE_EXHAUSTED_ASSETS
 from accessible_constant import KEYRING_STORAGE
+from accessible_constant import KEYRING_TOGGLE_BUTTON
 from accessible_constant import SET_DEFAULT_EXP_TIME
 from accessible_constant import SET_DEFAULT_FEE_RATE
 from accessible_constant import SET_DEFAULT_MIN_EXPIRATION
@@ -190,11 +192,9 @@ class SettingsWidget(QWidget):
         self.login_auth_label.setObjectName('login_auth_label')
         self.login_auth_label.setStyleSheet('')
         self.login_auth_label.setAlignment(Qt.AlignCenter)
-
         self.ask_auth_login_content_vertical_layout.addWidget(
             self.login_auth_label, 0, Qt.AlignLeft,
         )
-
         self.auth_login_desc = QLabel(self.ask_auth_login_frame)
         self.auth_login_desc.setObjectName('auth_login_desc')
         self.auth_login_desc.setWordWrap(True)
@@ -207,9 +207,11 @@ class SettingsWidget(QWidget):
         self.grid_layout_5.addLayout(
             self.ask_auth_login_content_vertical_layout, 0, 0, 1, 1,
         )
-
         self.login_auth_toggle_button = ToggleSwitch(self.ask_auth_login_frame)
         self.login_auth_toggle_button.setObjectName('login_auth_toggle_button')
+        self.login_auth_toggle_button.setAccessibleName(
+            ASK_AUTH_FOR_APP_LOGIN_TOGGLE,
+        )
         self.login_auth_toggle_button.setMinimumSize(QSize(50, 35))
         self.login_auth_toggle_button.setMaximumSize(QSize(50, 35))
         self.login_auth_toggle_button.setStyleSheet('border: 1px solid white')
@@ -286,6 +288,7 @@ class SettingsWidget(QWidget):
         self.keyring_toggle_button.setObjectName(
             'keyring_toggle_button',
         )
+        self.keyring_toggle_button.setAccessibleName(KEYRING_TOGGLE_BUTTON)
         self.keyring_toggle_button.setMinimumSize(QSize(50, 35))
         self.keyring_toggle_button.setMaximumSize(QSize(50, 35))
         self.keyring_toggle_button.setStyleSheet(
@@ -307,7 +310,6 @@ class SettingsWidget(QWidget):
         self.keyring_frame_layout.addWidget(
             self.keyring_label, 0, Qt.AlignLeft,
         )
-
         self.keyring_desc = QLabel(self.keyring_storage_frame)
         self.keyring_desc.setWordWrap(True)
         self.keyring_desc.setObjectName('keyring_desc')
@@ -342,8 +344,6 @@ class SettingsWidget(QWidget):
                 ),
                 placeholder_value=str(self.fee_rate),
             ),
-
-
         )
         self.set_fee_rate_frame.setAccessibleName(SET_DEFAULT_FEE_RATE)
         self.set_expiry_time_frame = ConfigurableCardFrame(

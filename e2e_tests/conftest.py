@@ -48,3 +48,20 @@ def wallet_mode(request):
     :return: Selected wallet mode
     """
     return request.param
+
+
+def pytest_runtest_setup(item):
+    """Skip tests based on wallet mode."""
+    wallet_mode = item.config.getoption('--wallet-mode')
+
+    # Skip tests marked with @pytest.mark.skip_for_embedded if running in embedded mode
+    if wallet_mode == 'embedded' and any(mark.name == 'skip_for_embedded' for mark in item.own_markers):
+        pytest.skip(
+            'Skipping test because it is not applicable in embedded mode.',
+        )
+
+    # Skip tests marked with @pytest.mark.skip_for_connect if running in connect mode
+    if wallet_mode == 'connect' and any(mark.name == 'skip_for_connect' for mark in item.own_markers):
+        pytest.skip(
+            'Skipping test because it is not applicable in connect mode.',
+        )

@@ -63,7 +63,7 @@ class CreateLnInvoicePageObjects(BaseOperations):
         Returns:
             The expiry amount if the field is displayed, otherwise None.
         """
-        return self.do_get_text(self.expiry_input()) if self.do_is_displayed(self.expiry_input()) else None
+        return self.expiry_input().text if self.do_is_displayed(self.expiry_input()) else None
 
     def enter_expiry_amount(self, value):
         """

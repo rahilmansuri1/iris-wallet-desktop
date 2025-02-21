@@ -349,7 +349,9 @@ def mock_node_info_widget(mocker):
         'src.views.components.wallet_detail_frame.NodeInfoWidget', autospec=True,
     )
     mocker.patch('src.views.ui_about.NodeInfoWidget', mock)
-
+    mock_instance = mock.return_value
+    mock_instance.node_pub_key_copy_button = mocker.Mock()
+    mock_instance.value_label = mocker.Mock()
     # Print mock details
     print(f"Created mock with id: {id(mock)}")
 

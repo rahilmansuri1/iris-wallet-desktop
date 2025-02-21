@@ -1,8 +1,14 @@
 """Accessible name and description constants"""
 # Application Name
 from __future__ import annotations
-FIRST_APPLICATION = 'Iris Wallet Regtest'
-SECOND_APPLICATION = 'Iris Wallet Regtest app_1'
+
+from src.utils.constant import APP_NAME
+APP1_NAME = 'test_app_1'
+APP2_NAME = 'test_app_2'
+FIRST_SERVICE = f"{APP_NAME}_{APP1_NAME}"
+SECOND_SERVICE = f"{APP_NAME}_{APP2_NAME}"
+FIRST_APPLICATION = f"Iris Wallet Regtest {APP1_NAME}"
+SECOND_APPLICATION = f"Iris Wallet Regtest {APP2_NAME}"
 FIRST_APPLICATION_URL = 'http://127.0.0.1:3001'
 SECOND_APPLICATION_URL = 'http://127.0.0.1:3002'
 LN_PORT = '9736'
@@ -187,6 +193,10 @@ SPECIFY_ANNOUNCE_ADD = 'specify_announce_add'
 SPECIFY_ANNOUNCE_ALIAS = 'specify_announce_alias'
 EXPIRY_TIME_COMBO_BOX = 'expiry_time_combo_box'
 INPUT_BOX_NAME = 'input_box'
+KEYRING_TOGGLE_BUTTON = 'keyring_toggle_button'
+ASK_AUTH_FOR_APP_LOGIN_TOGGLE = 'ask_auth_for_app_login_toggle'
+ASK_AUTH_FOR_IMPORTANT_QUESTION_TOGGLE = ''
+HIDE_EXHAUSTED_ASSETS_TOGGLE = ''
 
 # View Unspent List Page
 UNSPENT_UTXO_ASSET_ID = 'unspent_utxo_asset_id'
@@ -204,3 +214,30 @@ BACKUP_CLOSE_BUTTON = 'backup_close_button'
 SHOW_MNEMONIC_BUTTON = 'show_mnemonic_button'
 CONFIGURE_BACKUP_BUTTON = 'configure_backup_button'
 BACKUP_WINDOW = 'backup_window'
+BACKUP_NODE_DATA_BUTTON = 'backup_node_data_button'
+MNEMONIC_FRAME = 'mnemonic_frame'
+
+# Keyring Dialog Box
+KEYRING_DIALOG_BOX = 'keyring_dialog_box'
+KEYRING_MNEMONICS_FRAME = 'keyring_mnemonics_frame'
+KEYRING_MNEMONIC_COPY_BUTTON = 'keyring_copy_button'
+KEYRING_PASSWORD_FRAME = 'keyring_password_frame'
+KEYRING_PASSWORD_COPY_BUTTON = 'keyring_password_copy_button'
+KEYRING_PASSWORD_VALUE_LABEL = 'keyring_password_value_label'
+KEYRING_MNEMONIC_VALUE_LABEL = 'keyring_mnemonic_value_label'
+KEYRING_CONTINUE_BUTTON = 'keyring_continue_button'
+KEYRING_CANCEL_BUTTON = 'keyring_cancel_button'
+SAVE_CREDENTIALS_CHECK_BOX = 'save_credentials_check_box'
+
+# Restore Dialog Box
+RESTORE_DIALOG_BOX = 'restore_dialog_box'
+RESTORE_MNEMONIC_INPUT = 'restore_mnemonic_input'
+RESTORE_PASSWORD_INPUT = 'restore_password_input'
+RESTORE_CONTINUE_BUTTON = 'restore_continue_button'
+
+# Enter Wallet Password
+ENTER_WALLET_PASSWORD = 'enter_wallet_password'
+LOGIN_BUTTON = 'login_button'
+
+# Header Frame
+NETWORK_AND_BACKUP_FRAME = 'network_and_backup_frame'
