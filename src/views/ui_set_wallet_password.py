@@ -449,12 +449,12 @@ class SetWalletPasswordWidget(QWidget):
         """This method handled close button navigation"""
         if self.originating_page == WalletType.EMBEDDED_TYPE_WALLET.value:
             self._view_model.page_navigation.welcome_page()
-        if self.originating_page == WalletType.CONNECT_TYPE_WALLET.value:
+        if self.originating_page == WalletType.REMOTE_TYPE_WALLET.value:
             title = 'connection_type'
             embedded_path = ':/assets/embedded.png'
             embedded_title = WalletType.EMBEDDED_TYPE_WALLET.value
-            connect_path = ':/assets/connect.png'
-            connect_title = WalletType.CONNECT_TYPE_WALLET.value
+            connect_path = ':/assets/remote.png'
+            connect_title = WalletType.REMOTE_TYPE_WALLET.value
             params = SelectionPageModel(
                 title=title,
                 logo_1_path=embedded_path,

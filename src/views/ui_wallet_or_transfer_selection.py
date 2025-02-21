@@ -266,9 +266,9 @@ class WalletOrTransferSelectionWidget(QWidget):
             SettingRepository.set_wallet_type(WalletType.EMBEDDED_TYPE_WALLET)
             self._view_model.wallet_transfer_selection_view_model.start_node_for_embedded_option()
 
-        # Handle the 'connect' frame click event
-        elif _id == WalletType.CONNECT_TYPE_WALLET.value:
-            SettingRepository.set_wallet_type(WalletType.CONNECT_TYPE_WALLET)
+        # Handle the 'remote' frame click event
+        elif _id == WalletType.REMOTE_TYPE_WALLET.value:
+            SettingRepository.set_wallet_type(WalletType.REMOTE_TYPE_WALLET)
             self._view_model.page_navigation.ln_endpoint_page(
                 'wallet_selection_page',
             )

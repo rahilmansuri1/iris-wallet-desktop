@@ -40,6 +40,7 @@ from src.data.service.helpers.main_asset_page_helper import get_offline_asset_ti
 from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import TokenSymbol
+from src.model.enums.enums_model import WalletType
 from src.model.selection_page_model import SelectionPageModel
 from src.utils.constant import APP_NAME
 from src.utils.constant import BITCOIN_EXPLORER_URL
@@ -443,8 +444,8 @@ def close_button_navigation(parent, back_page_navigation=None):
         title = 'connection_type'
         logo_1_path = ':/assets/embedded.png'
         logo_1_title = 'embedded'
-        logo_2_path = ':/assets/connect.png'
-        logo_2_title = 'connect'
+        logo_2_path = ':/assets/remote.png'
+        logo_2_title = WalletType.REMOTE_TYPE_WALLET.value
         params = SelectionPageModel(
             title=title,
             logo_1_path=logo_1_path,

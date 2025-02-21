@@ -79,7 +79,7 @@ class LnEndpointViewModel(QObject, ThreadManager):
             self.stop_loading_message.emit(False)
             if error.message == QCoreApplication.translate('iris_wallet_desktop', 'not_initialized', None):
                 self._page_navigation.set_wallet_password_page(
-                    WalletType.CONNECT_TYPE_WALLET.value,
+                    WalletType.REMOTE_TYPE_WALLET.value,
                 )
             elif error.message == QCoreApplication.translate('iris_wallet_desktop', 'wrong_password', None):
                 self._page_navigation.enter_wallet_password_page()
