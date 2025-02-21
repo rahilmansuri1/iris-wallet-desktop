@@ -24,7 +24,7 @@ def set_wallet_password_widget(qtbot):
     mock_navigation = MagicMock()
     view_model = MagicMock(MainViewModel(mock_navigation))
     widget = SetWalletPasswordWidget(
-        view_model, WalletType.CONNECT_TYPE_WALLET.value,
+        view_model, WalletType.REMOTE_TYPE_WALLET.value,
     )
     qtbot.addWidget(widget)
     return widget
@@ -39,7 +39,7 @@ def test_close_navigation(set_wallet_password_widget: SetWalletPasswordWidget):
     set_wallet_password_widget._view_model.page_navigation.welcome_page.assert_called_once()
 
     # Test for Connect Wallet Type
-    set_wallet_password_widget.originating_page = WalletType.CONNECT_TYPE_WALLET.value
+    set_wallet_password_widget.originating_page = WalletType.REMOTE_TYPE_WALLET.value
     set_wallet_password_widget.close_navigation()
 
     # Verify that wallet_connection_page is called with the correct parameters
@@ -50,7 +50,7 @@ def test_close_navigation(set_wallet_password_widget: SetWalletPasswordWidget):
     params = args[0]
     assert params.title == 'connection_type'
     assert params.logo_1_title == WalletType.EMBEDDED_TYPE_WALLET.value
-    assert params.logo_2_title == WalletType.CONNECT_TYPE_WALLET.value
+    assert params.logo_2_title == WalletType.REMOTE_TYPE_WALLET.value
 
 
 def test_set_password_suggestion(set_wallet_password_widget: SetWalletPasswordWidget):

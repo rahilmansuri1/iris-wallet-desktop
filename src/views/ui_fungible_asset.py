@@ -477,7 +477,7 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         """This method handle the backup visibility on embedded or connect wallet type."""
         wallet_type: WalletType = SettingRepository.get_wallet_type()
         self.sidebar = self._view_model.page_navigation.sidebar()
-        if WalletType.CONNECT_TYPE_WALLET.value == wallet_type.value:
+        if WalletType.REMOTE_TYPE_WALLET.value == wallet_type.value:
             self.sidebar.backup.hide()
         if WalletType.EMBEDDED_TYPE_WALLET.value == wallet_type.value:
             self.sidebar.backup.show()

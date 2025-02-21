@@ -318,8 +318,8 @@ class SettingRepository:
         try:
             value = local_store.get_value('walletType')
             wallet_type = WalletType.EMBEDDED_TYPE_WALLET
-            if value == 'connect':
-                wallet_type = WalletType.CONNECT_TYPE_WALLET
+            if value == WalletType.REMOTE_TYPE_WALLET.value:
+                wallet_type = WalletType.REMOTE_TYPE_WALLET
             return wallet_type
         except Exception as exe:
             return handle_exceptions(exe)

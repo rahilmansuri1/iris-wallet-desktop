@@ -124,6 +124,17 @@ class AboutWidget(QWidget):
                 translation_key='announce_alias', value=self.get_bitcoin_config.announce_alias, v_layout=self.about_vertical_layout,
             )
 
+        basepath = local_store.get_path()
+        self.data_directory_path = NodeInfoWidget(
+            translation_key='data_directory_path_label', value=basepath, v_layout=self.about_vertical_layout,
+        )
+
+        connection_type: WalletType = SettingRepository.get_wallet_type()
+
+        self.rln_node_connection_type = NodeInfoWidget(
+            translation_key='connection_type', value=connection_type.value.capitalize(), v_layout=self.about_vertical_layout,
+        )
+
         self.privacy_policy_label = QLabel(self.about_widget)
         self.privacy_policy_label.setObjectName('privacy_policy_label')
         self.privacy_policy_label.setTextInteractionFlags(
@@ -196,6 +207,13 @@ class AboutWidget(QWidget):
             QCoreApplication.translate(
                 'iris_wallet_desktop', 'download_debug_log', None,
             ),
+        )
+        self.rln_node_connection_type.key_label.setText(
+            f"{
+                QCoreApplication.translate(
+                    'iris_wallet_desktop', 'connection_type'
+                )
+            }:",
         )
 
     def setup_ui_connection(self):

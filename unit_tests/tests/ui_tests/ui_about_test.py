@@ -348,6 +348,8 @@ def mock_node_info_widget(mocker):
     mock = mocker.patch(
         'src.views.components.wallet_detail_frame.NodeInfoWidget', autospec=True,
     )
+    mock_instance = mock.return_value
+    mock_instance.key_label = mocker.MagicMock()
     mocker.patch('src.views.ui_about.NodeInfoWidget', mock)
 
     # Print mock details

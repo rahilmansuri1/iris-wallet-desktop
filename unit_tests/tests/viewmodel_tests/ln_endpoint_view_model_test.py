@@ -144,7 +144,7 @@ def test_on_error_wallet_not_initialized(mock_qcore, mock_logger, mock_toast_man
 
     # Verify navigation page change
     mock_page_navigation.set_wallet_password_page.assert_called_once_with(
-        WalletType.CONNECT_TYPE_WALLET.value,
+        WalletType.REMOTE_TYPE_WALLET.value,
     )
 
     # Verify ToastManager call
@@ -262,7 +262,7 @@ def test_on_error_common_exception_not_initialized(ln_endpoint_vm, mocker):
     # Assert
     ln_endpoint_vm.stop_loading_message.emit.assert_called_once_with(False)
     ln_endpoint_vm._page_navigation.set_wallet_password_page.assert_called_once_with(
-        WalletType.CONNECT_TYPE_WALLET.value,
+        WalletType.REMOTE_TYPE_WALLET.value,
     )
     mock_toast_manager.assert_called_once_with(description=error_msg)
     mock_logger.assert_called_once_with(
