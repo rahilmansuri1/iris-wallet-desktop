@@ -204,6 +204,22 @@ class SendAssetWidget(QWidget):
         self.send_asset_details_layout.addWidget(
             self.asset_address_value, 0, Qt.AlignHCenter,
         )
+        self.asset_address_validation_label = QLabel(self)
+        self.asset_address_validation_label.setObjectName(
+            'address_validation_label',
+        )
+        self.asset_address_validation_label.setMinimumSize(QSize(335, 0))
+        self.asset_address_validation_label.setMaximumSize(
+            QSize(335, 16777215),
+        )
+        self.asset_address_validation_label.setWordWrap(True)
+        self.send_asset_details_layout.addWidget(
+            self.asset_address_validation_label, 0, Qt.AlignHCenter,
+        )
+        self.asset_address_validation_label.setStyleSheet(
+            load_stylesheet('views/qss/q_label.qss'),
+        )
+        self.asset_address_validation_label.hide()
 
         self.total_supply_label = QLabel(self.send_asset_page)
         self.total_supply_label.setObjectName('total_supply_label')

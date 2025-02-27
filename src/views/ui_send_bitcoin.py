@@ -4,11 +4,16 @@
  """
 from __future__ import annotations
 
+from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
+from rgb_lib import Address
+from rgb_lib import BitcoinNetwork
+from rgb_lib import RgbLibError
 
 import src.resources_rc
 from src.data.repository.setting_card_repository import SettingCardRepository
+from src.data.repository.setting_repository import SettingRepository
 from src.model.setting_model import DefaultFeeRate
 from src.utils.constant import FEE_RATE
 from src.utils.render_timer import RenderTimer
@@ -43,6 +48,9 @@ class SendBitcoinWidget(QWidget):
     def setup_ui_connection(self):
         """Set up connections for UI elements."""
         self.send_bitcoin_page.send_btn.setDisabled(True)
+        self.send_bitcoin_page.asset_address_value.textChanged.connect(
+            self.validate_bitcoin_address,
+        )
         self.send_bitcoin_page.asset_address_value.textChanged.connect(
             self.handle_button_enabled,
         )
@@ -162,8 +170,9 @@ class SendBitcoinWidget(QWidget):
             return bool(value) and value != '0'
 
         is_address_valid = bool(
-            self.send_bitcoin_page.asset_address_value.text(),
-        )
+            self.send_bitcoin_page.asset_address_value.text(
+            ),
+        ) and not self.send_bitcoin_page.asset_address_validation_label.isVisible()
         is_amount_valid = is_valid_value(
             self.send_bitcoin_page.asset_amount_value.text(),
         )
@@ -184,3 +193,36 @@ class SendBitcoinWidget(QWidget):
         """This method handles the feature for refreshing the Bitcoin balance."""
         self.loading_performer = 'REFRESH_BUTTON'
         self._view_model.bitcoin_view_model.get_transaction_list()
+
+    def validate_bitcoin_address(self):
+        """
+        Validates the Bitcoin address input.
+
+        - Retrieves the wallet network from settings.
+        - Checks if the entered address is valid for the given network.
+        - Displays an error message if the address is invalid.
+        """
+        address = self.send_bitcoin_page.asset_address_value.text().strip()
+
+        if not address:
+            self.send_bitcoin_page.asset_address_validation_label.hide()
+            return
+
+        try:
+            network_enum = SettingRepository.get_wallet_network()
+            network_value = BitcoinNetwork[network_enum.value.upper()]
+
+            # Validate the Bitcoin address
+            Address(address, network_value)
+
+            # Hide validation label if the address is valid
+            self.send_bitcoin_page.asset_address_validation_label.hide()
+
+        except RgbLibError.InvalidAddress:
+            # Show error message if the address is invalid
+            self.send_bitcoin_page.asset_address_validation_label.show()
+            self.send_bitcoin_page.asset_address_validation_label.setText(
+                QCoreApplication.translate(
+                    'iris_wallet_desktop', 'invalid_address',
+                ),
+            )

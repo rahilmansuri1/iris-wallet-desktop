@@ -6,6 +6,8 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 import pytest
+from PySide6.QtCore import QCoreApplication
+from rgb_lib import RgbLibError
 
 from src.model.setting_model import DefaultFeeRate
 from src.viewmodels.main_view_model import MainViewModel
@@ -101,6 +103,9 @@ def test_handle_button_enabled(send_bitcoin_widget: SendBitcoinWidget):
     send_bitcoin_widget.send_bitcoin_page.asset_address_value.setText(
         '1BitcoinAddress',
     )
+    send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.setVisible(
+        False,
+    )
     send_bitcoin_widget.send_bitcoin_page.asset_amount_value.setText('0.001')
     send_bitcoin_widget.send_bitcoin_page.fee_rate_value.setText('0.0001')
     send_bitcoin_widget.send_bitcoin_page.pay_amount = 1000
@@ -111,6 +116,25 @@ def test_handle_button_enabled(send_bitcoin_widget: SendBitcoinWidget):
 
     # Test invalid address (empty)
     send_bitcoin_widget.send_bitcoin_page.asset_address_value.clear()
+    send_bitcoin_widget.handle_button_enabled()
+    assert not send_bitcoin_widget.send_bitcoin_page.send_btn.isEnabled()
+
+    # Test invalid address (validation label visible)
+    send_bitcoin_widget.send_bitcoin_page.asset_address_value.setText(
+        '1BitcoinAddress',
+    )
+    send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.setVisible(
+        True,
+    )
+    send_bitcoin_widget.handle_button_enabled()
+    # Since the validation label is visible, the button should be enabled
+    assert send_bitcoin_widget.send_bitcoin_page.send_btn.isEnabled()
+
+    # Test invalid amount (empty)
+    send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.setVisible(
+        False,
+    )
+    send_bitcoin_widget.send_bitcoin_page.asset_amount_value.clear()
     send_bitcoin_widget.handle_button_enabled()
     assert not send_bitcoin_widget.send_bitcoin_page.send_btn.isEnabled()
 
@@ -245,3 +269,43 @@ def test_bitcoin_page_navigation(send_bitcoin_widget: SendBitcoinWidget):
 
     # Assert that the bitcoin_page method was called once
     send_bitcoin_widget._view_model.page_navigation.bitcoin_page.assert_called_once()
+
+
+def test_validate_bitcoin_address(send_bitcoin_widget: SendBitcoinWidget):
+    """Test the validate_bitcoin_address method."""
+
+    # Mock the necessary attributes
+    send_bitcoin_widget.send_bitcoin_page.asset_address_value = MagicMock()
+    send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label = MagicMock()
+
+    # Test with an empty address
+    send_bitcoin_widget.send_bitcoin_page.asset_address_value.text.return_value = '   '
+    send_bitcoin_widget.validate_bitcoin_address()
+    send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.hide.assert_called_once()
+    send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.hide.reset_mock()
+
+    # Test with a valid address
+    # Example valid Bitcoin address
+    valid_address = '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa'
+    send_bitcoin_widget.send_bitcoin_page.asset_address_value.text.return_value = valid_address
+
+    # Mock the settings and the address validation
+    with patch('src.data.repository.setting_repository.SettingRepository.get_wallet_network', return_value=MagicMock(value='MAINNET')), \
+            patch('rgb_lib.Address', return_value=None):
+        send_bitcoin_widget.validate_bitcoin_address()
+        # Reset the call count for hide before the next assertion
+        send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.hide.assert_called_once()
+
+    # Test with an invalid address
+    invalid_address = 'invalid_address'
+    send_bitcoin_widget.send_bitcoin_page.asset_address_value.text.return_value = invalid_address
+
+    with patch('src.data.repository.setting_repository.SettingRepository.get_wallet_network', return_value=MagicMock(value='MAINNET')), \
+            patch('rgb_lib.Address', side_effect=RgbLibError.InvalidAddress('Invalid address details')):
+        send_bitcoin_widget.validate_bitcoin_address()
+        send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.show.assert_called_once()
+        send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.setText.assert_called_once_with(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'invalid_address',
+            ),
+        )
