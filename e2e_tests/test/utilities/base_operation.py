@@ -4,14 +4,21 @@ This module provides a class for performing base operations on a graphical user 
 """
 from __future__ import annotations
 
+import os
 import re
 import time
 
 import pyperclip
+from dogtail.rawinput import keyCombo
 from dogtail.rawinput import pressKey
-from dogtail.tree import Node
+from dogtail.rawinput import typeText
+from dotenv import load_dotenv
 from Xlib import display
 from Xlib import X
+# from dogtail.tree import Node
+
+load_dotenv()
+AUTHENTICATION_PASSWORD = os.getenv('AUTHENTICATION_PASSWORD')
 
 
 class BaseOperations:
@@ -353,3 +360,16 @@ class BaseOperations:
                 toaster_name
             }' did not appear within {timeout} seconds.""",
         )
+
+    def do_get_child_count(self, element):
+        """gets the number of children of the specified element"""
+        if self.do_is_displayed(element):
+
+            return element.children
+
+        return None
+
+    def enter_native_password(self):
+        """Enter the password when the native auth dialog is show"""
+        typeText(AUTHENTICATION_PASSWORD)
+        keyCombo('enter')

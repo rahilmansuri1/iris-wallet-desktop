@@ -3,6 +3,7 @@ Fungible Page Objects class for interacting with the application.
 """
 from __future__ import annotations
 
+from accessible_constant import FUNGIBLES_SCROLL_WIDGETS
 from accessible_constant import ISSUE_RGB20_ASSET
 from accessible_constant import NETWORK_AND_BACKUP_FRAME
 from e2e_tests.test.utilities.base_operation import BaseOperations
@@ -31,6 +32,13 @@ class FungiblePageObjects(BaseOperations):
         self.backup_frame = lambda: self.perform_action_on_element(
             role_name='panel', name=NETWORK_AND_BACKUP_FRAME,
         )
+        self.fungibles_scroll_area = lambda: self.perform_action_on_element(
+            role_name='filler', name=FUNGIBLES_SCROLL_WIDGETS,
+        )
+
+    def get_child_count(self):
+        """Returns child count"""
+        return self.do_get_child_count(self.fungibles_scroll_area()) if self.do_is_displayed(self.fungibles_scroll_area()) else None
 
     def click_issue_rgb20_button(self):
         """

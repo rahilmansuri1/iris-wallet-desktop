@@ -22,7 +22,9 @@ from PySide6.QtWidgets import QWidget
 from accessible_constant import ASK_AUTH_FOR_APP_LOGIN
 from accessible_constant import ASK_AUTH_FOR_APP_LOGIN_TOGGLE
 from accessible_constant import ASK_AUTH_FOR_IMPORTANT_QUESTION
+from accessible_constant import ASK_AUTH_FOR_IMPORTANT_QUESTION_TOGGLE
 from accessible_constant import HIDE_EXHAUSTED_ASSETS
+from accessible_constant import HIDE_EXHAUSTED_ASSETS_TOGGLE
 from accessible_constant import KEYRING_STORAGE
 from accessible_constant import KEYRING_TOGGLE_BUTTON
 from accessible_constant import SET_DEFAULT_EXP_TIME
@@ -162,18 +164,16 @@ class SettingsWidget(QWidget):
             'imp_operation_auth_toggle_button',
         )
         self.imp_operation_auth_toggle_button.setAccessibleName(
-            'toggle_switch',
+            ASK_AUTH_FOR_IMPORTANT_QUESTION_TOGGLE,
         )
         self.imp_operation_auth_toggle_button.setMinimumSize(QSize(50, 35))
         self.imp_operation_auth_toggle_button.setMaximumSize(QSize(50, 35))
         self.imp_operation_auth_toggle_button.setStyleSheet(
             'border: 1px solid white',
         )
-
         self.grid_layout_6.addWidget(
             self.imp_operation_auth_toggle_button, 0, 1, 1, 1,
         )
-
         self.ask_auth_login_frame = QFrame(self.settings_widget)
         self.ask_auth_login_frame.setObjectName('ask_auth_login_frame')
         self.ask_auth_login_frame.setAccessibleName(ASK_AUTH_FOR_APP_LOGIN)
@@ -199,11 +199,9 @@ class SettingsWidget(QWidget):
         self.auth_login_desc.setObjectName('auth_login_desc')
         self.auth_login_desc.setWordWrap(True)
         self.auth_login_desc.setMinimumSize(QSize(385, 46))
-
         self.ask_auth_login_content_vertical_layout.addWidget(
             self.auth_login_desc, 0,
         )
-
         self.grid_layout_5.addLayout(
             self.ask_auth_login_content_vertical_layout, 0, 0, 1, 1,
         )
@@ -238,6 +236,9 @@ class SettingsWidget(QWidget):
         self.hide_exhausted_asset_toggle_button.setObjectName(
             'hide_exhausted_asset_toggle_button',
         )
+        self.hide_exhausted_asset_toggle_button.setAccessibleName(
+            HIDE_EXHAUSTED_ASSETS_TOGGLE,
+        )
         self.hide_exhausted_asset_toggle_button.setMinimumSize(QSize(50, 35))
         self.hide_exhausted_asset_toggle_button.setMaximumSize(QSize(50, 35))
         self.hide_exhausted_asset_toggle_button.setStyleSheet(
@@ -260,7 +261,6 @@ class SettingsWidget(QWidget):
         self.hide_exhausted_asset_layout.addWidget(
             self.hide_exhausted_label, 0, Qt.AlignLeft,
         )
-
         self.hide_asset_desc = QLabel(self.hide_exhausted_asset_frame)
         self.hide_asset_desc.setWordWrap(True)
         self.hide_asset_desc.setObjectName('hide_asset_desc')

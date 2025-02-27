@@ -19,6 +19,7 @@ from e2e_tests.test.pageobjects.create_channel_page import CreateChannelPageObje
 from e2e_tests.test.pageobjects.create_ln_invoice_page import CreateLnInvoicePageObjects
 from e2e_tests.test.pageobjects.enter_wallet_password_page import EnterWalletPasswordPageObjects
 from e2e_tests.test.pageobjects.fungible_page import FungiblePageObjects
+from e2e_tests.test.pageobjects.help_page import HelpPageObjects
 from e2e_tests.test.pageobjects.issue_rgb20_page import IssueRgb20PageObjects
 from e2e_tests.test.pageobjects.issue_rgb25_page import IssueRgb25PageObjects
 from e2e_tests.test.pageobjects.keyring_dialog_page import KeyringDialogBoxPageObjects
@@ -156,3 +157,5 @@ class MainPageObjects():
         self.enter_wallet_password_page_objects = EnterWalletPasswordPageObjects(
             self.application,
         )
+
+        self.help_page_objects = HelpPageObjects(self.application)

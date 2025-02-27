@@ -18,6 +18,7 @@ from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
+from accessible_constant import HELP_CARD_TITLE_ACCESSIBLE_DESCRIPTION
 from src.model.help_card_content_model import HelpCardContentModel
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
@@ -112,10 +113,12 @@ class HelpWidget(QWidget):
 
     def create_help_frames(self):
         """This method creates the help frames according to the faucet list"""
+        count = 1
         for card in self._model.card_content:
             faucet_frame = self.create_help_card(
-                card.title, card.detail, card.links,
+                card.title, card.detail, card.links, count,
             )
+            count += 1
             self.vertical_layout_4.addWidget(faucet_frame)
         self.main_vertical_spacer = QSpacerItem(
             20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding,
@@ -123,7 +126,7 @@ class HelpWidget(QWidget):
 
         self.vertical_layout_4.addItem(self.main_vertical_spacer)
 
-    def create_help_card(self, title, detail, links):
+    def create_help_card(self, title, detail, links, count):
         """This method creates the single help card"""
         self.help_card_frame = QFrame(
             self.help_card_scroll_area_widget_contents,
@@ -140,6 +143,9 @@ class HelpWidget(QWidget):
         self.vertical_layout_3.setContentsMargins(15, 20, 15, 20)
         self.help_card_title_label = QLabel(title, self.help_card_frame)
         self.help_card_title_label.setObjectName('help_card_title_label')
+        self.help_card_title_label.setAccessibleDescription(
+            HELP_CARD_TITLE_ACCESSIBLE_DESCRIPTION+'_'+str(count),
+        )
         self.help_card_title_label.setWordWrap(True)
 
         self.vertical_layout_3.addWidget(self.help_card_title_label)

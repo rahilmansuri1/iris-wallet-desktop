@@ -21,7 +21,7 @@ class IssueRgb25(MainPageObjects, BaseOperations):
         """
         super().__init__(application)
 
-    def issue_rgb25_with_sufficient_sats_and_utxo(self, application, asset_name, asset_description, asset_amount):
+    def issue_rgb25_with_sufficient_sats_and_utxo(self, application, asset_name, asset_description, asset_amount, is_native_auth_enabled: bool = False):
         """
         Issue RGB25 asset with sufficient sats and utxo.
         """
@@ -53,6 +53,9 @@ class IssueRgb25(MainPageObjects, BaseOperations):
 
         if self.do_is_displayed(self.issue_rgb25_page_objects.issue_rgb25_button()):
             self.issue_rgb25_page_objects.click_issue_rgb25_button()
+
+        if is_native_auth_enabled is True:
+            self.enter_native_password()
 
         if self.do_is_displayed(self.success_page_objects.home_button()):
             self.success_page_objects.click_home_button()

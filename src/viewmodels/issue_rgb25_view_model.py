@@ -101,8 +101,7 @@ class IssueRGB25ViewModel(QObject, ThreadManager):
         """
         try:
             file_dialog = QFileDialog()
-            home_dir = str(Path.home())         # Method 2 (pathlib)
-            # file_dialog.setOptions(QFileDialog.DontUseNativeDialog)
+            home_dir = str(Path.home())
             file_dialog.setDirectory(home_dir)  # Open dialog in this directory
             file_dialog.setFileMode(QFileDialog.ExistingFile)
             file_dialog.setNameFilter('Images (*.png *.jpg *.jpeg)')

@@ -4,22 +4,14 @@
 """
 from __future__ import annotations
 
-import os
-
 import allure
 import pytest
-from dogtail.rawinput import keyCombo
-from dogtail.rawinput import typeText
-from dotenv import load_dotenv
 
 from accessible_constant import FIRST_APPLICATION
 from accessible_constant import FIRST_APPLICATION_URL
 from e2e_tests.test.utilities.app_setup import test_environment
 from e2e_tests.test.utilities.app_setup import wallets_and_operations
 from e2e_tests.test.utilities.app_setup import WalletTestSetup
-
-load_dotenv()
-AUTHENTICATION_PASSWORD = os.getenv('AUTHENTICATION_PASSWORD')
 
 
 @allure.feature('Login App')
@@ -69,13 +61,11 @@ def test_login_app_with_authentication(wallets_and_operations: WalletTestSetup):
         None
     """
     with allure.step('assert the state of toggle button and toggle it to off'):
-        typeText(AUTHENTICATION_PASSWORD)
-        keyCombo('enter')
+        wallets_and_operations.first_page_operations.enter_native_password()
         wallets_and_operations.first_page_objects.sidebar_page_objects.click_settings_button()
         assert True is wallets_and_operations.first_page_objects.settings_page_objects.login_auth_toggle_button().checked
         wallets_and_operations.first_page_objects.settings_page_objects.click_login_app_toggle_button()
 
-        typeText(AUTHENTICATION_PASSWORD)
-        keyCombo('enter')
+        wallets_and_operations.first_page_operations.enter_native_password()
 
         assert False is wallets_and_operations.first_page_objects.settings_page_objects.login_auth_toggle_button().checked

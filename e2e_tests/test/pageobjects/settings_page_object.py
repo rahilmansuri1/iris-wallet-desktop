@@ -77,6 +77,7 @@ class SettingsPageObjects(BaseOperations):
         self.days_list_item = lambda: self.perform_action_on_element(
             role_name='list item', name='Days',
         )
+
         self.hide_exhausted_asset_toggle_button = lambda: self.perform_action_on_element(
             role_name='check box', name=HIDE_EXHAUSTED_ASSETS_TOGGLE,
         )
@@ -90,14 +91,6 @@ class SettingsPageObjects(BaseOperations):
             role_name='text', name=INPUT_BOX_NAME,
         )
 
-    def click_keyring_toggle_button(self):
-        """Click on Keyring toggle button"""
-        return self.do_click(self.keyring_toggle_button()) if self.do_is_displayed(self.keyring_toggle_button()) else None
-
-    def click_login_app_toggle_button(self):
-        """Click on Login App toggle button"""
-        return self.do_click(self.login_auth_toggle_button()) if self.do_is_displayed(self.login_auth_toggle_button()) else None
-
     def clear_input_box(self):
         """Clears the input box."""
         return self.do_clear_text(self.input_box()) if self.do_is_displayed(self.input_box()) else None
@@ -105,6 +98,14 @@ class SettingsPageObjects(BaseOperations):
     def enter_input_value(self, value):
         """Enters a value in the input box."""
         return self.do_set_value(self.input_box(), value) if self.do_is_displayed(self.input_box()) else None
+
+    def click_keyring_toggle_button(self):
+        """Click on Keyring toggle button"""
+        return self.do_click(self.keyring_toggle_button()) if self.do_is_displayed(self.keyring_toggle_button()) else None
+
+    def click_login_app_toggle_button(self):
+        """Click on Login App toggle button"""
+        return self.do_click(self.login_auth_toggle_button()) if self.do_is_displayed(self.login_auth_toggle_button()) else None
 
     # Default Fee Rate
     def click_default_fee_rate_frame(self):

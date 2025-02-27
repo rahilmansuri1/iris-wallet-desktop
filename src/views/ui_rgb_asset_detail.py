@@ -1,4 +1,4 @@
-# pylint: disable=too-many-instance-attributes, too-many-statements, unused-import
+# pylint: disable=too-many-instance-attributes, too-many-statements
 """This module contains the RGBAssetDetailWidget class,
  which represents the UI for RGB asset detail.
  """
@@ -24,7 +24,6 @@ from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
-import src.resources_rc
 from accessible_constant import ASSET_CLOSE_BUTTON
 from accessible_constant import ASSET_ID_COPY_BUTTON
 from accessible_constant import ASSET_LIGHTNING_SPENDABLE_BALANCE
@@ -36,6 +35,7 @@ from accessible_constant import ASSET_REFRESH_BUTTON
 from accessible_constant import ASSET_SEND_BUTTON
 from accessible_constant import RGB_TRANSACTION_DETAIL_LIGHTNING_FRAME
 from accessible_constant import RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME
+from accessible_constant import TRANSACTION_DETAIL_CLOSE_BUTTON
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import NetworkEnumModel
@@ -118,7 +118,6 @@ class RGBAssetDetailWidget(QWidget):
             'rgb_asset_detail_widget',
         )
         self.rgb_asset_detail_widget.setMinimumSize(QSize(499, 770))
-
         self.rgb_asset_detail_widget_layout = QGridLayout(
             self.rgb_asset_detail_widget,
         )
@@ -373,7 +372,6 @@ class RGBAssetDetailWidget(QWidget):
         self.asset_refresh_button.setObjectName('refresh_button')
         self.asset_refresh_button.setAccessibleName(ASSET_REFRESH_BUTTON)
         self.asset_refresh_button.setMinimumSize(QSize(50, 65))
-
         icon = QIcon()
         icon.addFile(
             ':/assets/refresh_2x.png',
@@ -772,9 +770,7 @@ class RGBAssetDetailWidget(QWidget):
         confirmation_dialog.exec()
 
     def _confirm_fail_transfer(self, idx):
-        """
-        Confirms the fail transfer action and closes the confirmation dialog.
-        """
+        """Confirms the fail transfer action and closes the confirmation dialog."""
         self._view_model.rgb25_view_model.on_fail_transfer(idx)
 
     def handle_img_path(self, image_path):
@@ -831,6 +827,9 @@ class RGBAssetDetailWidget(QWidget):
         )
         self.transaction_detail_frame.setAccessibleName(
             RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME,
+        )
+        self.transaction_detail_frame.close_button.setAccessibleName(
+            TRANSACTION_DETAIL_CLOSE_BUTTON,
         )
         self.transaction_date = str(transaction.updated_at_date)
         self.transaction_time = str(transaction.created_at_time)

@@ -77,7 +77,7 @@ class IssueRgb20(MainPageObjects, BaseOperations):
 
         return description
 
-    def issue_rgb20_with_sufficient_sats_and_utxo(self, application, asset_ticker, asset_name, asset_amount):
+    def issue_rgb20_with_sufficient_sats_and_utxo(self, application, asset_ticker, asset_name, asset_amount, is_native_auth_enabled: bool = False):
         """
         Issues an RGB20 asset with sufficient sats and UTXO.
         """
@@ -96,6 +96,9 @@ class IssueRgb20(MainPageObjects, BaseOperations):
 
         if self.do_is_displayed(self.issue_rgb20_page_objects.issue_rgb20_button()):
             self.issue_rgb20_page_objects.click_issue_rgb20_button()
+
+        if is_native_auth_enabled is True:
+            self.enter_native_password()
 
         if self.do_is_displayed(self.success_page_objects.home_button()):
             self.success_page_objects.click_home_button()

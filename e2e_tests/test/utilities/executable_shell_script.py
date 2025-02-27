@@ -68,3 +68,10 @@ def mine(amount):
         amount
     }"
     return execute_shell_command(command)
+
+
+def get_working_directory():
+    """gets the working directory"""
+
+    command = 'pwd'
+    return execute_shell_command(command)

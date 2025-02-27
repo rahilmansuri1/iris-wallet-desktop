@@ -3,12 +3,20 @@
 from __future__ import annotations
 
 from src.utils.constant import APP_NAME
+from src.utils.constant import ORGANIZATION_NAME
 APP1_NAME = 'test_app_1'
 APP2_NAME = 'test_app_2'
 FIRST_SERVICE = f"{APP_NAME}_{APP1_NAME}"
 SECOND_SERVICE = f"{APP_NAME}_{APP2_NAME}"
 FIRST_APPLICATION = f"Iris Wallet Regtest {APP1_NAME}"
 SECOND_APPLICATION = f"Iris Wallet Regtest {APP2_NAME}"
+ORIGINAL_PATH = f"{ORGANIZATION_NAME}/{APP_NAME}"
+FIRST_APPLICATION_PATH = f"{ORGANIZATION_NAME}_{
+    APP1_NAME
+}/{APP_NAME}_{APP1_NAME}"
+SECOND_APPLICATION_PATH = f"{ORGANIZATION_NAME}_{
+    APP2_NAME
+}/{APP_NAME}_{APP2_NAME}"
 FIRST_APPLICATION_URL = 'http://127.0.0.1:3001'
 SECOND_APPLICATION_URL = 'http://127.0.0.1:3002'
 LN_PORT = '9736'
@@ -113,7 +121,10 @@ ASSET_LIGHTNING_SPENDABLE_BALANCE = 'asset_lightning_spendable_balance'
 ASSET_RECEIVE_BUTTON = 'asset_receive_button'
 ASSET_AMOUNT_VALIDATION = 'asset_amount_validation'
 ASSET_ID_COPY_BUTTON = 'asset_id_copy_button'
-
+TRANSACTION_DETAIL_CLOSE_BUTTON = 'transaction_detail_close_button'
+CONFIRMATION_DIALOG_CONTINUE_BUTTON = 'confirmation_dialog_continue_button'
+CONFIRMATION_DIALOG_CANCEL_BUTTON = 'confirmation_dialog_cancel_button'
+CONFIRMAION_DIALOG = 'confirmation_dialog'
 
 # Asset Transaction Details Page
 AMOUNT_VALUE = 'amount_value'
@@ -175,7 +186,17 @@ NODE_PUBKEY_COPY_BUTTON = 'node_pubkey_copy_button'
 LN_PEER_LISTENING_PORT_COPY_BUTTON = 'ln_peer_listening_port_copy_button'
 INDEXER_URL_ACCESSIBLE_DESCRIPTION = 'indexer_url'
 RGB_PROXY_URL_ACCESSIBLE_DESCRIPTION = 'rgb_proxy_url'
-
+NODE_PUBKEY_ACCESSIBLE_DESCRIPTION = 'node_pubkey'
+LN_PEER_LISTENING_PORT_ACCESSIBLE_DESCRIPTION = 'ln_peer_listening_port'
+BITCOIND_HOST_ACCESSIBLE_DESCRIPTION = 'bitcoind_host'
+BITCOIND_PORT_ACCESSIBLE_DESCRIPTION = 'bitcoind_port'
+BITCOIND_HOST_COPY_BUTTON = 'bitcoind_host_copy_button'
+BITCOIND_PORT_COPY_BUTTON = 'bitcoind_port_copy_button'
+INDEXER_URL_COPY_BUTTON = 'indexer_url_copy_button'
+RGB_PROXY_URL_COPY_BUTTON = 'rgb_proxy_url_copy_button'
+ANNOUNCE_ADDRESS_COPY_BUTTON = 'announce_address_copy_button'
+ANNOUNCE_ALIAS_COPY_BUTTON = 'announce_alias_copy_button'
+DOWNLOAD_DEBUG_LOG = 'download_debug_log'
 
 # Settings page
 ASK_AUTH_FOR_IMPORTANT_QUESTION = 'auth_for_imp_question'
@@ -241,3 +262,32 @@ LOGIN_BUTTON = 'login_button'
 
 # Header Frame
 NETWORK_AND_BACKUP_FRAME = 'network_and_backup_frame'
+KEYRING_TOGGLE_BUTTON = 'keyring_toggle_button'
+HIDE_EXHAUSTED_ASSETS_TOGGLE = 'hide_exhausted_assets_toggle'
+ASK_AUTH_FOR_IMPORTANT_QUESTION_TOGGLE = 'ask_auth_for_important_question_toggle'
+ASK_AUTH_FOR_APP_LOGIN_TOGGLE = 'ask_auth_for_app_login_toggle'
+
+# Keyring Dialog Box
+KEYRING_DIALOG_BOX = 'keyring_dialog_box'
+KEYRING_MNEMONICS_FRAME = 'keyring_mnemonics_frame'
+KEYRING_COPY_BUTTON = 'keyring_copy_button'
+KEYRING_PASSWORD_FRAME = 'keyring_password_frame'
+KEYRING_PASSWORD_COPY_BUTTON = 'keyring_password_copy_button'
+KEYRING_PASSWORD_VALUE_LABEL = 'keyring_password_value_label'
+KEYRING_MNEMONIC_VALUE_LABEL = 'keyring_mnemonic_value_label'
+
+
+# Fungibles page
+FUNGIBLES_SCROLL_WIDGETS = 'fungibles_scroll_widget'
+
+# Help Page
+HELP_CARD_TITLE_ACCESSIBLE_DESCRIPTION = 'help_card_title'
+
+# Keyring password
+FIRST_SERVICE = 'iriswallet_test_app_1'
+NATIVE_AUTH_ENABLE = 'isNativeAuthenticationEnabled_test_app_1'
+
+
+# Test values used in tests
+TEST_ANNOUNCE_ADDRESS = 'example.url.com:2222'
+TEST_ANNOUNCE_ALIAS = 'testAlias'

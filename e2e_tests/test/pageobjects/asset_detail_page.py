@@ -4,6 +4,8 @@ This file contains the AssetDetailPageObjects class, which provides methods for 
 """
 from __future__ import annotations
 
+from dogtail.tree import root
+
 from accessible_constant import ASSET_CLOSE_BUTTON
 from accessible_constant import ASSET_ID_COPY_BUTTON
 from accessible_constant import ASSET_LIGHTNING_SPENDABLE_BALANCE
@@ -13,8 +15,11 @@ from accessible_constant import ASSET_ON_CHAIN_TOTAL_BALANCE
 from accessible_constant import ASSET_RECEIVE_BUTTON
 from accessible_constant import ASSET_REFRESH_BUTTON
 from accessible_constant import ASSET_SEND_BUTTON
+from accessible_constant import CONFIRMAION_DIALOG
+from accessible_constant import CONFIRMATION_DIALOG_CONTINUE_BUTTON
 from accessible_constant import RGB_TRANSACTION_DETAIL_LIGHTNING_FRAME
 from accessible_constant import RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME
+from accessible_constant import TRANSACTION_DETAIL_CLOSE_BUTTON
 from accessible_constant import TRANSFER_STATUS
 from e2e_tests.test.utilities.base_operation import BaseOperations
 
@@ -67,6 +72,15 @@ class AssetDetailPageObjects(BaseOperations):
         )
         self.copy_button = lambda: self.perform_action_on_element(
             role_name='push button', name=ASSET_ID_COPY_BUTTON,
+        )
+        self.fail_transfer_button = lambda: self.get_first_element(
+            role_name='push button', name=TRANSACTION_DETAIL_CLOSE_BUTTON,
+        )
+        self.confirmation_dialog = lambda: root.child(
+            roleName='dialog', name=CONFIRMAION_DIALOG,
+        )
+        self.confirmation_continue_button = lambda: self.confirmation_dialog().child(
+            roleName='push button', name=CONFIRMATION_DIALOG_CONTINUE_BUTTON,
         )
 
     def click_close_button(self):
@@ -164,3 +178,15 @@ class AssetDetailPageObjects(BaseOperations):
         Clicks the copy button on the asset detail page.
         """
         return self.do_click(self.copy_button()) if self.do_is_displayed(self.copy_button()) else None
+
+    def click_confirmation_continue_button(self):
+        """
+        Clicks the transaction detail frame on the asset detail page.
+        """
+        return self.do_click(self.confirmation_continue_button()) if self.do_is_displayed(self.confirmation_continue_button()) else None
+
+    def click_fail_transfer_button(self):
+        """
+        Clicks the fail transfer button on the asset detail page.
+        """
+        return self.do_click(self.fail_transfer_button()) if self.do_is_displayed(self.fail_transfer_button()) else None

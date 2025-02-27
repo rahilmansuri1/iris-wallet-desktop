@@ -19,7 +19,7 @@ class SendOperation(MainPageObjects, BaseOperations):
         """
         super().__init__(application)
 
-    def send(self, application, receiver_invoice, amount=None, transfer_type=None):
+    def send(self, application, receiver_invoice, amount=None, transfer_type=None, is_native_auth_enabled: bool = False):
         """
         Send assets using Bitcoin or Lightning transfer.
 
@@ -44,6 +44,9 @@ class SendOperation(MainPageObjects, BaseOperations):
 
         if self.do_is_displayed(send_objects.send_button()):
             send_objects.click_send_button()
+
+        if is_native_auth_enabled is True:
+            self.enter_native_password()
 
     def send_with_no_fund(self, application, receiver_invoice, amount, transfer_type=None):
         """
