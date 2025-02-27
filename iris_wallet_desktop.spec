@@ -36,7 +36,6 @@ datas = [
     ('./src/views/qss/*.qss', './views/qss/'),
     ('./build_info.json', './build_info.json'),
     (ln_node_binary, './ln_node_binary/'),
-    ('binary', './binary/')
 ] + pyqttoast_datas
 
 # Common Analysis

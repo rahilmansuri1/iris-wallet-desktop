@@ -21,7 +21,6 @@ from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
-import src.resources_rc
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import LoaderDisplayModel
@@ -33,6 +32,7 @@ from src.model.selection_page_model import SelectionPageModel
 from src.utils.clickable_frame import ClickableFrame
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
+from src.views.components.buttons import PrimaryButton
 from src.views.components.loading_screen import LoadingTranslucentScreen
 from src.views.components.wallet_logo_frame import WalletLogoFrame
 
@@ -51,6 +51,7 @@ class WalletOrTransferSelectionWidget(QWidget):
         self._view_model: MainViewModel = view_model
         self._params: SelectionPageModel = params
         self.asset_type = None
+        self.selected_frame = None
         if self._params.rgb_asset_page_load_model:
             self.asset_type = self._params.rgb_asset_page_load_model.asset_type
         self.grid_layout = QGridLayout(self)
@@ -60,7 +61,7 @@ class WalletOrTransferSelectionWidget(QWidget):
         self.grid_layout.addWidget(self.wallet_logo, 0, 0, 1, 2)
 
         self.vertical_spacer_1 = QSpacerItem(
-            20, 208, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding,
+            20, 208, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed,
         )
 
         self.grid_layout.addItem(self.vertical_spacer_1, 0, 3, 1, 1)
@@ -119,6 +120,19 @@ class WalletOrTransferSelectionWidget(QWidget):
         self.header_line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.vertical_layout.addWidget(self.header_line)
+        self.rln_node_connection_description = QLabel(self.widget_page)
+        self.rln_node_connection_description.setMinimumSize(QSize(0, 54))
+        self.rln_node_connection_description.setMaximumSize(
+            QSize(16777215, 54),
+        )
+        self.rln_node_connection_description.setWordWrap(True)
+        self.rln_node_connection_description.hide()
+
+        self.rln_node_connection_description.setContentsMargins(40, 20, 20, 0)
+
+        self.vertical_layout.addWidget(
+            self.rln_node_connection_description, Qt.AlignmentFlag.AlignAbsolute,
+        )
 
         self.vertical_spacer_2 = QSpacerItem(
             20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding,
@@ -167,7 +181,7 @@ class WalletOrTransferSelectionWidget(QWidget):
         self.option_2_frame = ClickableFrame(
             self._params.logo_2_title, self.widget_page, self._params.callback,
         )
-        self.option_2_frame.setObjectName('frame_8')
+        self.option_2_frame.setObjectName('option_2_frame')
         self.option_2_frame.setMinimumSize(QSize(220, 200))
         self.option_2_frame.setMaximumSize(QSize(220, 200))
 
@@ -200,13 +214,36 @@ class WalletOrTransferSelectionWidget(QWidget):
 
         self.vertical_layout.addLayout(self.select_option_layout)
 
+        self.vertical_spacer_5 = QSpacerItem(
+            20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding,
+        )
+
+        self.info_frame = QFrame(self)
+        self.info_frame.setObjectName('info_frame')
+        self.info_frame.setMinimumSize(QSize(736, 100))
+        self.info_frame.setMaximumSize(QSize(736, 100))
+        self.info_frame.hide()
+
+        self.info_frame_layout = QHBoxLayout(self.info_frame)
+        self.info_frame_layout.setContentsMargins(30, 9, 30, 9)
+        self.wallet_connection_info_label = QLabel(self.info_frame)
+        self.wallet_connection_info_label.setObjectName(
+            'wallet_connection_info_label',
+        )
+        self.wallet_connection_info_label.setWordWrap(True)
+        self.info_frame_layout.addWidget(self.wallet_connection_info_label)
+
+        self.continue_button = PrimaryButton()
+        self.info_frame_layout.addWidget(self.continue_button)
         self.vertical_spacer_3 = QSpacerItem(
             20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding,
         )
 
         self.vertical_layout.addItem(self.vertical_spacer_3)
 
-        self.grid_layout.addWidget(self.widget_page, 1, 1, 2, 3)
+        self.grid_layout.addWidget(self.widget_page, 1, 1)
+        self.grid_layout.addItem(self.vertical_spacer_5, 3, 1)
+        self.grid_layout.addWidget(self.info_frame, 4, 1)
 
         self.horizontal_spacer_2 = QSpacerItem(
             268, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum,
@@ -218,7 +255,7 @@ class WalletOrTransferSelectionWidget(QWidget):
             20, 208, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding,
         )
 
-        self.grid_layout.addItem(self.vertical_spacer_4, 3, 2, 1, 1)
+        self.grid_layout.addItem(self.vertical_spacer_4, 5, 2, 1, 1)
 
         ln_message = QApplication.translate(
             'iris_wallet_desktop', 'ln_message', 'Starting LN node',
@@ -226,6 +263,7 @@ class WalletOrTransferSelectionWidget(QWidget):
         self.__loading_translucent_screen = LoadingTranslucentScreen(
             parent=self, description_text=ln_message, dot_animation=True, loader_type=LoaderDisplayModel.FULL_SCREEN,
         )
+        self.adjust_size()
         self.retranslate_ui()
         self.setup_ui_connection()
 
@@ -246,6 +284,16 @@ class WalletOrTransferSelectionWidget(QWidget):
                 'iris_wallet_desktop', self._params.logo_2_title, None,
             ),
         )
+        self.continue_button.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'continue', None,
+            ),
+        )
+        self.rln_node_connection_description.setText(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'rln_node_connection_description', None,
+            ),
+        )
 
     def setup_ui_connection(self):
         """Set up connections for UI elements."""
@@ -255,23 +303,30 @@ class WalletOrTransferSelectionWidget(QWidget):
             self.show_wallet_loading_screen,
         )
         self.close_button.clicked.connect(self.close_button_navigation)
+        self.continue_button.clicked.connect(self.on_click_continue)
 
     def handle_frame_click(self, _id):
         """Handle the click event for the option_frame_1 and option_frame_2."""
 
         # Retrieve the transfer type from the parameters
         transfer_type = self._params.callback
-        # Handle the 'embedded' frame click event
-        if _id == WalletType.EMBEDDED_TYPE_WALLET.value:
-            SettingRepository.set_wallet_type(WalletType.EMBEDDED_TYPE_WALLET)
-            self._view_model.wallet_transfer_selection_view_model.start_node_for_embedded_option()
 
-        # Handle the 'remote' frame click event
-        elif _id == WalletType.REMOTE_TYPE_WALLET.value:
-            SettingRepository.set_wallet_type(WalletType.REMOTE_TYPE_WALLET)
-            self._view_model.page_navigation.ln_endpoint_page(
-                'wallet_selection_page',
-            )
+        if self.selected_frame == _id:
+            self.info_frame.setHidden(not self.info_frame.isHidden())
+            if self.info_frame.isHidden():
+                self.on_click_frame(_id, False)
+            else:
+                self.on_click_frame(_id, True)
+            return
+
+        # If switching to another frame, ensure info_frame is visible
+        self.info_frame.show()
+        # Set the appropriate text
+        self._set_text_for_embedded_or_remote_connection_info(_id)
+
+        # Reset the previously selected frame's style
+        if self.selected_frame is not None:
+            self.on_click_frame(self.selected_frame, False)
 
         # Handle the 'On chain' frame click event
         elif _id == TransferType.ON_CHAIN.value:
@@ -303,15 +358,39 @@ class WalletOrTransferSelectionWidget(QWidget):
                     self.asset_type,
                 )
 
+        # Apply styles for the newly selected frame
+        self.on_click_frame(_id, True)
+
+        # Update the selected frame
+        self.selected_frame = _id
+
+    def _set_text_for_embedded_or_remote_connection_info(self, _id):
+        """This method sets the text for the information label for the embedded or remote connection."""
+        if _id == WalletType.EMBEDDED_TYPE_WALLET.value:
+            self.wallet_connection_info_label.setText(
+                QCoreApplication.translate(
+                    'iris_wallet_desktop', 'embedded_connection_info', None,
+                ),
+            )
+
+        elif _id == WalletType.REMOTE_TYPE_WALLET.value:
+            self.wallet_connection_info_label.setText(
+                QCoreApplication.translate(
+                    'iris_wallet_desktop', 'remote_connection_info', None,
+                ),
+            )
+
     def show_wallet_loading_screen(self, status):
         """This method handled show loading screen on wallet selection page"""
         if status is True:
             self.option_1_frame.setDisabled(True)
             self.option_2_frame.setDisabled(True)
+            self.continue_button.setDisabled(True)
             self.__loading_translucent_screen.start()
         if not status:
             self.option_1_frame.setDisabled(False)
             self.option_2_frame.setDisabled(False)
+            self.continue_button.setDisabled(False)
             self.__loading_translucent_screen.stop()
 
     def close_button_navigation(self):
@@ -328,3 +407,57 @@ class WalletOrTransferSelectionWidget(QWidget):
                     self._params.rgb_asset_page_load_model.image_path,
                     self._params.rgb_asset_page_load_model.asset_type,
                 )
+
+    def on_click_frame(self, _id, is_selected: bool):
+        """Handles frame click styling."""
+        if is_selected:
+            if _id == WalletType.EMBEDDED_TYPE_WALLET.value:
+                self.option_1_frame.setStyleSheet(
+                    load_stylesheet(
+                        'views/qss/style.qss',
+                    ),
+                )
+            elif _id == WalletType.REMOTE_TYPE_WALLET.value:
+                self.option_2_frame.setStyleSheet(
+                    load_stylesheet(
+                        'views/qss/style.qss',
+                    ),
+                )
+
+        else:
+            if _id == WalletType.EMBEDDED_TYPE_WALLET.value:
+                self.option_1_frame.setStyleSheet(
+                    load_stylesheet(
+                        'views/qss/wallet_or_transfer_selection_style.qss',
+                    ),
+                )
+            elif _id == WalletType.REMOTE_TYPE_WALLET.value:
+                self.option_2_frame.setStyleSheet(
+                    load_stylesheet(
+                        'views/qss/wallet_or_transfer_selection_style.qss',
+                    ),
+                )
+
+    def on_click_continue(self):
+        """Handles continue button click."""
+        if self.selected_frame == WalletType.EMBEDDED_TYPE_WALLET.value:
+            SettingRepository.set_wallet_type(WalletType.EMBEDDED_TYPE_WALLET)
+            self._view_model.wallet_transfer_selection_view_model.start_node_for_embedded_option()
+
+        elif self.selected_frame == WalletType.REMOTE_TYPE_WALLET.value:
+            SettingRepository.set_wallet_type(WalletType.REMOTE_TYPE_WALLET)
+            self._view_model.page_navigation.ln_endpoint_page(
+                'wallet_selection_page',
+            )
+
+    def adjust_size(self):
+        """This method adjusts the size of the card"""
+
+        if self._params.title == 'connection_type':
+            self.rln_node_connection_description.show()
+            self.widget_page.setMinimumSize(QSize(736, 416))
+            self.widget_page.setMaximumSize(QSize(736, 542))
+            self.option_1_frame.setMinimumSize(QSize(224, 204))
+            self.option_1_frame.setMaximumSize(QSize(224, 204))
+            self.option_2_frame.setMinimumSize(QSize(224, 204))
+            self.option_2_frame.setMaximumSize(QSize(224, 204))
