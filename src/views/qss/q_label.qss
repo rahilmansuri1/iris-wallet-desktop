@@ -58,7 +58,7 @@ font-weight: 600;
 }
 
 /* Error label */
-QLabel#spendable_balance_validation,#asset_amount_validation{
+QLabel#spendable_balance_validation,#asset_amount_validation, #address_validation_label{
     color: red;
     border: none;
 }

@@ -7,7 +7,6 @@ from __future__ import annotations
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QDoubleValidator
 from PySide6.QtGui import QIntValidator
 from PySide6.QtWidgets import QDialog
 from PySide6.QtWidgets import QFrame
@@ -639,7 +638,7 @@ class SettingsWidget(QWidget):
             )
 
     def _set_bitcoind_host(self):
-        """ Set the default announce address based on user input."""
+        """ Set the default bitcoind host based on user input."""
         password = self._check_keyring_state()
         if password:
             self._view_model.setting_view_model.set_bitcoind_host(
@@ -647,7 +646,7 @@ class SettingsWidget(QWidget):
             )
 
     def _set_bitcoind_port(self):
-        """Set the default announce address based on user input."""
+        """Set the default bitcoind port based on user input."""
         password = self._check_keyring_state()
         if password:
             self._view_model.setting_view_model.set_bitcoind_port(
@@ -893,7 +892,7 @@ class SettingsWidget(QWidget):
         self._set_frame_content(
             self.set_fee_rate_frame,
             self.fee_rate,
-            QDoubleValidator(),
+            QIntValidator(),
             suggestion_desc=self.set_fee_rate_frame.suggestion_desc,
         )
 

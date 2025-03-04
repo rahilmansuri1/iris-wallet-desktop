@@ -8,8 +8,8 @@ from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QCursor
-from PySide6.QtGui import QDoubleValidator
 from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIntValidator
 from PySide6.QtWidgets import QCheckBox
 from PySide6.QtWidgets import QFrame
 from PySide6.QtWidgets import QGridLayout
@@ -204,6 +204,22 @@ class SendAssetWidget(QWidget):
         self.send_asset_details_layout.addWidget(
             self.asset_address_value, 0, Qt.AlignHCenter,
         )
+        self.asset_address_validation_label = QLabel(self)
+        self.asset_address_validation_label.setObjectName(
+            'address_validation_label',
+        )
+        self.asset_address_validation_label.setMinimumSize(QSize(335, 0))
+        self.asset_address_validation_label.setMaximumSize(
+            QSize(335, 16777215),
+        )
+        self.asset_address_validation_label.setWordWrap(True)
+        self.send_asset_details_layout.addWidget(
+            self.asset_address_validation_label, 0, Qt.AlignHCenter,
+        )
+        self.asset_address_validation_label.setStyleSheet(
+            load_stylesheet('views/qss/q_label.qss'),
+        )
+        self.asset_address_validation_label.hide()
 
         self.total_supply_label = QLabel(self.send_asset_page)
         self.total_supply_label.setObjectName('total_supply_label')
@@ -284,7 +300,7 @@ class SendAssetWidget(QWidget):
 
         self.fee_rate_value = QLineEdit(self.send_asset_page)
         self.fee_rate_value.setObjectName('amount_input_25')
-        self.fee_rate_value.setValidator(QDoubleValidator())
+        self.fee_rate_value.setValidator(QIntValidator())
         self.fee_rate_value.setMinimumSize(QSize(335, 40))
         self.fee_rate_value.setMaximumSize(QSize(335, 16777215))
         self.fee_rate_value.setClearButtonEnabled(False)
@@ -539,9 +555,9 @@ class SendAssetWidget(QWidget):
             )
 
     def set_fee_rate(self, fee_rate: float):
-        """Sets the fee rate in the input field, rounding it to three decimal places."""
-        fee_rate_rounded = f'{fee_rate:.3f}'
-        self.fee_rate_value.setText(str(fee_rate_rounded))
+        """Sets the fee rate in the input field as an integer, removing decimal places entirely."""
+        fee_rate_int = int(fee_rate)
+        self.fee_rate_value.setText(str(fee_rate_int))
 
     def show_fee_estimation_error(self):
         """

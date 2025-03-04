@@ -4,9 +4,11 @@
  """
 from __future__ import annotations
 
-from PySide6.QtCore import QSize
+from PySide6.QtCore import QCoreApplication
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
+from rgb_lib import Invoice
+from rgb_lib import RgbLibError
 
 import src.resources_rc
 from src.data.repository.rgb_repository import RgbRepository
@@ -72,6 +74,9 @@ class SendRGBAssetWidget(QWidget):
         )
         self._view_model.rgb25_view_model.message.connect(
             self.show_rgb25_message,
+        )
+        self.send_rgb_asset_page.asset_address_value.textChanged.connect(
+            self.validate_rgb_invoice,
         )
         self.send_rgb_asset_page.asset_amount_value.textChanged.connect(
             self.handle_button_enabled,
@@ -178,6 +183,8 @@ class SendRGBAssetWidget(QWidget):
             """Checks if required fields are filled and valid."""
             return (
                 is_valid_value(self.send_rgb_asset_page.asset_address_value.text()) and
+                # Check if the validation label is hidden
+                not self.send_rgb_asset_page.asset_address_validation_label.isVisible() and
                 is_valid_value(self.send_rgb_asset_page.asset_amount_value.text()) and
                 is_valid_value(self.send_rgb_asset_page.fee_rate_value.text())
             )
@@ -296,3 +303,29 @@ class SendRGBAssetWidget(QWidget):
         )
         self.send_rgb_asset_page.send_btn.setDisabled(update_button_status)
         self.handle_button_enabled()
+
+    def validate_rgb_invoice(self):
+        """
+        Validates the RGB invoice input.
+
+        - Hides the validation label initially.
+        - Checks if the entered invoice is valid.
+        - Displays an error message if the invoice is invalid.
+        """
+        invoice = self.send_rgb_asset_page.asset_address_value.text().strip()
+
+        if not invoice:
+            self.send_rgb_asset_page.asset_address_validation_label.hide()
+            return
+        try:
+            Invoice(invoice)
+            self.send_rgb_asset_page.asset_address_validation_label.hide()
+
+        except RgbLibError.InvalidInvoice:
+            self.send_rgb_asset_page.asset_address_validation_label.show()
+            self.send_rgb_asset_page.send_btn.setDisabled(True)
+            self.send_rgb_asset_page.asset_address_validation_label.setText(
+                QCoreApplication.translate(
+                    'iris_wallet_desktop', 'invalid_invoice',
+                ),
+            )

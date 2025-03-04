@@ -146,7 +146,7 @@ class RGB25ViewModel(QObject, ThreadManager):
         ) else ERROR_SOMETHING_WENT_WRONG
         ToastManager.error(description=description)
 
-    def on_send_click(self, amount: int, blinded_utxo: str, transport_endpoints: list, fee_rate: float, min_confirmation: int) -> None:
+    def on_send_click(self, amount: int, blinded_utxo: str, transport_endpoints: list, fee_rate: int, min_confirmation: int) -> None:
         """Starts a thread to execute the send_rgb25 function with the provided arguments."""
         self.amount = amount
         self.blinded_utxo = blinded_utxo

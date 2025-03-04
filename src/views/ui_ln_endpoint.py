@@ -244,7 +244,7 @@ class LnEndpointWidget(QWidget):
         )
         self.node_endpoint_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'node_endpoint', None,
+                'iris_wallet_desktop', 'rgb_lightning_node_url', None,
             ),
         )
         self.enter_ln_node_url_input.setPlaceholderText(

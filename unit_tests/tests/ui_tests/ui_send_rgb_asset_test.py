@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 import pytest
 from PySide6.QtCore import QCoreApplication
+from rgb_lib import RgbLibError
 
 from src.model.enums.enums_model import ToastPreset
 from src.model.rgb_model import Balance
@@ -64,6 +65,7 @@ def test_retranslate_ui(send_rgb_asset_widget: SendRGBAssetWidget, qtbot):
 
 def test_handle_button_enabled(send_rgb_asset_widget: SendRGBAssetWidget, qtbot):
     """Test the handle_button_enabled method."""
+
     # Test with empty address and amount
     send_rgb_asset_widget.send_rgb_asset_page.asset_address_value.setText('')
     send_rgb_asset_widget.send_rgb_asset_page.asset_amount_value.setText('')
@@ -75,8 +77,21 @@ def test_handle_button_enabled(send_rgb_asset_widget: SendRGBAssetWidget, qtbot)
         'blind_utxo_123',
     )
     send_rgb_asset_widget.send_rgb_asset_page.asset_amount_value.setText('10')
+
+    # Mocking the spendable balance to be greater than 0
+    send_rgb_asset_widget.asset_spendable_balance = 50
     send_rgb_asset_widget.handle_button_enabled()
     assert send_rgb_asset_widget.send_rgb_asset_page.send_btn.isEnabled() is True
+
+    # Test with invalid amount (zero)
+    send_rgb_asset_widget.send_rgb_asset_page.asset_amount_value.setText('0')
+    send_rgb_asset_widget.handle_button_enabled()
+    assert send_rgb_asset_widget.send_rgb_asset_page.send_btn.isEnabled() is False
+
+    # Test with valid address and invalid spendable balance
+    send_rgb_asset_widget.asset_spendable_balance = 0
+    send_rgb_asset_widget.handle_button_enabled()
+    assert send_rgb_asset_widget.send_rgb_asset_page.send_btn.isEnabled() is False
 
 
 def test_set_asset_balance(send_rgb_asset_widget: SendRGBAssetWidget, qtbot):
@@ -556,3 +571,45 @@ def test_disable_buttons_on_fee_rate_loading(send_rgb_asset_widget: SendRGBAsset
     assert not send_rgb_asset_widget.send_rgb_asset_page.fast_checkbox.isEnabled()
     assert not send_rgb_asset_widget.send_rgb_asset_page.custom_checkbox.isEnabled()
     assert not send_rgb_asset_widget.send_rgb_asset_page.send_btn.isEnabled()
+
+
+def test_validate_rgb_invoice(send_rgb_asset_widget: SendRGBAssetWidget):
+    """Test the validate_rgb_invoice method."""
+
+    # Mock the necessary attributes
+    send_rgb_asset_widget.send_rgb_asset_page.asset_address_value = MagicMock()
+    send_rgb_asset_widget.send_rgb_asset_page.asset_address_validation_label = MagicMock()
+
+    # Test with an empty invoice
+    send_rgb_asset_widget.send_rgb_asset_page.asset_address_value.text.return_value = '   '
+    send_rgb_asset_widget.validate_rgb_invoice()
+    send_rgb_asset_widget.send_rgb_asset_page.asset_address_validation_label.hide.assert_called_once()
+    send_rgb_asset_widget.send_rgb_asset_page.asset_address_validation_label.hide.reset_mock()
+
+    # Test with a valid invoice
+    valid_invoice = 'valid_rgb_invoice_string'  # Example valid RGB invoice
+    send_rgb_asset_widget.send_rgb_asset_page.asset_address_value.text.return_value = valid_invoice
+
+#     # Test with a valid invoice
+    valid_invoice = 'valid_invoice_string'
+    send_rgb_asset_widget.send_rgb_asset_page.asset_address_value.setText(
+        valid_invoice,
+    )
+    with patch('src.views.ui_send_rgb_asset.Invoice', return_value=None):
+        send_rgb_asset_widget.validate_rgb_invoice()
+        send_rgb_asset_widget.send_rgb_asset_page.asset_address_validation_label.hide.assert_called_once()
+        send_rgb_asset_widget.send_rgb_asset_page.asset_address_validation_label.hide.reset_mock()
+
+    # Test with an invalid invoice
+    invalid_invoice = 'invalid_rgb_invoice_string'
+    send_rgb_asset_widget.send_rgb_asset_page.asset_address_value.text.return_value = invalid_invoice
+
+    with patch('rgb_lib.Invoice', side_effect=RgbLibError.InvalidInvoice('Invalid invoice details')):
+        send_rgb_asset_widget.validate_rgb_invoice()
+        send_rgb_asset_widget.send_rgb_asset_page.asset_address_validation_label.show.assert_called_once()
+        send_rgb_asset_widget.send_rgb_asset_page.asset_address_validation_label.setText.assert_called_once_with(
+            QCoreApplication.translate(
+                'iris_wallet_desktop', 'invalid_invoice',
+            ),
+        )
+        assert not send_rgb_asset_widget.send_rgb_asset_page.send_btn.isEnabled()

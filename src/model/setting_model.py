@@ -1,4 +1,5 @@
-# pylint: disable = W0107
+# pylint: disable = W0107,too-few-public-methods
+# Model classes are used to store data and don't require methods.
 """
 Module containing models related to settings.
 """
@@ -72,9 +73,9 @@ class DefaultFeeRate(BaseModel):
     Model representing the default fee rate.
 
     Attributes:
-        fee_rate (int | float): The default fee rate value.
+        fee_rate (int): The default fee rate value.
     """
-    fee_rate: int | float
+    fee_rate: int
 
 
 class IsDefaultExpiryTimeSet(Status):

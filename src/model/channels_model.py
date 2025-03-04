@@ -1,3 +1,5 @@
+# pylint:disable=too-few-public-methods
+# Model classes are used to store data and don't require methods.
 """
 Module defining Pydantic models for channel operations.
 
@@ -27,7 +29,7 @@ class Channel(BaseModel):
     status: str
     ready: bool
     capacity_sat: int
-    local_balance_msat: int
+    local_balance_sat: int
     outbound_balance_msat: int | None = None
     inbound_balance_msat: int | None = None
     is_usable: bool
