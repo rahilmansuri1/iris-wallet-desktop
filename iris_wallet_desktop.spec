@@ -19,6 +19,8 @@ print(__network__)
 
 # Collect data files from pyqttoast, bip32utils, mnemonic, and cryptography
 pyqttoast_datas = collect_data_files('pyqttoast')
+rgb_lib_datas = collect_data_files('rgb_lib')
+rgb_lib_binaries = collect_dynamic_libs('rgb_lib')
 
 base_project_path = os.path.abspath(__name__)
 print(base_project_path)
@@ -36,16 +38,15 @@ datas = [
     ('./src/views/qss/*.qss', './views/qss/'),
     ('./build_info.json', './build_info.json'),
     (ln_node_binary, './ln_node_binary/'),
-    ('binary', './binary/')
-] + pyqttoast_datas
+] + pyqttoast_datas + rgb_lib_datas
 
 # Common Analysis
 a = Analysis(
     ['src/main.py'],
     pathex=[],
-    binaries=[],
+    binaries=rgb_lib_binaries,
     datas=datas,
-    hiddenimports=['pyqttoast', 'PySide6', 'bip32utils', 'mnemonic', 'importlib_metadata', 'hashlib'],
+    hiddenimports=['pyqttoast', 'PySide6', 'bip32utils', 'mnemonic', 'importlib_metadata', 'hashlib', 'rgb_lib'],
     hookspath=[],
     runtime_hooks=[],
     excludes=[],

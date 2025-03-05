@@ -360,8 +360,8 @@ If you understand the above remarks and wish to proceed, press the button below 
         <translation>Lightning Node Connection</translation>
     </message>
     <message>
-        <source>node_endpoint</source>
-        <translation>Node endpoint</translation>
+        <source>rgb_lightning_node_url</source>
+        <translation>RGB Lightning Node URL</translation>
     </message>
     <message>
         <source>enter_lightning_node_url</source>
@@ -1665,8 +1665,20 @@ If you understand the above remarks and wish to proceed, press the button below 
         <translation>RGB invoice</translation>
     </message>
     <message>
-            <source>copied</source>
-            <translation>Copied!</translation>
+        <source>copied</source>
+        <translation>Copied!</translation>
+    </message>
+    <message>
+        <source>local_balance</source>
+        <translation>Local Balance</translation>
+    </message>
+    <message>
+        <source>remote_balance</source>
+        <translation>Remote Balance</translation>
+    </message>
+    <message>
+        <source>asset</source>
+        <translation>Asset</translation>
     </message>
     <message>
             <source>data_directory_path_label</source>
@@ -1675,6 +1687,18 @@ If you understand the above remarks and wish to proceed, press the button below 
     <message>
             <source>remote</source>
             <translation>Remote</translation>
+    </message>
+    <message>
+            <source>embedded_connection_info</source>
+            <translation>With embedded connection, an RGB Lightning Node is automatically run in the background.</translation>
+    </message>
+    <message>
+            <source>remote_connection_info</source>
+            <translation>With remote connection, an RGB Lightning Node needs to be hosted separately and its URL will need to be provided.</translation>
+    </message>
+    <message>
+            <source>rln_node_connection_description</source>
+            <translation>An RLN (RGB Lightning Node) instance is necessary to support the app's functionalities. Clicking an option reveals details about it.</translation>
     </message>
 </context>
 </TS>

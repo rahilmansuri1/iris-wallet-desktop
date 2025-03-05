@@ -129,7 +129,9 @@ mock_node_info_Response_model = NodeInfoResponseModel(
     pubkey='02270dadcd6e7ba0ef707dac72acccae1a3607453a8dd2aef36ff3be4e0d31f043',
     num_channels=0,
     num_usable_channels=0,
-    local_balance_msat=0,
+    local_balance_sat=0,
+    eventual_close_fees_sat=892,
+    pending_outbound_payments_sat=7852,
     num_peers=0,
     onchain_pubkey='02270dadcd6e7ba0ef707dac72acccae1a3607453a8dd2aef36ff3be4e0d31f043',
     max_media_upload_size_mb=5,
@@ -139,6 +141,8 @@ mock_node_info_Response_model = NodeInfoResponseModel(
     channel_capacity_max_sat=1,
     channel_asset_min_amount=1,
     channel_asset_max_amount=1,
+    network_nodes=1,
+    network_channels=1,
 )
 
 

@@ -1,4 +1,4 @@
-QWidget#widget_page {
+QWidget#widget_page, #info_frame {
     background: transparent;
     border: 1px solid rgb(102, 108, 129);
     background-color: rgb(3, 11, 37);
@@ -21,13 +21,13 @@ QFrame#line_2 {
     border-bottom: 1px solid rgb(27, 35, 59);
 }
 
-QFrame#option_1_frame,#option_3_frame, QFrame#frame_8 {
+QFrame#option_1_frame,#option_3_frame, QFrame#option_2_frame {
     border-radius: 8px;
     border: 1px solid rgb(102, 108, 129);
     border-radius: 8px;
 }
 
-QFrame#option_1_frame:hover,QFrame#option_3_frame:hover, QFrame#frame_8:hover {
+QFrame#option_1_frame:hover,QFrame#option_3_frame:hover, QFrame#option_2_frame:hover {
     font: 14px "Inter";
     color: white;
     border-radius: 8px;

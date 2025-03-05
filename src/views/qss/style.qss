@@ -23,3 +23,14 @@ QLabel {
     color: white ;
     border-radius: 8px;
 }
+
+
+QFrame #option_2_frame,#option_1_frame{
+    font: 15px "Inter";
+    border-radius: 8px;
+    border: 1px solid white;
+}
+
+QLabel#option_2_text_label, #option_1_text_label{
+    border:none
+}

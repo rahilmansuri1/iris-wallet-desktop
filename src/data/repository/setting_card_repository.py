@@ -72,7 +72,7 @@ class SettingCardRepository:
         try:
             local_store.set_value('defaultFeeRate', rate)
             # Verify the setting was applied
-            if local_store.get_value('defaultFeeRate', value_type=float):
+            if local_store.get_value('defaultFeeRate', value_type=int):
                 return IsDefaultFeeRateSet(is_enabled=True)
             return IsDefaultFeeRateSet(is_enabled=False)
         except Exception as exe:
