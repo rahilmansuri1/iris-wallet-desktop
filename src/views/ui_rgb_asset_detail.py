@@ -41,6 +41,7 @@ from src.model.transaction_detail_page_model import TransactionDetailPageModel
 from src.utils.common_utils import convert_hex_to_image
 from src.utils.common_utils import copy_text
 from src.utils.common_utils import resize_image
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
@@ -407,42 +408,42 @@ class RGBAssetDetailWidget(QWidget):
         """Retranslate the UI elements."""
         self.transactions_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'transfers', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'transfers', None,
             ),
         )
         self.asset_id_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_id', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_id', None,
             ),
         )
         self.asset_balance_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'on_chain_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'on_chain_balance', None,
             ),
         )
         self.asset_total_amount_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'total', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'total', None,
             ),
         )
         self.asset_spendable_amount_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'spendable_bal', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'spendable_bal', None,
             ),
         )
         self.lightning_spendable_balance_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'spendable_bal', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'spendable_bal', None,
             ),
         )
         self.lightning_total_balance_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'total', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'total', None,
             ),
         )
         self.lightning_balance_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'lightning_balance',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'lightning_balance',
             ),
         )
 
@@ -732,18 +733,18 @@ class RGBAssetDetailWidget(QWidget):
             confirmation_dialog = ConfirmationDialog(
                 parent=self, message=(f"{
                     QCoreApplication.translate(
-                        'iris_wallet_desktop', 'transaction_id', None,
+                        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'transaction_id', None,
                     )
                 }: {tx_id}\n\n {
                     QCoreApplication.translate(
-                        'iris_wallet_desktop', 'cancel_transfer', None,
+                        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'cancel_transfer', None,
                     )
                 }"),
             )
         else:
             confirmation_dialog = ConfirmationDialog(
                 parent=self, message=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'cancel_invoice', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'cancel_invoice', None,
                 ),
             )
         confirmation_dialog.confirmation_dialog_continue_button.clicked.connect(
@@ -866,7 +867,7 @@ class RGBAssetDetailWidget(QWidget):
         )
         self.transaction_detail_frame.transfer_type.setToolTip(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'on_chain', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'on_chain', None,
             ),
         )
         self.transaction_detail_frame.transaction_amount.setText(
@@ -893,7 +894,7 @@ class RGBAssetDetailWidget(QWidget):
             )
             self.transaction_detail_frame.close_button.setToolTip(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'fail_transfer', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'fail_transfer', None,
                 ),
             )
         self.handle_show_hide(self.transaction_detail_frame)
@@ -976,6 +977,6 @@ class RGBAssetDetailWidget(QWidget):
         )
         self.transaction_detail_frame.transfer_type.setToolTip(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'lightning', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'lightning', None,
             ),
         )

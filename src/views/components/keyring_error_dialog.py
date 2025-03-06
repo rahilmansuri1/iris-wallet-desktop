@@ -21,6 +21,7 @@ from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import ToastPreset
 from src.utils.common_utils import copy_text
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import IS_NATIVE_AUTHENTICATION_ENABLED
 from src.utils.constant import MNEMONIC_KEY
 from src.utils.constant import NATIVE_LOGIN_ENABLED
@@ -213,52 +214,52 @@ class KeyringErrorDialog(QDialog):
         """Retranslate ui"""
         self.info_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'keyring_error_message', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'keyring_error_message', None,
             ),
         )
         self.mnemonic_title_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'Mnemonic', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'Mnemonic', None,
             ),
         )
         self.mnemonic_copy_button.setToolTip(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'copy_mnemonic', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copy_mnemonic', None,
             ),
         )
         self.mnemonic_value_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self._mnemonic, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self._mnemonic, None,
             ),
         )
         self.wallet_password_title_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'wallet_password', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wallet_password', None,
             ),
         )
         self.password_copy_button.setToolTip(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'copy_password', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copy_password', None,
             ),
         )
         self.wallet_password_value.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self._password, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self._password, None,
             ),
         )
         self.check_box.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'store_mnemoic_checkbox_message', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'store_mnemoic_checkbox_message', None,
             ),
         )
         self.continue_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'continue', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'continue', None,
             ),
         )
         self.cancel_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'cancel', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'cancel', None,
             ),
         )
 
@@ -348,7 +349,7 @@ class KeyringErrorDialog(QDialog):
         if self.originating_page == 'settings_page':
             self.info_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'keyring_removal_message', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'keyring_removal_message', None,
                 ),
             )
             self.cancel_button.show()

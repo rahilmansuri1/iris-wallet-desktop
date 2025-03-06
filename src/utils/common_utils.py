@@ -46,6 +46,7 @@ from src.utils.constant import APP_NAME
 from src.utils.constant import BITCOIN_EXPLORER_URL
 from src.utils.constant import DEFAULT_LOCALE
 from src.utils.constant import FAST_TRANSACTION_FEE_BLOCKS
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LDK_DATA_NAME_MAINNET
 from src.utils.constant import LDK_DATA_NAME_REGTEST
 from src.utils.constant import LDK_DATA_NAME_TESTNET
@@ -322,7 +323,7 @@ def translate_value(element: QWidget, key: str):
         if hasattr(element, 'setText'):
             element.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     key,
                     None,
                 ),
@@ -496,7 +497,7 @@ def sigterm_handler(_sig, _frame):
         sig (int): The signal number received (SIGTERM).
     """
     sigterm_warning_message = QApplication.translate(
-        'iris_wallet_desktop', 'sigterm_warning_message', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'sigterm_warning_message', None,
     )
     qwarning = QMessageBox.warning(
         None,

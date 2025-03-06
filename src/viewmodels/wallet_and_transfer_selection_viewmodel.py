@@ -15,6 +15,7 @@ from src.data.repository.common_operations_repository import CommonOperationRepo
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.setting_model import IsWalletInitialized
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import WALLET_PASSWORD_KEY
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
@@ -78,7 +79,7 @@ class WalletTransferSelectionViewModel(QObject, ThreadManager):
                         self.sidebar.my_fungibles.setChecked(True)
                         self.splash_view_model.splash_screen_message.emit(
                             QCoreApplication.translate(
-                                'iris_wallet_desktop', 'wait_for_node_to_unlock', None,
+                                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wait_for_node_to_unlock', None,
                             ),
                         )
                         self.splash_view_model.sync_chain_info_label.emit(True)

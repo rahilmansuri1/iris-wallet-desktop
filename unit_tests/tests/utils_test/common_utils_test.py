@@ -43,6 +43,7 @@ from src.utils.common_utils import translate_value
 from src.utils.common_utils import zip_logger_folder
 from src.utils.constant import APP_NAME
 from src.utils.constant import DEFAULT_LOCALE
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LOG_FOLDER_NAME
 from src.utils.custom_exception import CommonException
 from src.version import __version__
@@ -962,7 +963,7 @@ def test_sigterm_handler(mock_qapp_instance, mock_ln_node_manager_get_instance, 
         None,
         'Are you sure you want to exit?',
         QApplication.translate(
-            'iris_wallet_desktop',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT,
             'sigterm_warning_message', None,
         ),
         QMessageBox.Ok | QMessageBox.Cancel,
@@ -984,7 +985,7 @@ def test_sigterm_handler(mock_qapp_instance, mock_ln_node_manager_get_instance, 
         None,
         'Are you sure you want to exit?',
         QApplication.translate(
-            'iris_wallet_desktop',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT,
             'sigterm_warning_message', None,
         ),
         QMessageBox.Ok | QMessageBox.Cancel,
@@ -1061,7 +1062,9 @@ def test_translate_value_valid_element(mock_translate):
     translate_value(element, key)
 
     element.setText.assert_called_once_with('Translated Text')
-    mock_translate.assert_called_once_with('iris_wallet_desktop', key, None)
+    mock_translate.assert_called_once_with(
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, key, None,
+    )
 
 
 def test_translate_value_invalid_element_type():

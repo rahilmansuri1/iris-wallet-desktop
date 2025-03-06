@@ -20,6 +20,7 @@ import src.resources_rc
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.selection_page_model import AssetDataModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.buttons import PrimaryButton
 from src.views.components.buttons import SidebarButton
@@ -194,18 +195,18 @@ class Sidebar(QWidget):
         if self.network == NetworkEnumModel.MAINNET.value:
             self.iris_wallet_text.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'iris_wallet', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'iris_wallet', None,
                 ),
             )
         else:
             self.iris_wallet_text.setText(
-                f'{QCoreApplication.translate("iris_wallet_desktop", "iris_wallet", None)} {
+                f'{QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, "iris_wallet", None)} {
                     self.network.capitalize()
                 }',
             )
         self.receive_asset_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'receive_assets',
                 None,
             ),

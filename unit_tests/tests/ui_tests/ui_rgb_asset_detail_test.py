@@ -23,6 +23,7 @@ from src.model.enums.enums_model import TransferStatusEnumModel
 from src.model.enums.enums_model import TransferType
 from src.model.selection_page_model import AssetDataModel
 from src.model.transaction_detail_page_model import TransactionDetailPageModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.transaction_detail_frame import TransactionDetailFrame
 from src.views.ui_rgb_asset_detail import RGBAssetDetailWidget
@@ -719,9 +720,9 @@ def test_handle_fail_transfer(rgb_asset_detail_widget: RGBAssetDetailWidget):
         # Verify dialog was created with correct message containing tx_id
         mock_confirmation_dialog.assert_called_with(
             parent=rgb_asset_detail_widget,
-            message=f"{QCoreApplication.translate('iris_wallet_desktop', 'transaction_id', None)}: {
+            message=f"{QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'transaction_id', None)}: {
                 tx_id
-            }\n\n {QCoreApplication.translate('iris_wallet_desktop', 'cancel_transfer', None)}",
+            }\n\n {QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'cancel_transfer', None)}",
         )
 
         # Reset mock for next test
@@ -734,7 +735,7 @@ def test_handle_fail_transfer(rgb_asset_detail_widget: RGBAssetDetailWidget):
         mock_confirmation_dialog.assert_called_with(
             parent=rgb_asset_detail_widget,
             message=QCoreApplication.translate(
-                'iris_wallet_desktop', 'cancel_invoice', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'cancel_invoice', None,
             ),
         )
 

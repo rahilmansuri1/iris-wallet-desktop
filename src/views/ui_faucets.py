@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
@@ -136,7 +137,7 @@ class FaucetsWidget(QWidget):
         """Retranslate the UI elements."""
         self.get_faucets_title_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'get_faucets', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'get_faucets', None,
             ),
         )
 
@@ -192,7 +193,7 @@ class FaucetsWidget(QWidget):
             )
             self.faucet_request_button.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'request', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'request', None,
                 ),
             )
 

@@ -15,6 +15,7 @@ from src.model.common_operation_model import NodeInfoResponseModel
 from src.model.common_operation_model import UnlockRequestModel
 from src.model.enums.enums_model import NativeAuthType
 from src.model.enums.enums_model import WalletType
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import NODE_PUB_KEY
 from src.utils.constant import WALLET_PASSWORD_KEY
 from src.utils.custom_exception import CommonException
@@ -109,12 +110,12 @@ class SplashViewModel(QObject, ThreadManager):
             error, CommonException,
         ) else ERROR_SOMETHING_WENT_WRONG_WHILE_UNLOCKING_LN_ON_SPLASH
 
-        if error_message == QCoreApplication.translate('iris_wallet_desktop', 'already_unlocked', None):
+        if error_message == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'already_unlocked', None):
             # Node is already unlocked, treat it as a success
             self.on_success_of_unlock_api()
             return
 
-        if error_message == QCoreApplication.translate('iris_wallet_desktop', 'not_initialized', None):
+        if error_message == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'not_initialized', None):
             self.render_timer.stop()
             self._page_navigation.term_and_condition_page()
             return
@@ -140,7 +141,7 @@ class SplashViewModel(QObject, ThreadManager):
             if WalletType.EMBEDDED_TYPE_WALLET.value == wallet_type.value:
                 self.splash_screen_message.emit(
                     QCoreApplication.translate(
-                        'iris_wallet_desktop', 'wait_node_to_start', None,
+                        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wait_node_to_start', None,
                     ),
                 )
                 self.wallet_transfer_selection_view_model.start_node_for_embedded_option()
@@ -152,7 +153,7 @@ class SplashViewModel(QObject, ThreadManager):
 
                     self.splash_screen_message.emit(
                         QCoreApplication.translate(
-                            'iris_wallet_desktop', 'wait_for_node_to_unlock', None,
+                            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wait_for_node_to_unlock', None,
                         ),
                     )
                     self.sync_chain_info_label.emit(True)

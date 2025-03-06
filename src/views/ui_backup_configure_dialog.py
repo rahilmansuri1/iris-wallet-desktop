@@ -17,6 +17,7 @@ from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.views.components.on_close_progress_dialog import OnCloseDialogBox
 
@@ -104,19 +105,19 @@ class BackupConfigureDialog(QDialog):
         """Retranslate ui"""
         self.mnemonic_detail_text_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'google_auth_not_found_message',
                 None,
             ),
         )
         self.cancel_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'ignore_button', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'ignore_button', None,
             ),
         )
         self.continue_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'configure_backup', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'configure_backup', None,
             ),
         )
 

@@ -30,6 +30,7 @@ from src.model.enums.enums_model import WalletType
 from src.model.selection_page_model import AssetDataModel
 from src.model.selection_page_model import SelectionPageModel
 from src.utils.clickable_frame import ClickableFrame
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.buttons import PrimaryButton
@@ -258,7 +259,7 @@ class WalletOrTransferSelectionWidget(QWidget):
         self.grid_layout.addItem(self.vertical_spacer_4, 5, 2, 1, 1)
 
         ln_message = QApplication.translate(
-            'iris_wallet_desktop', 'ln_message', 'Starting LN node',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'ln_message', 'Starting LN node',
         )
         self.__loading_translucent_screen = LoadingTranslucentScreen(
             parent=self, description_text=ln_message, dot_animation=True, loader_type=LoaderDisplayModel.FULL_SCREEN,
@@ -271,27 +272,27 @@ class WalletOrTransferSelectionWidget(QWidget):
         """Retranslate the UI elements."""
         self.title_text.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self._params.title, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self._params.title, None,
             ),
         )
         self.option_1_text_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self._params.logo_1_title, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self._params.logo_1_title, None,
             ),
         )
         self.option_2_text_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self._params.logo_2_title, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self._params.logo_2_title, None,
             ),
         )
         self.continue_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'continue', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'continue', None,
             ),
         )
         self.rln_node_connection_description.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'rln_node_connection_description', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'rln_node_connection_description', None,
             ),
         )
 
@@ -369,14 +370,14 @@ class WalletOrTransferSelectionWidget(QWidget):
         if _id == WalletType.EMBEDDED_TYPE_WALLET.value:
             self.wallet_connection_info_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'embedded_connection_info', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'embedded_connection_info', None,
                 ),
             )
 
         elif _id == WalletType.REMOTE_TYPE_WALLET.value:
             self.wallet_connection_info_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'remote_connection_info', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'remote_connection_info', None,
                 ),
             )
 

@@ -13,6 +13,7 @@ from PySide6.QtCore import QCoreApplication
 from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import ToastPreset
 from src.model.selection_page_model import AssetDataModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.toast import ToastManager
 from src.views.ui_receive_rgb_asset import ReceiveRGBAssetWidget
@@ -48,7 +49,7 @@ def test_setup_ui_connection(receive_rgb_asset_widget: ReceiveRGBAssetWidget):
                 # Emit the signal to simulate a button click
                 # Verify copy button text is set correctly
                 assert receive_rgb_asset_widget.receive_rgb_asset_page.copy_button.text() == QCoreApplication.translate(
-                    'iris_wallet_desktop', 'copy_rgb_invoice', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copy_rgb_invoice', None,
                 )
                 receive_rgb_asset_widget.receive_rgb_asset_page.copy_button.clicked.emit()
 
@@ -60,7 +61,7 @@ def test_setup_ui_connection(receive_rgb_asset_widget: ReceiveRGBAssetWidget):
 
                 # Verify address label text is set correctly
                 assert receive_rgb_asset_widget.receive_rgb_asset_page.address_label.text() == QCoreApplication.translate(
-                    'iris_wallet_desktop', 'rgb_invoice_label', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'rgb_invoice_label', None,
                 )
 
 
@@ -156,13 +157,13 @@ def test_update_address(receive_rgb_asset_widget: ReceiveRGBAssetWidget):
         )
         mock_set_text.assert_called_once_with(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'ln_invoice_info', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'ln_invoice_info', None,
             ).format('24', 'hours'),
         )
 
         # Test case 3: Copy Lightning invoice translation
         assert QCoreApplication.translate(
-            'iris_wallet_desktop', 'copy_ln_invoice', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copy_ln_invoice', None,
         )
 
 

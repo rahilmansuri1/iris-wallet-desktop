@@ -25,6 +25,7 @@ import src.resources_rc
 from src.model.enums.enums_model import ToastPreset
 from src.model.enums.enums_model import WalletType
 from src.model.selection_page_model import SelectionPageModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import SYNCING_CHAIN_LABEL_TIMER
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
@@ -363,32 +364,34 @@ class SetWalletPasswordWidget(QWidget):
         """Retranslate the UI elements."""
         self.set_wallet_password_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'set_your_wallet_password',
                 None,
             ),
         )
         self.enter_password_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'enter_your_password',
                 None,
             ),
         )
         self.confirm_password_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'confirm_your_password',
                 None,
             ),
         )
         self.proceed_wallet_password.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'proceed', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'proceed', None,
+            ),
         )
         self.setup_ui_connection()
         self.syncing_chain_info_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'syncing_chain_info', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'syncing_chain_info', None,
             ),
         )
 

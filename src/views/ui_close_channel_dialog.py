@@ -18,6 +18,7 @@ from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 
@@ -142,19 +143,19 @@ class CloseChannelDialog(QDialog):
         """Retranslate ui"""
         self.close_channel_text = f'{
             QCoreApplication.translate(
-                "iris_wallet_desktop", "close_channel_prompt", None
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, "close_channel_prompt", None
             )
         } {self.pub_key}?'
 
         self.close_channel_detail_text_label.setText(self.close_channel_text)
         self.close_channel_cancel_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'cancel', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'cancel', None,
             ),
         )
         self.close_channel_continue_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'continue', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'continue', None,
             ),
         )
 

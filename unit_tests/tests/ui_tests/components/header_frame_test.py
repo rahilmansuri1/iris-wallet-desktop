@@ -13,6 +13,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 
 from src.model.enums.enums_model import WalletType
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.views.components.header_frame import HeaderFrame
 
 
@@ -61,7 +62,7 @@ def test_network_error_frame_visibility_when_offline(header_frame):
 
         # Assert the correct error message is displayed
         expected_message = QCoreApplication.translate(
-            'iris_wallet_desktop', 'connection_error_message', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'connection_error_message', None,
         )
         assert header_frame.network_error_info_label.text(
         ) == expected_message, 'Error message is incorrect'

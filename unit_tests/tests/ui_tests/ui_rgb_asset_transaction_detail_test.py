@@ -15,6 +15,7 @@ from src.model.enums.enums_model import TransferStatusEnumModel
 from src.model.rgb_model import RgbAssetPageLoadModel
 from src.model.rgb_model import TransportEndpoint
 from src.model.transaction_detail_page_model import TransactionDetailPageModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.ui_rgb_asset_transaction_detail import RGBAssetTransactionDetail
 
@@ -68,11 +69,11 @@ def test_retranslate_ui(rgb_asset_transaction_detail_widget: RGBAssetTransaction
     rgb_asset_transaction_detail_widget.retranslate_ui()
 
     expected_tx_id_text = QCoreApplication.translate(
-        'iris_wallet_desktop', 'transaction_id', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'transaction_id', None,
     )
 
     expected_blinded_utxo_text = QCoreApplication.translate(
-        'iris_wallet_desktop', 'amount', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount', None,
     )
 
     assert rgb_asset_transaction_detail_widget.tx_id_label.text() == expected_tx_id_text
@@ -136,7 +137,7 @@ def test_set_rgb_asset_value(rgb_asset_transaction_detail_widget: RGBAssetTransa
     with patch('src.views.ui_rgb_asset_transaction_detail.load_stylesheet', return_value='mocked_stylesheet'):
         rgb_asset_transaction_detail_widget.set_rgb_asset_value()
     assert rgb_asset_transaction_detail_widget.date_label.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'status', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'status', None,
     )
     assert rgb_asset_transaction_detail_widget.date_value.text(
     ) == rgb_asset_transaction_detail_widget.params.transaction_status
@@ -147,7 +148,7 @@ def test_set_rgb_asset_value(rgb_asset_transaction_detail_widget: RGBAssetTransa
     with patch('src.views.ui_rgb_asset_transaction_detail.load_stylesheet', return_value='mocked_stylesheet'):
         rgb_asset_transaction_detail_widget.set_rgb_asset_value()
     assert rgb_asset_transaction_detail_widget.date_label.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'status', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'status', None,
     )
     assert rgb_asset_transaction_detail_widget.date_value.text(
     ) == rgb_asset_transaction_detail_widget.params.transaction_status

@@ -30,6 +30,7 @@ from src.model.enums.enums_model import TransferType
 from src.model.selection_page_model import SelectionPageModel
 from src.model.transaction_detail_page_model import TransactionDetailPageModel
 from src.utils.common_utils import network_info
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
@@ -281,31 +282,33 @@ class BtcWidget(QWidget):
         """Retranslate the UI elements."""
         self.bitcoin_text = f'{
             QCoreApplication.translate(
-                "iris_wallet_desktop", "bitcoin", None
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, "bitcoin", None
             )
         } ({self.network})'
         self.bitcoin_title.setText(self.bitcoin_text)
         self.transactions.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'transfers', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'transfers', None,
             ),
         )
         self.balance_value.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'total_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'total_balance', None,
             ),
         )
         self.bitcoin_balance.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'SAT', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'SAT', None,
+            ),
         )
         self.spendable_balance_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'spendable_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'spendable_balance', None,
             ),
         )
         self.spendable_balance_value.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'SAT', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'SAT', None,
             ),
         )
 

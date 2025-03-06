@@ -6,7 +6,6 @@ from __future__ import annotations
 
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QSize
-from PySide6.QtCore import Qt
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QFrame
@@ -22,6 +21,7 @@ from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
 from src.model.enums.enums_model import ToastPreset
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import SYNCING_CHAIN_LABEL_TIMER
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
@@ -251,22 +251,24 @@ class EnterWalletPassword(QWidget):
         """Retranslate the UI elements."""
         self.enter_wallet_password.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'enter_wallet_password', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'enter_wallet_password', None,
             ),
         )
 
         self.enter_password_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'enter_your_password', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'enter_your_password', None,
             ),
         )
         self.login_wallet_button.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'login', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'login', None,
+            ),
         )
         self.setup_ui_connection()
         self.syncing_chain_info_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'syncing_chain_info', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'syncing_chain_info', None,
             ),
         )
 

@@ -42,6 +42,7 @@ asyncio = "^3.4.3"
 requests-cache = "^1.2.1"
 pytest-xdist = "^3.6.1"
 rgb-lib = "0.3.0a12"
+
 [tool.poetry.dev-dependencies]
 black = "24.4.1"
 bump2version = "1.0.1"

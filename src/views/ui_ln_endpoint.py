@@ -24,6 +24,7 @@ import src.resources_rc
 from src.data.repository.setting_repository import SettingRepository
 from src.utils.common_utils import close_button_navigation
 from src.utils.constant import BACKED_URL_LIGHTNING_NETWORK
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.buttons import PrimaryButton
@@ -239,22 +240,22 @@ class LnEndpointWidget(QWidget):
         """Retranslate the UI elements."""
         self.ln_node_connection.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'lightning_node_connection', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'lightning_node_connection', None,
             ),
         )
         self.node_endpoint_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'rgb_lightning_node_url', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'rgb_lightning_node_url', None,
             ),
         )
         self.enter_ln_node_url_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'enter_lightning_node_url', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'enter_lightning_node_url', None,
             ),
         )
         self.proceed_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'proceed', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'proceed', None,
             ),
         )
 
@@ -269,7 +270,7 @@ class LnEndpointWidget(QWidget):
         """Set the validation for lightning node URL"""
         self.label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'invalid_url', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'invalid_url', None,
             ),
         )
 

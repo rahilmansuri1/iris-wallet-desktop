@@ -28,6 +28,7 @@ from src.utils.common_utils import network_info
 from src.utils.common_utils import zip_logger_folder
 from src.utils.constant import ANNOUNCE_ADDRESS
 from src.utils.constant import ANNOUNCE_ALIAS
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LDK_PORT_KEY
 from src.utils.constant import PRIVACY_POLICY_URL
 from src.utils.constant import TERMS_OF_SERVICE_URL
@@ -177,18 +178,18 @@ class AboutWidget(QWidget):
     def retranslate_ui(self):
         """Retranslate the UI elements."""
         self.privacy_policy_text = QCoreApplication.translate(
-            'iris_wallet_desktop', 'privacy_policy', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'privacy_policy', None,
         )
         self.app_version_text = QCoreApplication.translate(
-            'iris_wallet_desktop', 'app_version', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'app_version', None,
         )
         self.terms_of_service_text = QCoreApplication.translate(
-            'iris_wallet_desktop', 'terms_of_service', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'terms_of_service', None,
         )
 
         self.app_version_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', f'{self.app_version_text} {
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, f'{self.app_version_text} {
                     __version__
                 }-{self.network}', None,
             ),
@@ -205,13 +206,13 @@ class AboutWidget(QWidget):
         )
         self.download_log.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'download_debug_log', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'download_debug_log', None,
             ),
         )
         self.rln_node_connection_type.key_label.setText(
             f"{
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'connection_type'
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'connection_type'
                 )
             }:",
         )

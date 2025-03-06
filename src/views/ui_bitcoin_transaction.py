@@ -26,6 +26,7 @@ from src.model.transaction_detail_page_model import TransactionDetailPageModel
 from src.utils.common_utils import get_bitcoin_explorer_url
 from src.utils.common_utils import insert_zero_width_spaces
 from src.utils.common_utils import network_info
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.wallet_logo_frame import WalletLogoFrame
@@ -232,12 +233,12 @@ class BitcoinTransactionDetail(QWidget):
         self.url = get_bitcoin_explorer_url(self.params.tx_id)
         self.bitcoin_text = f'{
             QCoreApplication.translate(
-                "iris_wallet_desktop", "bitcoin", None
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, "bitcoin", None
             )
         } ({self.network})'
         self.tx_id_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'transaction_id', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'transaction_id', None,
             ),
         )
         if SettingRepository.get_wallet_network() != NetworkEnumModel.REGTEST:
@@ -249,12 +250,12 @@ class BitcoinTransactionDetail(QWidget):
             self.bitcoin_tx_id_value.setText(self.tx_id)
         self.btc_amount_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'amount', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount', None,
             ),
         )
         self.date_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'date', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'date', None,
             ),
         )
         self.bitcoin_title_value.setText(self.bitcoin_text)
@@ -290,7 +291,7 @@ class BitcoinTransactionDetail(QWidget):
         else:
             self.date_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'status', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'status', None,
                 ),
             )
             self.date_value.setText(self.params.transaction_status)

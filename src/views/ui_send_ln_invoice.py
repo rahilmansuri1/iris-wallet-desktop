@@ -23,6 +23,7 @@ import src.resources_rc
 from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import ChannelFetchingModel
 from src.model.invoices_model import DecodeInvoiceResponseModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
@@ -491,72 +492,72 @@ class SendLnInvoiceWidget(QWidget):
         """Retranslate the UI elements."""
         self.enter_ln_invoice_title_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'enter_ln_invoice_title_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'enter_ln_invoice_title_label', None,
             ),
         )
         self.ln_invoice_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'ln_invoice_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'ln_invoice_label', None,
             ),
         )
         self.invoice_detail_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'invoice_detail_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'invoice_detail_label', None,
             ),
         )
         self.amount_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'msat_amount_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'msat_amount_label', None,
             ),
         )
         self.expiry_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'expiry_label_sec', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'expiry_label_sec', None,
             ),
         )
         self.timestamp_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'timestamp_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'timestamp_label', None,
             ),
         )
         self.asset_id_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_id', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_id', None,
             ),
         )
         self.asset_amount_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_amount_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_amount_label', None,
             ),
         )
         self.p_hash_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'p_hash_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'p_hash_label', None,
             ),
         )
         self.p_secret_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'p_secret_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'p_secret_label', None,
             ),
         )
         self.p_pubkey_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'p_pubkey_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'p_pubkey_label', None,
             ),
         )
         self.network_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'network_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'network_label', None,
             ),
         )
         self.amount_validation_error_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'amount_validation_error_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount_validation_error_label', None,
             ),
         )
         self.send_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'send_button', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'send_button', None,
             ),
         )
 

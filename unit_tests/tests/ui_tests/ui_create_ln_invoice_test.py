@@ -11,6 +11,7 @@ import pytest
 from PySide6.QtCore import QCoreApplication
 
 from src.model.enums.enums_model import AssetType
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.ln_offchain_view_model import LnOffChainViewModel
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.ui_create_ln_invoice import CreateLnInvoiceWidget
@@ -335,7 +336,7 @@ def test_msat_value_is_valid(create_ln_invoice_widget):
     assert create_ln_invoice_widget.msat_value_is_valid() is False
     create_ln_invoice_widget.msat_error_label.setText.assert_called_with(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'msat_lower_bound_limit', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'msat_lower_bound_limit', None,
         ).format(create_ln_invoice_widget.node_info.rgb_htlc_min_msat // 1000),
     )
     create_ln_invoice_widget.msat_error_label.show.assert_called()
@@ -345,7 +346,7 @@ def test_msat_value_is_valid(create_ln_invoice_widget):
     assert create_ln_invoice_widget.msat_value_is_valid() is False
     create_ln_invoice_widget.msat_error_label.setText.assert_called_with(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'msat_uper_bound_limit', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'msat_uper_bound_limit', None,
         ).format(10000),  # max_inbound_balance // 1000
     )
     create_ln_invoice_widget.msat_error_label.show.assert_called()
@@ -357,7 +358,7 @@ def test_msat_value_is_valid(create_ln_invoice_widget):
     assert create_ln_invoice_widget.msat_value_is_valid() is False
     create_ln_invoice_widget.msat_error_label.setText.assert_called_with(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'msat_uper_bound_limit', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'msat_uper_bound_limit', None,
         ).format(0),
     )
     create_ln_invoice_widget.msat_error_label.show.assert_called()
@@ -413,12 +414,12 @@ def test_handle_bitcoin_layout(create_ln_invoice_widget):
     # Verify the labels and placeholders are set for non-BITCOIN assets
     create_ln_invoice_widget.amount_label.setText.assert_called_with(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'asset_amount', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_amount', None,
         ),
     )
     create_ln_invoice_widget.amount_input.setPlaceholderText.assert_called_with(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'asset_amount', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_amount', None,
         ),
     )
 

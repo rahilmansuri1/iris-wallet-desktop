@@ -9,6 +9,7 @@ Just define any function and call it immediately, or anything else, and it will 
 from __future__ import annotations
 
 import argparse
+import atexit
 import shutil
 import sys
 from pathlib import Path
@@ -97,8 +98,17 @@ def modify_constant_file(app_name: str | None):
         file.writelines(new_lines)
 
 
+def restore_constant_file():
+    """Restore the original constant file and remove the temporary backup."""
+    temp_path = Path(TEMP_CONSTANT_PATH)
+    if temp_path.exists():
+        shutil.copy(temp_path, CONSTANT_PATH)  # Restore original constants
+        temp_path.unlink()  # Delete the temporary backup file
+
+
 # Dev note: Exercise caution before removing this section of code.
 if not getattr(sys, 'frozen', False):
     args = network_configure()
     # Use the app-name argument in modify_constant_file
     modify_constant_file(args.app_name)
+    atexit.register(restore_constant_file)

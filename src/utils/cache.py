@@ -27,6 +27,7 @@ from src.utils.constant import CACHE_EXPIRE_TIMEOUT
 from src.utils.constant import CACHE_FILE_NAME
 from src.utils.constant import CACHE_FOLDER_NAME
 from src.utils.constant import DEFAULT_CACHE_FILENAME
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.error_mapping import ERROR_MAPPING
 from src.utils.global_toast import global_toaster
 from src.utils.local_store import local_store
@@ -242,7 +243,7 @@ class Cache:
         """
         error_key = ERROR_MAPPING.get(message_key)
         translated_error_message = QCoreApplication.translate(
-            'iris_wallet_desktop', error_key, None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, error_key, None,
         )
         global_toaster.cache_error_event.emit(translated_error_message)
 

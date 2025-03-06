@@ -20,6 +20,7 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 from src.model.help_card_content_model import HelpCardContentModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.header_frame import HeaderFrame
@@ -108,7 +109,9 @@ class HelpWidget(QWidget):
     def retranslate_ui(self):
         """Retranslate the UI elements."""
         self.help_title_label.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'help', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'help', None,
+            ),
         )
 
     def create_help_frames(self):

@@ -18,10 +18,10 @@ from src.model.rgb_model import DecodeRgbInvoiceRequestModel
 from src.model.rgb_model import DecodeRgbInvoiceResponseModel
 from src.model.rgb_model import ListTransferAssetWithBalanceResponseModel
 from src.model.setting_model import DefaultFeeRate
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SEND_ASSET
 from src.utils.error_message import ERROR_UNEXPECTED
-from src.utils.logging import logger
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.loading_screen import LoadingTranslucentScreen
@@ -326,6 +326,6 @@ class SendRGBAssetWidget(QWidget):
             self.send_rgb_asset_page.send_btn.setDisabled(True)
             self.send_rgb_asset_page.asset_address_validation_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'invalid_invoice',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'invalid_invoice',
                 ),
             )
