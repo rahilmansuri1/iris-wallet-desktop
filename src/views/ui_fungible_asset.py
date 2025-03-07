@@ -316,6 +316,7 @@ class FungibleAssetWidget(QWidget, ThreadManager):
 
         self.asset_name = QLabel(self.fungible_frame)
         self.asset_name.setObjectName('asset_name')
+        self.asset_name.setMinimumSize(QSize(135, 40))
         self.asset_name.setStyleSheet(
             load_stylesheet(
                 'views/qss/fungible_asset_style.qss',
@@ -339,7 +340,6 @@ class FungibleAssetWidget(QWidget, ThreadManager):
             elif network == NetworkEnumModel.TESTNET:
                 self.address.setText(TokenSymbol.TESTNET_BITCOIN)
         else:
-            self.asset_name.setMinimumSize(QSize(135, 40))
             self.address.setText(asset.asset_id)
 
         self.grid_layout_fungible_frame.addWidget(
