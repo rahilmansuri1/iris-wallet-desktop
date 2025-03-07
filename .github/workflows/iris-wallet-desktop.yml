@@ -58,12 +58,12 @@ jobs:
 
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node
-        run: cargo install --locked --debug --path .
+        run: cargo build --release
 
       - name: Copy rgb-lightning-node binary to root directory
         run: |
           mkdir ln_node_binary
-          cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary
+          cp rgb-lightning-node/target/release/rgb-lightning-node ln_node_binary
 
       - name: Set environment variables from GitHub Secrets and generate config.py
         env:
@@ -170,12 +170,12 @@ jobs:
 
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node
-        run: cargo install --locked --debug --path .
+        run: cargo build --release
 
       - name: Copy rgb-lightning-node binary to root directory
         run: |
           mkdir ln_node_binary
-          cp rgb-lightning-node/target/debug/rgb-lightning-node ln_node_binary
+          cp rgb-lightning-node/target/release/rgb-lightning-node ln_node_binary
 
       - name: Set environment variables from secrets and create config.py
         env:

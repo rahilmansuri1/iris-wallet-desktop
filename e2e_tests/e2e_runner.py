@@ -1,14 +1,15 @@
 """
-End-to-End Testing Script for Embedded and Connect Wallet Modes.
+End-to-End Testing Script for Embedded and Remote Wallet Modes.
 """
 from __future__ import annotations
 
 import subprocess
 import sys
 
+from accessible_constant import DEFAULT_WALLET_MODES
+
 E2E_SCRIPT = './run_e2e_tests.sh'
 # Default modes if none is provided
-DEFAULT_WALLET_MODES = ['embedded', 'connect']
 
 
 def run_e2e(extra_args=None):
@@ -93,9 +94,9 @@ def result_embedded():
     serve_allure_result('allure-results-embedded')
 
 
-def result_connect():
-    """Serves the Allure report for connect wallet mode."""
-    serve_allure_result('allure-results-connect')
+def result_remote():
+    """Serves the Allure report for remote wallet mode."""
+    serve_allure_result('allure-results-remote')
 
 
 def run_regtest(extra_args=None):

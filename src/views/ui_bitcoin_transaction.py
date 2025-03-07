@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from accessible_constant import BITCOIN_AMOUNT_VALUE
 from accessible_constant import BITCOIN_TX_ID
 from accessible_constant import BITCOIN_TX_PAGE_CLOSE_BUTTON
 from src.data.repository.setting_repository import SettingRepository
@@ -191,6 +192,9 @@ class BitcoinTransactionDetail(QWidget):
             self.bitcoin_single_transaction_detail_widget,
         )
         self.bitcoin_amount_value.setObjectName('amount_value')
+        self.bitcoin_amount_value.setAccessibleDescription(
+            BITCOIN_AMOUNT_VALUE,
+        )
         self.bitcoin_amount_value.setMinimumSize(QSize(0, 60))
 
         self.amount_layout.addWidget(

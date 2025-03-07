@@ -85,7 +85,7 @@ def test_available_channels_success(channel_view_model):
         peer_alias='peer_alias',
         ready=True,
         capacity_sat=1000,
-        local_balance_msat=500000,
+        local_balance_sat=500000,
         is_usable=True,
         public=True,
     )

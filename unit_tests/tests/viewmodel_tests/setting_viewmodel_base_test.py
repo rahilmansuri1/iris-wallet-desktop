@@ -285,7 +285,7 @@ def test_on_page_load(mock_toast_manager, mock_setting_card_repository, mock_set
         is_enabled=True,
     )
     mock_setting_card_repository.get_default_fee_rate.return_value = DefaultFeeRate(
-        fee_rate=0.5,
+        fee_rate=5,
     )
     mock_setting_card_repository.get_default_expiry_time.return_value = DefaultExpiryTime(
         time=600,
@@ -324,7 +324,7 @@ def test_on_page_load(mock_toast_manager, mock_setting_card_repository, mock_set
             is_enabled=True,
         ),
         status_of_hide_asset=IsShowHiddenAssetEnabled(is_enabled=True),
-        value_of_default_fee=DefaultFeeRate(fee_rate=0.5),
+        value_of_default_fee=DefaultFeeRate(fee_rate=5),
         value_of_default_expiry_time=DefaultExpiryTime(
             time=600, unit='minutes',
         ),

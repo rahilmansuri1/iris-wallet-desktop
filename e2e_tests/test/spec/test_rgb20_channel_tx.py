@@ -60,7 +60,7 @@ def test_send_and_receive_with_correct_invoice_for_rgb20(wallets_and_operations:
                 application=SECOND_APPLICATION, ip_address=IP_ADDRESS,
             )
         else:
-            node_uri = wallets_and_operations.second_page_features.channel_features.get_node_uri_for_connect(
+            node_uri = wallets_and_operations.second_page_features.channel_features.get_node_uri_for_remote(
                 application=SECOND_APPLICATION, ip_address=IP_ADDRESS, ln_port=LN_PORT,
             )
 

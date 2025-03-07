@@ -15,7 +15,8 @@ from dogtail.rawinput import typeText
 from dotenv import load_dotenv
 from Xlib import display
 from Xlib import X
-# from dogtail.tree import Node
+
+from accessible_constant import TOASTER_DESCRIPTION
 
 load_dotenv()
 AUTHENTICATION_PASSWORD = os.getenv('AUTHENTICATION_PASSWORD')
@@ -217,7 +218,7 @@ class BaseOperations:
         """
         return self.activate_window_by_name(application)
 
-    def perform_action_on_element(self, role_name, name=None, description=None, timeout=10, retry_interval=0.5):
+    def perform_action_on_element(self, role_name, name=None, description=None, timeout=30, retry_interval=0.5):
         """
         Retrieves the specified element with the given role and name or description, with retries.
 
@@ -225,7 +226,7 @@ class BaseOperations:
             role_name (str): The role of the element.
             name (str, optional): The name of the element. Defaults to None.
             description (str, optional): The description of the element. Defaults to None.
-            timeout (int): The maximum time to wait for the element in seconds. Defaults to 10.
+            timeout (int): The maximum time to wait for the element in seconds. Defaults to 30.
             retry_interval (float): The time to wait between retries in seconds. Defaults to 0.5.
 
         Returns:
@@ -265,7 +266,7 @@ class BaseOperations:
 
         return False
 
-    def get_first_element(self, role_name, name=None, description=None, timeout=10, retry_interval=0.5):
+    def get_first_element(self, role_name, name=None, description=None, timeout=30, retry_interval=0.5):
         """
         Retrieves the first element with the given role and name or description, with retries.
 
@@ -273,7 +274,7 @@ class BaseOperations:
             role_name (str): The role of the element.
             name (str, optional): The name of the element. Defaults to None.
             description (str, optional): The description of the element. Defaults to None.
-            timeout (int): The maximum time to wait for the element in seconds. Defaults to 10.
+            timeout (int): The maximum time to wait for the element in seconds. Defaults to 30.
             retry_interval (float): The time to wait between retries in seconds. Defaults to 0.5.
 
         Returns:
@@ -329,13 +330,13 @@ class BaseOperations:
             return element.text
         return None
 
-    def wait_for_toaster_message(self, toaster_name, timeout=60, interval=0.5):
+    def wait_for_toaster_message(self, toaster_name=TOASTER_DESCRIPTION, timeout=120, interval=0.5):
         """
         Waits until a toaster message appears on the screen.
 
         Args:
             toaster_name (str): The accessible name of the toaster message.
-            timeout (int): Maximum time to wait (in seconds). Default is 60 seconds.
+            timeout (int): Maximum time to wait (in seconds). Default is 120 seconds.
             interval (float): Time interval between checks. Default is 0.5 seconds.
 
         Raises:

@@ -542,8 +542,8 @@ def test_close_button_navigation_wallet_selection_page(mock_page_navigation):
         title='connection_type',
         logo_1_path=':/assets/embedded.png',
         logo_1_title='embedded',
-        logo_2_path=':/assets/connect.png',
-        logo_2_title='connect',
+        logo_2_path=':/assets/remote.png',
+        logo_2_title='remote',
         asset_id='none',
         asset_name=None,
         callback='none',
@@ -968,7 +968,7 @@ def test_sigterm_handler(mock_qapp_instance, mock_ln_node_manager_get_instance, 
         QMessageBox.Ok | QMessageBox.Cancel,
     )
     mock_ln_node_manager.stop_server_from_close_button.assert_called_once()
-    mock_qapp.quit.assert_called_once()
+    mock_qapp.exit.assert_called_once()
 
     # Reset mocks for next case
     mock_qmessagebox_warning.reset_mock()

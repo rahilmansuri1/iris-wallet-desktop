@@ -151,9 +151,9 @@ class Channel(MainPageObjects, BaseOperations):
 
         return embedded_node_uri
 
-    def get_node_uri_for_connect(self, application, ip_address, ln_port):
-        """Get the node URI for Connect"""
-        node_pubkey, connect_node_uri = None, None
+    def get_node_uri_for_remote(self, application, ip_address, ln_port):
+        """Get the node URI for Remote"""
+        node_pubkey, remote_node_uri = None, None
         self.do_focus_on_application(application)
 
         if self.do_is_displayed(self.sidebar_page_objects.about_button()):
@@ -166,6 +166,6 @@ class Channel(MainPageObjects, BaseOperations):
         if self.do_is_displayed(self.sidebar_page_objects.fungibles_button()):
             self.sidebar_page_objects.click_fungibles_button()
 
-        connect_node_uri = f"{node_pubkey}@{ip_address}:{ln_port}"
+        remote_node_uri = f"{node_pubkey}@{ip_address}:{ln_port}"
 
-        return connect_node_uri
+        return remote_node_uri

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from accessible_constant import OPTION_1_FRAME
 from accessible_constant import OPTION_2_FRAME
+from accessible_constant import WALLET_OR_TRANSFER_SELECTION_CONTINUE_BUTTON
 from e2e_tests.test.utilities.base_operation import BaseOperations
 
 
@@ -26,8 +27,11 @@ class WalletSelectionPageObjects(BaseOperations):
         self.embedded_button = lambda: self.perform_action_on_element(
             role_name='panel', name=OPTION_1_FRAME,
         )
-        self.connect_button = lambda: self.perform_action_on_element(
+        self.remote_button = lambda: self.perform_action_on_element(
             role_name='panel', name=OPTION_2_FRAME,
+        )
+        self.continue_button = lambda: self.perform_action_on_element(
+            role_name='push button', name=WALLET_OR_TRANSFER_SELECTION_CONTINUE_BUTTON,
         )
 
     def click_embedded_button(self):
@@ -39,11 +43,17 @@ class WalletSelectionPageObjects(BaseOperations):
         """
         return self.do_click(self.embedded_button()) if self.do_is_displayed(self.embedded_button()) else None
 
-    def click_connect_button(self):
+    def click_remote_button(self):
         """
-        Clicks the connect button if it is displayed.
+        Clicks the remote button if it is displayed.
 
         Returns:
             The result of the click action or None if the button is not displayed.
         """
-        return self.do_click(self.connect_button()) if self.do_is_displayed(self.connect_button()) else None
+        return self.do_click(self.remote_button()) if self.do_is_displayed(self.remote_button()) else None
+
+    def click_continue_button(self):
+        """
+        Clicks the continue button if it is displayed.
+        """
+        return self.do_click(self.continue_button()) if self.do_is_displayed(self.continue_button()) else None

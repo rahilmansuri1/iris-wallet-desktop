@@ -105,7 +105,6 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         self.outbound_amount_header = None
         self.symbol_header = None
         self.outbound_balance = None
-        self.signal_connected = False
 
         self.vertical_layout_fungible_2.addWidget(self.title_frame)
 
@@ -175,11 +174,6 @@ class FungibleAssetWidget(QWidget, ThreadManager):
 
     def show_assets(self):
         """This method creates all the fungible assets elements of the main asset page."""
-        self._view_model.receive_bitcoin_view_model.get_bitcoin_address()
-        if self.signal_connected:
-            self._view_model.receive_bitcoin_view_model.address.disconnect()
-            self.signal_connected = False
-
         for i in reversed(range(self.vertical_layout_3.count())):
             widget = self.vertical_layout_3.itemAt(i).widget()
             if widget is not None:
@@ -208,6 +202,9 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         self.address_header.setMinimumSize(QSize(600, 0))
         self.address_header.setMaximumSize(QSize(16777215, 16777215))
         self.header_layout.addWidget(self.address_header, 0, 2, Qt.AlignLeft)
+        self.address_header.setStyleSheet(
+            'padding-left: 10px;',
+        )
 
         self.amount_header = QLabel(self.header_frame)
         self.amount_header.setObjectName('amount_header')
@@ -256,7 +253,7 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         )
         self.address_header.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'address', None,
+                'iris_wallet_desktop', 'asset_id', None,
             ),
         )
         self.amount_header.setText(
@@ -331,16 +328,16 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         self.address.setObjectName('address')
         self.address.setMinimumSize(QSize(600, 0))
         self.address.setMaximumSize(QSize(16777215, 16777215))
+        self.address.setStyleSheet(
+            'padding-left:10px;',
+        )
 
         if asset.asset_iface == AssetType.BITCOIN:
-            # Connect signal to update label when the address is updated
-            self.asset_name.setMinimumSize(QSize(130, 40))
-            self._view_model.receive_bitcoin_view_model.address.connect(
-                lambda addr, label=self.address: self.set_bitcoin_address(
-                    label, addr,
-                ),
-            )
-            self.signal_connected = True
+            network = SettingRepository.get_wallet_network()
+            if network == NetworkEnumModel.REGTEST:
+                self.address.setText(TokenSymbol.REGTEST_BITCOIN)
+            elif network == NetworkEnumModel.TESTNET:
+                self.address.setText(TokenSymbol.TESTNET_BITCOIN)
         else:
             self.asset_name.setMinimumSize(QSize(135, 40))
             self.address.setText(asset.asset_id)
@@ -483,7 +480,7 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         """This method handle the backup visibility on embedded or connect wallet type."""
         wallet_type: WalletType = SettingRepository.get_wallet_type()
         self.sidebar = self._view_model.page_navigation.sidebar()
-        if WalletType.CONNECT_TYPE_WALLET.value == wallet_type.value:
+        if WalletType.REMOTE_TYPE_WALLET.value == wallet_type.value:
             self.sidebar.backup.hide()
         if WalletType.EMBEDDED_TYPE_WALLET.value == wallet_type.value:
             self.sidebar.backup.show()
@@ -527,7 +524,3 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         ToastManager.info(
             description=INFO_FAUCET_NOT_AVAILABLE,
         )
-
-    def set_bitcoin_address(self, label: QLabel, address: str):
-        """Set the Bitcoin address in the provided QLabel."""
-        label.setText(address)

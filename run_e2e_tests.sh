@@ -46,7 +46,7 @@ while [[ $# -gt 0 ]]; do
                 WALLET_MODES+=("$2")
                 shift 2
             else
-                echo "Error: --wallet-mode requires a value (embedded or connect)."
+                echo "Error: --wallet-mode requires a value (embedded or remote)."
                 exit 1
             fi
             ;;
@@ -59,7 +59,7 @@ done
 
 # Default to both wallet modes if none are specified
 if [[ ${#WALLET_MODES[@]} -eq 0 ]]; then
-    WALLET_MODES=("embedded" "connect")
+    WALLET_MODES=("embedded" "remote")
 fi
 
 # Ensure constants are restored if the script exits unexpectedly

@@ -26,13 +26,15 @@ TEST_INVALID_INDEXER_URL = 'test.indexer'
 TEST_RGB_PROXY_URL = 'rpcs://proxy.iriswallet.com/0.2/json-rpc'
 TEST_INVALID_RGB_PROXY_URL = 'test.rgb.proxy'
 TEST_INVALID_BITCOIND_HOST = 'test.bitcoind.host'
-TEST_INVALID_BITCOIND_PORT = '42069'
+TEST_INVALID_BITCOIND_PORT = '12345'
 TEST_FEE_RATE = '20'
 TEST_FEE_RATE_TOAST_DESC_SUCCESS = 'Fee rate set successfully'
 TEST_MIN_CONFIRMATION = '6'
 TEST_EXPIRY_MINUTES = '1440'
 TEST_EXPIRY_HOURS = '24'
 TEST_EXPIRY_DAYS = '1'
+
+pytestmark = pytest.mark.order(2)
 
 
 @pytest.mark.parametrize('test_environment', [False], indirect=True)

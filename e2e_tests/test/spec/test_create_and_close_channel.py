@@ -13,6 +13,7 @@ from e2e_tests.test.utilities.app_setup import test_environment
 from e2e_tests.test.utilities.app_setup import wallets_and_operations
 from e2e_tests.test.utilities.app_setup import WalletTestSetup
 from e2e_tests.test.utilities.translation_utils import TranslationManager
+from src.model.enums.enums_model import WalletType
 from src.utils.info_message import INFO_CHANNEL_DELETED
 
 ASSET_TICKER = 'TTK'
@@ -57,12 +58,12 @@ def test_create_channel_with_actual_value(wallets_and_operations: WalletTestSetu
         wallets_and_operations.first_page_objects.asset_detail_page_objects.click_close_button()
 
     with allure.step('Get node URI for create channel'):
-        if wallets_and_operations.wallet_mode == 'embedded':
+        if wallets_and_operations.wallet_mode == WalletType.EMBEDDED_TYPE_WALLET.value:
             node_uri = wallets_and_operations.second_page_features.channel_features.get_node_uri_for_embedded(
                 application=SECOND_APPLICATION, ip_address=IP_ADDRESS,
             )
-        elif wallets_and_operations.wallet_mode == 'connect':
-            node_uri = wallets_and_operations.second_page_features.channel_features.get_node_uri_for_connect(
+        elif wallets_and_operations.wallet_mode == WalletType.REMOTE_TYPE_WALLET.value:
+            node_uri = wallets_and_operations.second_page_features.channel_features.get_node_uri_for_remote(
                 application=SECOND_APPLICATION, ip_address=IP_ADDRESS, ln_port=LN_PORT,
             )
 

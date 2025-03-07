@@ -35,6 +35,9 @@ class Wallet(MainPageObjects, BaseOperations):
         if self.do_is_displayed(self.wallet_selection_page_objects.embedded_button()):
             self.wallet_selection_page_objects.click_embedded_button()
 
+        if self.do_is_displayed(self.wallet_selection_page_objects.continue_button()):
+            self.wallet_selection_page_objects.click_continue_button()
+
         if self.do_is_displayed(self.welcome_page_objects.create_button()):
             self.welcome_page_objects.click_create_button()
 
@@ -84,9 +87,9 @@ class Wallet(MainPageObjects, BaseOperations):
         if self.do_is_displayed(self.fungible_page_objects.refresh_button()):
             self.fungible_page_objects.click_refresh_button()
 
-    def connect_wallet(self, application, url):
+    def remote_wallet(self, application, url):
         """
-        Connect an external wallet.
+        Remote an external wallet.
         """
         self.do_focus_on_application(application)
 
@@ -97,7 +100,10 @@ class Wallet(MainPageObjects, BaseOperations):
             self.term_and_condition_page_objects.click_accept_button()
 
         if self.do_is_displayed(self.wallet_selection_page_objects.embedded_button()):
-            self.wallet_selection_page_objects.click_connect_button()
+            self.wallet_selection_page_objects.click_remote_button()
+
+        if self.do_is_displayed(self.wallet_selection_page_objects.continue_button()):
+            self.wallet_selection_page_objects.click_continue_button()
 
         if self.do_is_displayed(self.ln_endpoint_page_objects.ln_node_url()):
             self.ln_endpoint_page_objects.enter_ln_node_url(url=url)
@@ -123,6 +129,6 @@ class Wallet(MainPageObjects, BaseOperations):
         if wallets_and_operations.wallet_mode == WalletType.EMBEDDED_TYPE_WALLET.value:
             self.create_embedded_wallet(application)
         else:
-            self.connect_wallet(application=application, url=application_url)
+            self.remote_wallet(application=application, url=application_url)
         if fund:
             self.fund_wallet(application)

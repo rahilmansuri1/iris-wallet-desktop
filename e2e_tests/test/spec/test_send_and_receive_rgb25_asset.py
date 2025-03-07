@@ -8,9 +8,11 @@ from accessible_constant import FIRST_APPLICATION
 from accessible_constant import FIRST_APPLICATION_URL
 from accessible_constant import SECOND_APPLICATION
 from accessible_constant import SECOND_APPLICATION_URL
+from e2e_tests.test.utilities.app_setup import load_qm_translation
 from e2e_tests.test.utilities.app_setup import test_environment
 from e2e_tests.test.utilities.app_setup import wallets_and_operations
 from e2e_tests.test.utilities.app_setup import WalletTestSetup
+from e2e_tests.test.utilities.translation_utils import TranslationManager
 from src.model.enums.enums_model import TransactionStatusEnumModel
 
 ASSET_NAME = 'RGB25'
@@ -18,7 +20,6 @@ ASSET_DESCRIPTION = 'This is rgb25 asset'
 ASSET_AMOUNT = '2000'
 SEND_AMOUNT = '50'
 INVOICE = 'rgb:~/~/utxob:2msKeFq-uPjwpYxVY-jKS2ymYBq-SqmyP3ovg-AGvth8491-J7seMBm?expiry=1709616110&endpoints=rpc://10.0.2.2:3000/json-rpc'
-RGB25_TOASTER_DESCRIPTION = 'An unexpected error occurred: The invoice entered is invalid'
 
 
 @allure.feature('Automation of Send Operation for RGB25 Asset in Iris Wallet')
@@ -50,12 +51,17 @@ def test_send_rgb25_with_expired_invoice(wallets_and_operations: WalletTestSetup
             ASSET_NAME,
         )
         wallets_and_operations.first_page_objects.asset_detail_page_objects.click_send_button()
-        description = wallets_and_operations.first_page_features.send_features.send_with_wrong_invoice(
-            application=FIRST_APPLICATION, receiver_invoice=INVOICE, amount=SEND_AMOUNT,
+        wallets_and_operations.first_page_objects.send_asset_page_objects.enter_asset_invoice(
+            INVOICE,
         )
+    with allure.step('get the asset invoice validation label'):
+        validation_label = wallets_and_operations.first_page_objects.send_asset_page_objects.get_asset_address_validation_label()
+        wallets_and_operations.first_page_objects.send_asset_page_objects.click_send_asset_close_button()
 
-    with allure.step('Verify Error Message'):
-        assert description == RGB25_TOASTER_DESCRIPTION
+    with allure.step('Verify Error Message for rgb25 asset'):
+        assert validation_label == TranslationManager.translate(
+            'invalid_invoice',
+        )
 
 
 @allure.feature('Automation of Receive, Send, and Transaction Status for RGB25 Asset in Iris Wallet')
@@ -92,8 +98,8 @@ def test_send_and_receive_rgb25_asset_operation(wallets_and_operations: WalletTe
         wallets_and_operations.second_page_operations.do_focus_on_application(
             SECOND_APPLICATION,
         )
-        wallets_and_operations.second_page_objects.sidebar_page_objects.click_collectibles_button()
         wallets_and_operations.second_page_objects.collectible_page_objects.click_refresh_button()
+        wallets_and_operations.second_page_objects.sidebar_page_objects.click_collectibles_button()
         wallets_and_operations.second_page_objects.collectible_page_objects.click_rgb25_frame(
             ASSET_NAME,
         )

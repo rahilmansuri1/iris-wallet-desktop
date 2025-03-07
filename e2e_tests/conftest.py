@@ -6,7 +6,8 @@ from __future__ import annotations
 
 import pytest
 
-DEFAULT_WALLET_MODES = ['embedded', 'connect']  # Default wallet modes
+from accessible_constant import DEFAULT_WALLET_MODES
+from src.model.enums.enums_model import WalletType
 
 
 def pytest_addoption(parser):
@@ -19,7 +20,7 @@ def pytest_addoption(parser):
         '--wallet-mode',
         action='store',
         choices=DEFAULT_WALLET_MODES,
-        help="Set wallet mode to 'embedded' or 'connect'. If not provided, tests run for both modes.",
+        help="Set wallet mode to 'embedded' or 'remote'. If not provided, tests run for both modes.",
     )
 
 
@@ -55,13 +56,13 @@ def pytest_runtest_setup(item):
     wallet_mode = item.config.getoption('--wallet-mode')
 
     # Skip tests marked with @pytest.mark.skip_for_embedded if running in embedded mode
-    if wallet_mode == 'embedded' and any(mark.name == 'skip_for_embedded' for mark in item.own_markers):
+    if wallet_mode == WalletType.EMBEDDED_TYPE_WALLET.value and any(mark.name == 'skip_for_embedded' for mark in item.own_markers):
         pytest.skip(
             'Skipping test because it is not applicable in embedded mode.',
         )
 
-    # Skip tests marked with @pytest.mark.skip_for_connect if running in connect mode
-    if wallet_mode == 'connect' and any(mark.name == 'skip_for_connect' for mark in item.own_markers):
+    # Skip tests marked with @pytest.mark.skip_for_remote if running in remote mode
+    if wallet_mode == WalletType.REMOTE_TYPE_WALLET.value and any(mark.name == 'skip_for_remote' for mark in item.own_markers):
         pytest.skip(
-            'Skipping test because it is not applicable in connect mode.',
+            'Skipping test because it is not applicable in remote mode.',
         )

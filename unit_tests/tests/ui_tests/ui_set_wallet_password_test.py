@@ -24,7 +24,7 @@ def set_wallet_password_widget(qtbot):
     mock_navigation = MagicMock()
     view_model = MagicMock(MainViewModel(mock_navigation))
     widget = SetWalletPasswordWidget(
-        view_model, WalletType.CONNECT_TYPE_WALLET.value,
+        view_model, WalletType.REMOTE_TYPE_WALLET.value,
     )
     qtbot.addWidget(widget)
     return widget
@@ -39,7 +39,7 @@ def test_close_navigation(set_wallet_password_widget: SetWalletPasswordWidget):
     set_wallet_password_widget._view_model.page_navigation.welcome_page.assert_called_once()
 
     # Test for Connect Wallet Type
-    set_wallet_password_widget.originating_page = WalletType.CONNECT_TYPE_WALLET.value
+    set_wallet_password_widget.originating_page = WalletType.REMOTE_TYPE_WALLET.value
     set_wallet_password_widget.close_navigation()
 
     # Verify that wallet_connection_page is called with the correct parameters
@@ -50,7 +50,7 @@ def test_close_navigation(set_wallet_password_widget: SetWalletPasswordWidget):
     params = args[0]
     assert params.title == 'connection_type'
     assert params.logo_1_title == WalletType.EMBEDDED_TYPE_WALLET.value
-    assert params.logo_2_title == WalletType.CONNECT_TYPE_WALLET.value
+    assert params.logo_2_title == WalletType.REMOTE_TYPE_WALLET.value
 
 
 def test_set_password_suggestion(set_wallet_password_widget: SetWalletPasswordWidget):
@@ -77,11 +77,8 @@ def test_show_password_validation_label(set_wallet_password_widget: SetWalletPas
     assert set_wallet_password_widget.password_validation.objectName() == 'password_validation'
     assert set_wallet_password_widget.password_validation.minimumSize() == QSize(0, 25)
     assert set_wallet_password_widget.password_validation.styleSheet() == (
-        'font: 12px "Inter";\n'
-        'color: rgb(237, 51, 59);\n'
-        'background: transparent;\n'
-        'border: none;\n'
-        'font-weight: 400;\n'
+        'font: 12px "Inter";\ncolor: rgb(237, 51, 59);\n'
+        'background: transparent;\nborder: none;\nfont-weight: 400;\n'
         ''
     )
 

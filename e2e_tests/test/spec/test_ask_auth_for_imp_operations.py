@@ -2,6 +2,8 @@
 """Test module for hiding exhausted asset"""
 from __future__ import annotations
 
+import re
+
 import allure
 import keyring as kr
 
@@ -15,11 +17,12 @@ from e2e_tests.test.utilities.app_setup import test_environment
 from e2e_tests.test.utilities.app_setup import wallets_and_operations
 from e2e_tests.test.utilities.model import WalletTestSetup
 from src.data.repository.setting_repository import SettingRepository
+from src.utils.info_message import INFO_ASSET_SENT
+from src.utils.info_message import INFO_BITCOIN_SENT
 
 ASSET_TICKER = 'TTK'
-ASSET_NAME = 'Tether'
+ASSET_NAME_1 = 'Tether'
 ASSET_AMOUNT = '2000'
-ISSUE_RGB20_TOASTER_MESSAGE = 'You have insufficient funds'
 ASSET_DESCRIPTION = 'RGB25 Asset'
 ASSET_NAME_2 = 'Test Asset'
 
@@ -51,7 +54,7 @@ def test_ask_auth_for_imp_question_send_bitcoin_on(wallets_and_operations: Walle
             wallets_and_operations.first_page_objects.settings_page_objects.click_ask_auth_imp_question()
             wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
 
-    with allure.step('Gettings the receiver\'s address'):
+    with allure.step('Getting the receiver\'s address'):
         wallets_and_operations.second_page_operations.do_focus_on_application(
             SECOND_APPLICATION,
         )
@@ -60,7 +63,6 @@ def test_ask_auth_for_imp_question_send_bitcoin_on(wallets_and_operations: Walle
         address, _ = wallets_and_operations.second_page_features.receive_features.receive(
             SECOND_APPLICATION, transfer_type='bitcoin',
         )
-        wallets_and_operations.second_page_objects.bitcoin_detail_page_objects.click_bitcoin_close_button()
 
     with allure.step('Sending the bitcoin'):
         wallets_and_operations.first_page_operations.do_focus_on_application(
@@ -73,10 +75,22 @@ def test_ask_auth_for_imp_question_send_bitcoin_on(wallets_and_operations: Walle
             FIRST_APPLICATION, address, ASSET_AMOUNT, transfer_type='bitcoin', is_native_auth_enabled=True,
         )
         wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
-        toaster_title = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_title()
+        toaster_description = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
         wallets_and_operations.first_page_objects.bitcoin_detail_page_objects.click_bitcoin_close_button()
 
-        assert toaster_title == 'Success'
+    with allure.step('asserting tx id'):
+        wallets_and_operations.second_page_operations.do_focus_on_application(
+            SECOND_APPLICATION,
+        )
+        wallets_and_operations.second_page_objects.bitcoin_detail_page_objects.click_bitcoin_refresh_button()
+        wallets_and_operations.second_page_objects.bitcoin_detail_page_objects.click_bitcoin_transaction_frame()
+        bitcoin_tx_id = wallets_and_operations.second_page_objects.bitcoin_transaction_detail_page_objects.get_bitcoin_tx_id()
+        wallets_and_operations.second_page_objects.bitcoin_transaction_detail_page_objects.click_close_button()
+        wallets_and_operations.second_page_objects.bitcoin_detail_page_objects.click_bitcoin_close_button()
+        bitcoin_tx_id = re.sub(
+            r'[\u200B\u200C\u200D\u2060\uFEFF]', '', bitcoin_tx_id,
+        )
+        assert toaster_description == INFO_BITCOIN_SENT.format(bitcoin_tx_id)
 
 
 @allure.story('Issuing and sending the RGB assets')
@@ -86,9 +100,8 @@ def test_ask_auth_for_imp_question_issue_rgb_20_on(wallets_and_operations: Walle
         wallets_and_operations.first_page_operations.do_focus_on_application(
             FIRST_APPLICATION,
         )
-        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
         wallets_and_operations.first_page_features.issue_rgb20_features.issue_rgb20_with_sufficient_sats_and_utxo(
-            FIRST_APPLICATION, ASSET_TICKER, ASSET_NAME, ASSET_AMOUNT, is_native_auth_enabled=True,
+            FIRST_APPLICATION, ASSET_TICKER, ASSET_NAME_1, ASSET_AMOUNT, is_native_auth_enabled=True,
         )
 
 
@@ -107,7 +120,6 @@ def test_ask_auth_for_imp_question_send_rgb20_on(wallets_and_operations: WalletT
         wallets_and_operations.first_page_operations.do_focus_on_application(
             FIRST_APPLICATION,
         )
-        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
         wallets_and_operations.first_page_objects.fungible_page_objects.click_rgb20_frame(
             ASSET_AMOUNT,
         )
@@ -115,6 +127,22 @@ def test_ask_auth_for_imp_question_send_rgb20_on(wallets_and_operations: WalletT
         wallets_and_operations.first_page_features.send_features.send(
             FIRST_APPLICATION, rgb20_invoice, ASSET_AMOUNT, is_native_auth_enabled=True,
         )
+        wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
+        toaster_description = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
+    with allure.step('asserting tx id'):
+        wallets_and_operations.second_page_operations.do_focus_on_application(
+            SECOND_APPLICATION,
+        )
+        wallets_and_operations.second_page_objects.fungible_page_objects.click_refresh_button()
+        wallets_and_operations.second_page_objects.fungible_page_objects.click_rgb20_frame(
+            ASSET_NAME_1,
+        )
+        wallets_and_operations.second_page_objects.asset_detail_page_objects.click_rgb_transaction_on_chain_frame()
+        tx_id = wallets_and_operations.second_page_objects.asset_transaction_detail_page_objects.get_tx_id()
+        wallets_and_operations.second_page_objects.asset_transaction_detail_page_objects.click_close_button()
+        wallets_and_operations.second_page_objects.asset_detail_page_objects.click_close_button()
+        tx_id = re.sub(r'[\u200B\u200C\u200D\u2060\uFEFF]', '', tx_id)
+        assert toaster_description == INFO_ASSET_SENT.format(tx_id)
 
 
 @allure.step('Issuing RGB25 Asset')
@@ -124,9 +152,8 @@ def test_ask_auth_for_imp_question_issue_rgb_25_on(wallets_and_operations: Walle
         wallets_and_operations.first_page_operations.do_focus_on_application(
             FIRST_APPLICATION,
         )
-        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
         wallets_and_operations.first_page_features.issue_rgb25_features.issue_rgb25_with_sufficient_sats_and_utxo(
-            FIRST_APPLICATION, ASSET_NAME, ASSET_DESCRIPTION, ASSET_AMOUNT, is_native_auth_enabled=True,
+            FIRST_APPLICATION, ASSET_NAME_1, ASSET_DESCRIPTION, ASSET_AMOUNT, is_native_auth_enabled=True,
         )
 
 
@@ -145,15 +172,31 @@ def test_ask_auth_for_imp_question_send_rgb_25_on(wallets_and_operations: Wallet
         wallets_and_operations.first_page_operations.do_focus_on_application(
             FIRST_APPLICATION,
         )
-        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
         wallets_and_operations.first_page_objects.sidebar_page_objects.click_collectibles_button()
         wallets_and_operations.first_page_objects.collectible_page_objects.click_rgb25_frame(
-            ASSET_NAME,
+            ASSET_NAME_1,
         )
         wallets_and_operations.first_page_objects.asset_detail_page_objects.click_send_button()
         wallets_and_operations.first_page_features.send_features.send(
             FIRST_APPLICATION, rgb25_invoice, ASSET_AMOUNT, is_native_auth_enabled=True,
         )
+        wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
+        toaster_description = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
+    with allure.step('asserting tx id'):
+        wallets_and_operations.second_page_operations.do_focus_on_application(
+            SECOND_APPLICATION,
+        )
+        wallets_and_operations.second_page_objects.sidebar_page_objects.click_collectibles_button()
+        wallets_and_operations.second_page_objects.collectible_page_objects.click_refresh_button()
+        wallets_and_operations.second_page_objects.collectible_page_objects.click_rgb25_frame(
+            ASSET_NAME_1,
+        )
+        wallets_and_operations.second_page_objects.asset_detail_page_objects.click_rgb_transaction_on_chain_frame()
+        tx_id = wallets_and_operations.second_page_objects.asset_transaction_detail_page_objects.get_tx_id()
+        wallets_and_operations.second_page_objects.asset_transaction_detail_page_objects.click_close_button()
+        wallets_and_operations.second_page_objects.asset_detail_page_objects.click_close_button()
+        tx_id = re.sub(r'[\u200B\u200C\u200D\u2060\uFEFF]', '', tx_id)
+        assert toaster_description == INFO_ASSET_SENT.format(tx_id)
 
 
 @allure.feature('Ask Authorization for Important Operations')
@@ -179,6 +222,7 @@ def test_ask_auth_for_imp_question_send_bitcoin_off(wallets_and_operations: Wall
         wallets_and_operations.second_page_operations.do_focus_on_application(
             SECOND_APPLICATION,
         )
+        wallets_and_operations.second_page_objects.sidebar_page_objects.click_fungibles_button()
         wallets_and_operations.second_page_objects.fungible_page_objects.click_bitcoin_frame()
         wallets_and_operations.second_page_objects.bitcoin_detail_page_objects.click_receive_bitcoin_button()
         address, _ = wallets_and_operations.second_page_features.receive_features.receive(
@@ -210,9 +254,8 @@ def test_ask_auth_for_imp_question_issue_rgb_20_off(wallets_and_operations: Wall
         wallets_and_operations.first_page_operations.do_focus_on_application(
             FIRST_APPLICATION,
         )
-        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
         wallets_and_operations.first_page_features.issue_rgb20_features.issue_rgb20_with_sufficient_sats_and_utxo(
-            FIRST_APPLICATION, ASSET_TICKER, ASSET_NAME, ASSET_AMOUNT,
+            FIRST_APPLICATION, ASSET_TICKER, ASSET_NAME_2, ASSET_AMOUNT,
         )
 
 
@@ -231,14 +274,30 @@ def test_ask_auth_for_imp_question_send_rgb_20_off(wallets_and_operations: Walle
         wallets_and_operations.first_page_operations.do_focus_on_application(
             FIRST_APPLICATION,
         )
-        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
         wallets_and_operations.first_page_objects.fungible_page_objects.click_rgb20_frame(
-            ASSET_AMOUNT,
+            ASSET_NAME_2,
         )
         wallets_and_operations.first_page_objects.asset_detail_page_objects.click_send_button()
         wallets_and_operations.first_page_features.send_features.send(
             FIRST_APPLICATION, rgb20_invoice, ASSET_AMOUNT,
         )
+        wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
+        toaster_description = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
+        wallets_and_operations.first_page_objects.fungible_page_objects.click_refresh_button()
+    with allure.step('asserting tx id'):
+        wallets_and_operations.second_page_operations.do_focus_on_application(
+            SECOND_APPLICATION,
+        )
+        wallets_and_operations.second_page_objects.fungible_page_objects.click_refresh_button()
+        wallets_and_operations.second_page_objects.fungible_page_objects.click_rgb20_frame(
+            ASSET_NAME_2,
+        )
+        wallets_and_operations.second_page_objects.asset_detail_page_objects.click_rgb_transaction_on_chain_frame()
+        tx_id = wallets_and_operations.second_page_objects.asset_transaction_detail_page_objects.get_tx_id()
+        wallets_and_operations.second_page_objects.asset_transaction_detail_page_objects.click_close_button()
+        wallets_and_operations.second_page_objects.asset_detail_page_objects.click_close_button()
+        tx_id = re.sub(r'[\u200B\u200C\u200D\u2060\uFEFF]', '', tx_id)
+        assert toaster_description == INFO_ASSET_SENT.format(tx_id)
 
 
 @allure.step('Issuing RGB25 Asset')
@@ -248,7 +307,7 @@ def test_ask_auth_for_imp_question_issue_rgb_25_off(wallets_and_operations: Wall
         wallets_and_operations.first_page_operations.do_focus_on_application(
             FIRST_APPLICATION,
         )
-        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
+        wallets_and_operations.first_page_objects.fungible_page_objects.click_refresh_button()
         wallets_and_operations.first_page_features.issue_rgb25_features.issue_rgb25_with_sufficient_sats_and_utxo(
             FIRST_APPLICATION, ASSET_NAME_2, ASSET_DESCRIPTION, ASSET_AMOUNT,
         )
@@ -269,8 +328,7 @@ def test_ask_auth_for_imp_question_send_rgb_25_off(wallets_and_operations: Walle
         wallets_and_operations.first_page_operations.do_focus_on_application(
             FIRST_APPLICATION,
         )
-        wallets_and_operations.first_page_objects.sidebar_page_objects.click_fungibles_button()
-        wallets_and_operations.first_page_objects.sidebar_page_objects.click_collectibles_button()
+        wallets_and_operations.first_page_objects.collectible_page_objects.click_refresh_button()
         wallets_and_operations.first_page_objects.collectible_page_objects.click_rgb25_frame(
             ASSET_NAME_2,
         )
@@ -278,3 +336,20 @@ def test_ask_auth_for_imp_question_send_rgb_25_off(wallets_and_operations: Walle
         wallets_and_operations.first_page_features.send_features.send(
             FIRST_APPLICATION, rgb25_invoice, ASSET_AMOUNT,
         )
+        wallets_and_operations.first_page_objects.toaster_page_objects.click_toaster_frame()
+        toaster_description = wallets_and_operations.first_page_objects.toaster_page_objects.get_toaster_description()
+    with allure.step('asserting tx id'):
+        wallets_and_operations.second_page_operations.do_focus_on_application(
+            SECOND_APPLICATION,
+        )
+        wallets_and_operations.second_page_objects.sidebar_page_objects.click_collectibles_button()
+        wallets_and_operations.second_page_objects.collectible_page_objects.click_refresh_button()
+        wallets_and_operations.second_page_objects.collectible_page_objects.click_rgb25_frame(
+            ASSET_NAME_2,
+        )
+        wallets_and_operations.second_page_objects.asset_detail_page_objects.click_rgb_transaction_on_chain_frame()
+        tx_id = wallets_and_operations.second_page_objects.asset_transaction_detail_page_objects.get_tx_id()
+        wallets_and_operations.second_page_objects.asset_transaction_detail_page_objects.click_close_button()
+        wallets_and_operations.second_page_objects.asset_detail_page_objects.click_close_button()
+        tx_id = re.sub(r'[\u200B\u200C\u200D\u2060\uFEFF]', '', tx_id)
+        assert toaster_description == INFO_ASSET_SENT.format(tx_id)

@@ -21,6 +21,7 @@ from PySide6.QtWidgets import QWidget
 import src.resources_rc
 from accessible_constant import AMOUNT_VALUE
 from accessible_constant import ASSET_TRANSACTION_DETAIL_CLOSE_BUTTON
+from accessible_constant import ASSET_TX_ID
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import PaymentStatus
@@ -123,6 +124,7 @@ class RGBAssetTransactionDetail(QWidget):
         self.vertical_layout_tx_detail_frame.addWidget(self.tx_id_label)
 
         self.tx_id_value = QLabel(self.transaction_detail_frame)
+        self.tx_id_value.setAccessibleDescription(ASSET_TX_ID)
         self.tx_id_value.setWordWrap(True)
         self.tx_id_value.setTextInteractionFlags(
             Qt.TextBrowserInteraction,

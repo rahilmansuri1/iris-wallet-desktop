@@ -131,7 +131,7 @@ class CreateUtxosRequestModel(BaseModel):
     up_to: bool | None = False
     num: int = NO_OF_UTXO
     size: int = UTXO_SIZE_SAT
-    fee_rate: float = FEE_RATE_FOR_CREATE_UTXOS
+    fee_rate: int = FEE_RATE_FOR_CREATE_UTXOS
     skip_sync: bool = False
 
 
@@ -185,7 +185,7 @@ class SendAssetRequestModel(BaseModel):
     amount: int
     recipient_id: str
     donation: bool | None = False
-    fee_rate: float
+    fee_rate: int
     min_confirmations: int
     transport_endpoints: list[str]
     skip_sync: bool = False

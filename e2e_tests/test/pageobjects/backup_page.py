@@ -151,6 +151,7 @@ class BackupPageObjects(BaseOperations):
             The result of the click action.
         """
         self.try_another_way_button().grabFocus()
+        self.try_another_way_button().grabFocus()
         return self.do_click(self.try_another_way_button()) if self.do_is_displayed(self.try_another_way_button()) else None
 
     def click_google_authenticator_button(self):
@@ -205,6 +206,7 @@ class BackupPageObjects(BaseOperations):
         Returns:
             The result of the click action.
         """
+        self.continue_button().grabFocus()
         self.continue_button().grabFocus()
         return self.do_click(self.continue_button()) if self.do_is_displayed(self.continue_button()) else None
 

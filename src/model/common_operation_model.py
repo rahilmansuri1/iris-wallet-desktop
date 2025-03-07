@@ -1,3 +1,5 @@
+# pylint:disable=too-few-public-methods
+# Model classes are used to store data and don't require methods.
 """Module containing common operation models."""
 from __future__ import annotations
 
@@ -117,7 +119,9 @@ class NodeInfoResponseModel(BaseModel):
     pubkey: str
     num_channels: int
     num_usable_channels: int
-    local_balance_msat: int
+    local_balance_sat: int
+    eventual_close_fees_sat: int
+    pending_outbound_payments_sat: int
     num_peers: int
     onchain_pubkey: str
     max_media_upload_size_mb: int
@@ -127,6 +131,8 @@ class NodeInfoResponseModel(BaseModel):
     channel_capacity_max_sat: int
     channel_asset_min_amount: int
     channel_asset_max_amount: int
+    network_nodes: int
+    network_channels: int
 
 
 class RestoreResponseModel(StatusModel):

@@ -3,6 +3,7 @@ Send Asset Page Objects class for interacting with the send asset page.
 """
 from __future__ import annotations
 
+from accessible_constant import ASSET_ADDRESS_VALIDATION_LABEL
 from accessible_constant import ASSET_AMOUNT_VALIDATION
 from accessible_constant import ENTER_RECEIVER_ADDRESS
 from accessible_constant import FEE_RATE_INPUT
@@ -48,6 +49,9 @@ class SendAssetPageObjects(BaseOperations):
         )
         self.fee_rate_input = lambda: self.perform_action_on_element(
             role_name='text', name=FEE_RATE_INPUT,
+        )
+        self.asset_address_validation = lambda: self.perform_action_on_element(
+            role_name='label', description=ASSET_ADDRESS_VALIDATION_LABEL,
         )
 
     def enter_asset_invoice(self, address):
@@ -125,3 +129,9 @@ class SendAssetPageObjects(BaseOperations):
     def get_fee_rate_text(self):
         """Gets the fee rate from the input field."""
         return self.get_text(self.fee_rate_input()) if self.do_is_displayed(self.fee_rate_input()) else None
+
+    def get_asset_address_validation_label(self):
+        """
+        Gets the asset address validation label.
+        """
+        return self.do_get_text(self.asset_address_validation()) if self.do_is_displayed(self.asset_address_validation()) else None

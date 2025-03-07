@@ -1,5 +1,5 @@
 """Unit tests for main asset page service"""
-# pylint: disable=redefined-outer-name,unused-argument,too-many-arguments
+# pylint: disable=redefined-outer-name,unused-argument,too-many-arguments,unused-import
 from __future__ import annotations
 
 from unittest import mock
@@ -32,10 +32,6 @@ from unit_tests.service_test_resources.service_fixture.main_asset_page_helper_mo
 from unit_tests.service_test_resources.service_fixture.main_asset_page_helper_mock import (
     mock_get_offline_asset_ticker,
 )
-
-# Disable the redefined-outer-name warning as
-# it's normal to pass mocked object in tests  function
-# pylint: disable=redefined-outer-name
 
 
 def test_get_assets(
@@ -110,7 +106,7 @@ def test_get_asset_when_wallet_type_connect(
     mock_is_exhausted_asset_enabled,
 ):
     """Test case  for main asset page service when wallet type connect"""
-    wallet_type = mock_get_wallet_type(WalletType.CONNECT_TYPE_WALLET)
+    wallet_type = mock_get_wallet_type(WalletType.REMOTE_TYPE_WALLET)
     get_btc_balance = mock_get_btc_balance(mock_balance_response_data)
     refresh_asset = mock_refresh_transfer(
         RefreshTransferResponseModel(status=True),

@@ -30,6 +30,7 @@ from e2e_tests.test.utilities.base_operation import BaseOperations
 from e2e_tests.test.utilities.model import WalletTestSetup
 from e2e_tests.test.utilities.reset_app import delete_app_data
 from e2e_tests.test.utilities.translation_utils import TranslationManager
+from src.model.enums.enums_model import WalletType
 from src.utils.constant import IS_NATIVE_AUTHENTICATION_ENABLED
 from src.utils.constant import NATIVE_LOGIN_ENABLED
 from src.utils.local_store import local_store
@@ -46,7 +47,7 @@ class TestEnvironment:
         Initializes the test environment.
 
         Args:
-            wallet_mode (str): Determines whether to use "embedded" or "connect" wallet.
+            wallet_mode (str): Determines whether to use "embedded" or "remote" wallet.
             multi_instance (bool): If True, launches both applications. Otherwise, only launches one.
             skip_reset (bool): If True, skips resetting the application data.
         """
@@ -63,7 +64,7 @@ class TestEnvironment:
         self.remove_keyring_entries(service=SECOND_SERVICE, app_name=APP2_NAME)
 
         # Start applications based on wallet mode
-        if self.wallet_mode == 'connect':
+        if self.wallet_mode == WalletType.REMOTE_TYPE_WALLET.value:
             self.start_rgb_lightning_nodes()
 
         self.launch_applications()
@@ -81,7 +82,7 @@ class TestEnvironment:
             delete_app_data('dataldk1')
 
     def start_rgb_lightning_nodes(self):
-        """Starts two RGB Lightning Nodes when wallet mode is 'connect'."""
+        """Starts two RGB Lightning Nodes when wallet mode is 'remote'."""
         self.rgb_processes.append(self.start_rgb_node('dataldk0', 3001, 9735))
         if self.multi_instance:
             self.rgb_processes.append(
@@ -210,6 +211,30 @@ class TestEnvironment:
         # Terminate RGB Lightning Nodes
         for process in self.rgb_processes:
             self.terminate_process(process)
+            # Clear out any references to running RGB processes
+
+        self.rgb_processes.clear()
+
+        # Ensure processes are terminated and ports are freed up
+        self._ensure_processes_terminated()
+
+    def _ensure_processes_terminated(self):
+        """Checks that RGB processes have been properly terminated."""
+        for process in self.rgb_processes:
+            try:
+                process.wait(timeout=2)  # Wait for process to terminate
+            except subprocess.TimeoutExpired:
+                print(f"RGB process {process.pid} did not terminate in time.")
+            except Exception as e:
+                print(f"Error waiting for process {process.pid}: {e}")
+
+        # Check if any RGB processes are still running
+        for process in self.rgb_processes:
+            if psutil.pid_exists(process.pid):
+                os.kill(process.pid, signal.SIGKILL)
+
+        # Clear the list to ensure we're starting fresh
+        self.rgb_processes.clear()
 
     def restart(self, reset_data=True):
         """Restarts the application by terminating, optionally resetting data, and relaunching."""
@@ -218,7 +243,7 @@ class TestEnvironment:
         if reset_data:
             self.reset_app_data()
 
-        if self.wallet_mode == 'connect':
+        if self.wallet_mode == WalletType.REMOTE_TYPE_WALLET.value:
             self.start_rgb_lightning_nodes()
 
         self.launch_applications()
@@ -258,7 +283,7 @@ def test_environment(request):
 
 
 @pytest.fixture
-def wallets_and_operations(test_environment) -> WalletTestSetup:
+def wallets_and_operations(test_environment: TestEnvironment) -> WalletTestSetup:
     """
     A fixture that initializes the wallets and operations objects.
     """

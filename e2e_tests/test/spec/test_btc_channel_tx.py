@@ -13,6 +13,7 @@ from e2e_tests.test.utilities.app_setup import test_environment
 from e2e_tests.test.utilities.app_setup import wallets_and_operations
 from e2e_tests.test.utilities.app_setup import WalletTestSetup
 from e2e_tests.test.utilities.model import TransferType
+from src.model.enums.enums_model import WalletType
 from src.utils.info_message import INFO_ASSET_SENT_SUCCESSFULLY
 
 ASSET_TICKER = 'rBTC'
@@ -49,8 +50,8 @@ def test_send_and_receive_with_correct_invoice_for_btc(wallets_and_operations: W
         )
 
     with allure.step('Get node URI for btc channel'):
-        if wallets_and_operations.wallet_mode == 'connect':
-            node_uri = wallets_and_operations.second_page_features.channel_features.get_node_uri_for_connect(
+        if wallets_and_operations.wallet_mode == WalletType.REMOTE_TYPE_WALLET.value:
+            node_uri = wallets_and_operations.second_page_features.channel_features.get_node_uri_for_remote(
                 application=SECOND_APPLICATION, ip_address=IP_ADDRESS, ln_port=LN_PORT,
             )
         else:

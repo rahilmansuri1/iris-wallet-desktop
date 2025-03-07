@@ -63,7 +63,9 @@ node_data = {
     'pubkey': '02270dadcd6e7ba0ef707dac72acccae1a3607453a8dd2aef36ff3be4e0d31f043',
     'num_channels': 1,
     'num_usable_channels': 0,
-    'local_balance_msat': 28616000,
+    'local_balance_sat': 28616000,
+    'eventual_close_fees_sat': 1,
+    'pending_outbound_payments_sat': 1,
     'num_peers': 1,
     'onchain_pubkey': 'tpubDDqiQYzNMGsKVVmWYG4FCPPcbd5S4uW9u7a6zUFkgbh16VmFTvsaNyo37mAgkCku6jStBcU8VaLxG2SE7ab2sEwwagjfbS8U9H82BadjKR1',
     'max_media_upload_size_mb': 5,
@@ -73,6 +75,8 @@ node_data = {
     'channel_capacity_max_sat': 1,
     'channel_asset_min_amount': 1,
     'channel_asset_max_amount': 1,
+    'network_nodes': 1,
+    'network_channels': 1,
 }
 mocked_data_node_info: NodeInfoResponseModel = NodeInfoResponseModel(
     **node_data,

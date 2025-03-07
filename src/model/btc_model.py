@@ -1,3 +1,5 @@
+# pylint:disable=too-few-public-methods
+# Model classes are used to store data and don't require methods.
 """
 Bitcoin Model Module
 ====================
@@ -84,7 +86,7 @@ class SendBtcRequestModel(BaseModel):
 
     amount: int
     address: str
-    fee_rate: float
+    fee_rate: int
     skip_sync: bool = False
 
 # -------------------- Response Models -----------------------

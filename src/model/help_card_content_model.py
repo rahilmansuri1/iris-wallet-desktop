@@ -7,12 +7,15 @@ from __future__ import annotations
 from pydantic import BaseModel
 from pydantic import HttpUrl
 
+from src.data.repository.setting_repository import SettingRepository
+from src.model.enums.enums_model import NetworkEnumModel
+
 
 class HelpCardModel(BaseModel):
     """Model for a single help card."""
     title: str
     detail: str
-    links: list[HttpUrl]
+    links: list[HttpUrl] | None = None
 
 
 class HelpCardContentModel(BaseModel):
@@ -24,24 +27,45 @@ class HelpCardContentModel(BaseModel):
         """Factory method to create a default instance of HelpCardContentModel"""
         card_content = [
             HelpCardModel(
-                title='Why can I get TESTNET Bitcoins?',
-                detail='You can get Testnet Bitcoin by using one of the many available faucets. Below are a few linked examples, but you can always find more using a search engine:',
-                links=[
-                    'https://testnet-faucet.mempool.co/',
-                    'https://bitcoinfaucet.uo1.net/',
-                    'https://coinfaucet.eu/en/btc-testnet/',
-                    'https://testnet-faucet.com/btc-testnet/',
-                ],
+                title='where_can_i_learn_more_about_rgb',
+                detail='learn_about_rgb',
             ),
             HelpCardModel(
-                title="Why do I see outgoing Bitcoin transactions that I didn't authorize?",
-                detail='You can get Testnet Bitcoin by using one of the many available faucet, below are few linked examples but you can always find more using a search engine:',
+                title='why_do_i_see_outgoing_bitcoin_transactions_that_i_did_not_authorize',
+                detail='outgoing_transaction_without_authorize_detail',
+            ),
+            HelpCardModel(
+                title='what_is_the_minimum_bitcoin_balance_needed_to_issue_and_receive_rgb_assets',
+                detail='minimum_bitcoin_balance_needed_to_issue_and_receive_rgb_asset',
+            ),
+            HelpCardModel(
+                title='where_can_i_send_feedback_or_ask_for_support',
+                detail='support_and_feedback',
                 links=[
-                    'https://testnet-faucet.mempool.co/',
-                    'https://bitcoinfaucet.uo1.net/',
-                    'https://coinfaucet.eu/en/btc-testnet/',
-                    'https://testnet-faucet.com/btc-testnet/',
+                    'https://t.me/IrisWallet',
                 ],
             ),
         ]
+        network = SettingRepository.get_wallet_network()
+        if network == NetworkEnumModel.REGTEST:
+            card_content.append(
+                HelpCardModel(
+                    title='where_can_i_get_regtest_bitcoins',
+                    detail='get_regtest_bitcoin',
+                    links=['https://t.me/rgb_lightning_bot'],
+                ),
+            )
+        else:  # Default to Testnet
+            card_content.append(
+                HelpCardModel(
+                    title='where_can_i_get_testnet_bitcoins',
+                    detail='get_testnet_bitcoin',
+                    links=[
+                        'https://testnet-faucet.mempool.co/',
+                        'https://bitcoinfaucet.uo1.net/',
+                        'https://coinfaucet.eu/en/btc-testnet/',
+                        'https://testnet-faucet.com/btc-testnet/',
+                    ],
+                ),
+            )
         return cls(card_content=card_content)

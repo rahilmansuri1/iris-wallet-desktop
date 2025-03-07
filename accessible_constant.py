@@ -2,6 +2,7 @@
 # Application Name
 from __future__ import annotations
 
+from src.model.enums.enums_model import WalletType
 from src.utils.constant import APP_NAME
 from src.utils.constant import ORGANIZATION_NAME
 APP1_NAME = 'test_app_1'
@@ -30,6 +31,7 @@ TNC_TXT_DESCRIPTION = 'tnc_txt_description'
 OPTION_1_FRAME = 'option_1_frame'
 OPTION_2_FRAME = 'option_2_frame'
 WALLET_OR_TRANSFER_SELECTION_CLOSE_BUTTON = 'wallet_or_transfer_selection_close_button'
+WALLET_OR_TRANSFER_SELECTION_CONTINUE_BUTTON = 'wallet_or_transfer_selection_continue_button'
 
 # Wallet Password Page
 CREATE_BUTTON = 'create_button'
@@ -61,6 +63,7 @@ PAY_AMOUNT = 'pay_amount'
 SEND_ASSET_CLOSE_BUTTON = 'send_asset_close_button'
 SEND_ASSET_REFRESH_BUTTON = 'send_asset_refresh_button'
 SEND_ASSET_BUTTON = 'send_asset_button'
+ASSET_ADDRESS_VALIDATION_LABEL = 'asset_address_validation_label'
 
 # Issue RGB20 Asset Page
 ISSUE_RGB20_ASSET = 'issue_rgb20_asset'
@@ -129,6 +132,7 @@ CONFIRMAION_DIALOG = 'confirmation_dialog'
 # Asset Transaction Details Page
 AMOUNT_VALUE = 'amount_value'
 ASSET_TRANSACTION_DETAIL_CLOSE_BUTTON = 'asset_transaction_detail_close_button'
+ASSET_TX_ID = 'asset_tx_id'
 
 # Create LN Invoice
 ASSET_AMOUNT_LN = 'asset_amount_ln'
@@ -147,6 +151,7 @@ FEE_RATE_INPUT = 'fee_rate_input'
 
 # Bitcoin tx page
 BITCOIN_TX_ID = 'bitcoin_tx_id'
+BITCOIN_AMOUNT_VALUE = 'bitcoin_amount_value'
 BITCOIN_TX_PAGE_CLOSE_BUTTON = 'bitcoin_tx_page_close_button'
 
 # Transaction detail page
@@ -291,3 +296,8 @@ NATIVE_AUTH_ENABLE = 'isNativeAuthenticationEnabled_test_app_1'
 # Test values used in tests
 TEST_ANNOUNCE_ADDRESS = 'example.url.com:2222'
 TEST_ANNOUNCE_ALIAS = 'testAlias'
+
+# Default wallet modes
+DEFAULT_WALLET_MODES = [
+    WalletType.EMBEDDED_TYPE_WALLET.value, WalletType.REMOTE_TYPE_WALLET.value,
+]

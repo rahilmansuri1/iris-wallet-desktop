@@ -8,7 +8,6 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 import pytest
-from PySide6.QtGui import QDoubleValidator
 from PySide6.QtGui import QIntValidator
 from PySide6.QtWidgets import QDialog
 
@@ -605,7 +604,7 @@ def test_handle_fee_rate_frame(setting_widget):
     """Test handling fee rate frame."""
     # Mock frame and components
     setting_widget.set_fee_rate_frame = MagicMock()
-    setting_widget.fee_rate = 10.5
+    setting_widget.fee_rate = 10
 
     # Call method
     setting_widget.handle_fee_rate_frame()
@@ -613,7 +612,7 @@ def test_handle_fee_rate_frame(setting_widget):
     # Verify QDoubleValidator was used
     assert isinstance(
         setting_widget.set_fee_rate_frame.input_value.setValidator.call_args[0][0],
-        QDoubleValidator,
+        QIntValidator,
     )
 
 

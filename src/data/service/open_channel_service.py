@@ -16,7 +16,6 @@ from src.model.setting_model import DefaultFeeRate
 from src.utils.constant import MEDIUM_TRANSACTION_FEE_BLOCKS
 from src.utils.constant import UTXO_SIZE_SAT_FOR_OPENING_CHANNEL
 from src.utils.custom_exception import CommonException
-from src.utils.endpoints import LIST_UNSPENT_ENDPOINT
 from src.utils.handle_exception import handle_exceptions
 from src.utils.logging import logger
 
@@ -35,7 +34,7 @@ class LnNodeChannelManagement:
             return handle_exceptions(exc)
 
     @staticmethod
-    def get_network_fee_for_channel_utxo(block_value: int = MEDIUM_TRANSACTION_FEE_BLOCKS) -> int | float:
+    def get_network_fee_for_channel_utxo(block_value: int = MEDIUM_TRANSACTION_FEE_BLOCKS) -> int:
         """
         Fetches the estimated fee rate from the Bitcoin network.
         If it fails or the fee rate is zero, the default fee rate from settings is used.
@@ -64,7 +63,7 @@ class LnNodeChannelManagement:
                 'Successfully fetched fee rate from API: %s sats/byte (blocks: %d).',
                 fee_response.fee_rate, block_value,
             )
-            return fee_response.fee_rate
+            return int(fee_response.fee_rate)
 
         except CommonException as exc:
             # Log detailed error information
@@ -80,7 +79,7 @@ class LnNodeChannelManagement:
             return default_fee_rate
 
     @staticmethod
-    def _get_default_fee_rate() -> float | int:
+    def _get_default_fee_rate() -> int:
         """
         Retrieves the default fee rate from settings.
 

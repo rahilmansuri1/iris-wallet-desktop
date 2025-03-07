@@ -222,7 +222,6 @@ class TermConditionWidget(QWidget):
     def check_scroll_completion(self):
         """Enable the Accept button when the user scrolls to the end."""
         scrollbar = self.tnc_text_desc.verticalScrollBar()
-        scrollbar.setAccessibleName('ndjovbjksdbvjdb')
         if scrollbar.value() == scrollbar.maximum():
             self.accept_btn.setEnabled(True)
 
