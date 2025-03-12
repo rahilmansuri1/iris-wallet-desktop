@@ -550,7 +550,7 @@ class SetWalletPasswordWidget(QWidget):
 
     def handle_message(self, msg_type: int, message: str):
         """This method handled to show message."""
-        if msg_type == ToastPreset.ERROR.value:
+        if msg_type == ToastPreset.ERROR:
             ToastManager.error(message)
         else:
             ToastManager.success(message)

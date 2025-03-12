@@ -32,6 +32,7 @@ from src.utils.constant import MAX_ATTEMPTS_FOR_CLOSE
 from src.utils.constant import MAX_ATTEMPTS_TO_WAIT_FOR_NODE
 from src.utils.constant import NODE_CLOSE_INTERVAL
 from src.utils.endpoints import NODE_INFO_ENDPOINT
+from src.utils.logging import rln_qprocess_logger
 from src.utils.request import Request
 
 
@@ -53,6 +54,7 @@ class LnNodeServerManager(QObject):
     process_already_running = Signal()
     process_finished_on_request_app_close = Signal()
     process_finished_on_request_app_close_error = Signal()
+    main_window_loader = Signal(bool)
     _instance = None
 
     def __init__(self):
@@ -65,6 +67,8 @@ class LnNodeServerManager(QObject):
         self.process.started.connect(self.on_process_started)
         self.process.finished.connect(self.on_process_terminated)
         self.process.errorOccurred.connect(self.on_process_error)
+        self.process.readyReadStandardOutput.connect(self.handle_stdout)
+        self.process.readyReadStandardError.connect(self.handle_stderr)
         self.timer = QTimer()
         self.timer.timeout.connect(self.check_node_status)
         self.attempts = 0
@@ -129,6 +133,7 @@ class LnNodeServerManager(QObject):
         if self.attempts >= MAX_ATTEMPTS_TO_WAIT_FOR_NODE:
             self.process_error.emit(500, 'Unable to start server')
             self.timer.stop()
+            self.main_window_loader.emit(False)
             return
 
         try:
@@ -136,6 +141,7 @@ class LnNodeServerManager(QObject):
             response.raise_for_status()
             self.process_started.emit()
             self.timer.stop()
+            self.main_window_loader.emit(False)
         except HTTPError:
             self.process_started.emit()
             self.timer.stop()
@@ -187,6 +193,18 @@ class LnNodeServerManager(QObject):
             )
             return os.path.join(base_path, 'ln_node_binary', ln_binary_name)
         return os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../', 'ln_node_binary', ln_binary_name))
+
+    def handle_stdout(self):
+        """Read and print the standard output."""
+        output = self.process.readAllStandardOutput().data().decode()
+        if output:
+            rln_qprocess_logger.info(output)
+
+    def handle_stderr(self):
+        """Read and print the standard error output."""
+        error_output = self.process.readAllStandardError().data().decode()
+        if error_output:
+            rln_qprocess_logger.error(error_output)
 
     @staticmethod
     def get_instance():

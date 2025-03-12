@@ -614,3 +614,24 @@ TRANSACTION_SPEEDS = {
     'medium_checkBox': MEDIUM_TRANSACTION_FEE_BLOCKS,
     'fast_checkBox': FAST_TRANSACTION_FEE_BLOCKS,
 }
+
+
+def disable_rln_node_termination_handling(wallet_type: WalletType):
+    """
+    Disconnects the RLN node process termination handler when the user closes the application.
+
+    This ensures that the rln node termination handling logic does not trigger when the user explicitly exits.
+
+    Args:
+        wallet_type (WalletType): The type of the wallet being used.
+    """
+    if wallet_type.value == WalletType.EMBEDDED_TYPE_WALLET.value:
+        ln_node_manager = LnNodeServerManager.get_instance()
+
+        try:
+            ln_node_manager.process.finished.disconnect()
+        except CommonException as exc:
+            logger.error(
+                'Exception occurred: %s, Message: %s',
+                type(exc).__name__, str(exc),
+            )

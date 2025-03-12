@@ -1,11 +1,33 @@
 """Module to clean up the iriswallet directory by deleting all its contents. Use with caution as this will permanently remove all wallet data."""
 from __future__ import annotations
 
+import argparse
 import os
 import shutil
 import sys
 
 from src.utils.local_store import local_store
+
+
+def get_app_directory(app_name: str | None):
+    """
+    Determines the correct app data directory based on the provided app name.
+
+    Args:
+        app_name (str | None): The app name suffix, if provided.
+
+    Returns:
+        str: The directory path of the app data.
+    """
+    base_dir = local_store.get_path()  # Example: /home/user/.local/share/rgb/iriswallet
+
+    if app_name:
+        # Get '/home/user/.local/share/rgb'
+        rgb_parent = os.path.dirname(base_dir)
+        # Correct path
+        return os.path.join(f"{rgb_parent}_{app_name}", f"iriswallet_{app_name}")
+
+    return base_dir  # Default path if no app name is provided
 
 
 def delete_app_data(directory_path: str):
@@ -33,7 +55,9 @@ def delete_app_data(directory_path: str):
                 shutil.rmtree(item_path)  # Remove directory and its contents
 
         print(
-            f'All files and directories in {directory_path} have been deleted.',
+            f'All files and directories in {
+                directory_path
+            } have been deleted.',
         )
     except Exception as e:
         print(f'An error occurred while deleting files: {e}')
@@ -49,8 +73,17 @@ def main():
         This script is intended for development and testing purposes only. Use with caution as it will
         permanently delete data in the specified directory.
     """
+    parser = argparse.ArgumentParser(
+        description='Reset app data for Iris Wallet.',
+    )
+    parser.add_argument(
+        '--app-name',
+        required=False,
+        help='Specify the app name if multiple instances were created.',
+    )
+    args = parser.parse_args()
     # Path to the iriswallet directory
-    iriswallet_path = local_store.get_path()
+    iriswallet_path = get_app_directory(args.app_name)
     print(f'Directory to clean: {iriswallet_path}')
 
     # Prompt user for confirmation

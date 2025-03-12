@@ -33,6 +33,7 @@ class SplashScreenWidget(QWidget):
         self.render_timer = RenderTimer(task_name='SplashScreenWidget')
         self.render_timer.start()
         super().__init__()
+        self.setObjectName('splash_page')
         self._view_model: MainViewModel = view_model
         self.syncing_chain_label_timer = QTimer(self)
         self.syncing_chain_label_timer.setSingleShot(True)
@@ -143,9 +144,7 @@ class SplashScreenWidget(QWidget):
 
     def on_page_load(self):
         """Method run when page load"""
-        self._view_model.splash_view_model.is_login_authentication_enabled(
-            self._view_model.wallet_transfer_selection_view_model,
-        )
+        self._view_model.splash_view_model.is_login_authentication_enabled()
 
     def rotate_spinner(self):
         """This method rotate the iris logo"""
