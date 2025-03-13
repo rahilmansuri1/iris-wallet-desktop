@@ -80,5 +80,5 @@ logger = setup_logger(
 )
 # Capturing all logs without applying `APPLICATION_STATUS`
 rln_qprocess_logger = setup_logger(
-    'qprocess', 'rln_qprocess.log', APPLICATION_STATUS,
+    'qprocess', 'rln_qprocess.log',
 )

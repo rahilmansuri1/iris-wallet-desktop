@@ -12,6 +12,7 @@ import pytest
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
 from src.viewmodels.wallet_and_transfer_selection_viewmodel import WalletTransferSelectionViewModel
+from src.views.components.toast import ToastManager
 
 
 @pytest.fixture
@@ -147,15 +148,17 @@ def test_on_ln_node_start_common_exception(mock_logger, wallet_transfer_selectio
     wallet_transfer_selection_view_model.ln_node_process_status = Mock()
     error_message = 'Something went wrong'
 
-    with patch('src.views.components.toast.ToastManager.error') as mock_toast:
-        with patch('src.data.repository.setting_repository.SettingRepository') as mock_setting_repo:
-            mock_setting_repo.is_wallet_initialized.side_effect = CommonException(
-                error_message,
-            )
+    with patch.object(ToastManager, 'error') as mock_toast:
+        with patch(
+            'src.data.repository.setting_repository.SettingRepository.is_wallet_initialized',
+            side_effect=CommonException(error_message),
+        ):
 
             wallet_transfer_selection_view_model.on_ln_node_start()
 
-            mock_toast.assert_called_once_with(description=error_message)
+            mock_toast.assert_called_once_with(
+                description=error_message,
+            )  # Verify toast
             mock_logger.assert_called_once()
 
 
@@ -164,8 +167,11 @@ def test_on_ln_node_start_generic_exception(mock_logger, wallet_transfer_selecti
     """Test on_ln_node_start with generic Exception"""
     wallet_transfer_selection_view_model.ln_node_process_status = Mock()
 
-    with patch('src.views.components.toast.ToastManager.error') as mock_toast:
-        with patch('src.data.repository.setting_repository.SettingRepository') as mock_setting_repo:
+    with patch.object(ToastManager, 'error') as mock_toast:
+        with patch(
+            'src.data.repository.setting_repository.SettingRepository.is_wallet_initialized',
+            side_effect=Exception('Unexpected error'),
+        ) as mock_setting_repo:
             mock_setting_repo.is_wallet_initialized.side_effect = Exception(
                 'Unexpected error',
             )

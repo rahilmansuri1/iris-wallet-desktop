@@ -22,6 +22,7 @@ from src.utils.constant import WALLET_PASSWORD_KEY
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_CONNECTION_FAILED_WITH_LN
 from src.utils.error_message import ERROR_NATIVE_AUTHENTICATION
+from src.utils.error_message import ERROR_NODE_WALLET_NOT_INITIALIZED
 from src.utils.error_message import ERROR_PASSWORD_INCORRECT
 from src.utils.error_message import ERROR_REQUEST_TIMEOUT
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
@@ -160,6 +161,9 @@ class SplashViewModel(QObject, ThreadManager):
         if error_message == ERROR_PASSWORD_INCORRECT:
             PageNavigationEventManager.get_instance().enter_wallet_password_page_signal.emit()
 
+        if error_message == ERROR_NODE_WALLET_NOT_INITIALIZED:
+            PageNavigationEventManager.get_instance().set_wallet_password_page_signal.emit()
+
         # Log the error and display a toast message
         logger.error(
             'Error while unlocking node on splash page: %s, Message: %s',
@@ -237,6 +241,11 @@ class SplashViewModel(QObject, ThreadManager):
         """
         if not self.is_error_handled:
             self.is_error_handled = True
+
+            rln_qprocess_logger.error(
+                'RLN node process was KILLED or CRASHED!',
+            )
+
             crash_dialog_box = CrashDialogBox()
 
             if crash_dialog_box.message_box.clickedButton() == crash_dialog_box.retry_button:

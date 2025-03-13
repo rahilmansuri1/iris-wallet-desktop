@@ -64,8 +64,9 @@ class WalletTransferSelectionViewModel(QObject, ThreadManager):
             )
             keyring_status = SettingRepository.get_keyring_status()
             stored_network: NetworkEnumModel = SettingRepository.get_wallet_network()
-            if self.is_node_data_exits or wallet.is_wallet_initialized:
-                if keyring_status is True or password is None:
+
+            if self.is_node_data_exits and wallet.is_wallet_initialized:
+                if keyring_status is True:
                     self.splash_view_model.show_main_window_loader.emit(False)
                     self._page_navigation.enter_wallet_password_page()
                 else:
@@ -89,6 +90,7 @@ class WalletTransferSelectionViewModel(QObject, ThreadManager):
                             },
                         )
             else:
+                self.splash_view_model.show_main_window_loader.emit(False)
                 self._page_navigation.welcome_page()
         except CommonException as exc:
             logger.error(

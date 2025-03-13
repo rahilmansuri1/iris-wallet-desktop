@@ -91,7 +91,7 @@ class MainWindow:
         if loading_status:
             self._loading_translucent_screen = LoadingTranslucentScreen(
                 parent=self.main_window,
-                description_text='Ln node starting',
+                description_text='Ln node restarting. Please do not close the app',
                 loader_type=LoaderDisplayModel.FULL_SCREEN,
             )
             self._loading_translucent_screen.start()
@@ -99,7 +99,7 @@ class MainWindow:
                 True,
             )
         else:
-            if hasattr(self, '_loading_translucent_screen'):
+            if hasattr(self, '_loading_translucent_screen') and self._loading_translucent_screen:
                 self._loading_translucent_screen.stop()
                 self._loading_translucent_screen.make_parent_disabled_during_loading(
                     False,
