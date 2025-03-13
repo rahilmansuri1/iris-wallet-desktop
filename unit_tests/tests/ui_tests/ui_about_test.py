@@ -208,12 +208,12 @@ def test_download_logs_with_save_path(about_widget, qtbot, mocker):
     # Mock download_file to ensure it's called
     def mock_download_file(save_path, output_dir):
         # Simulate the behavior of the actual download_file function
-        with zipfile.ZipFile(save_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(save_path, 'w', zipfile.ZIP_DEFLATED) as zip_file:
             for root, _, files in os.walk(output_dir):
                 for file in files:
                     file_path = os.path.join(root, file)
                     arcname = os.path.relpath(file_path, output_dir)
-                    zipf.write(file_path, arcname)
+                    zip_file.write(file_path, arcname)
         # Simulate the finally block
         shutil.rmtree(output_dir)
         # Simulate success toast
@@ -351,7 +351,9 @@ def mock_node_info_widget(mocker):
     mock_instance = mock.return_value
     mock_instance.key_label = mocker.MagicMock()
     mocker.patch('src.views.ui_about.NodeInfoWidget', mock)
-
+    mock_instance = mock.return_value
+    mock_instance.node_pub_key_copy_button = mocker.Mock()
+    mock_instance.value_label = mocker.Mock()
     # Print mock details
     print(f"Created mock with id: {id(mock)}")
 

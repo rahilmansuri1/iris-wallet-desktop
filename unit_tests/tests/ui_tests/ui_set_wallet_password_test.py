@@ -77,11 +77,8 @@ def test_show_password_validation_label(set_wallet_password_widget: SetWalletPas
     assert set_wallet_password_widget.password_validation.objectName() == 'password_validation'
     assert set_wallet_password_widget.password_validation.minimumSize() == QSize(0, 25)
     assert set_wallet_password_widget.password_validation.styleSheet() == (
-        'font: 12px "Inter";\n'
-        'color: rgb(237, 51, 59);\n'
-        'background: transparent;\n'
-        'border: none;\n'
-        'font-weight: 400;\n'
+        'font: 12px "Inter";\ncolor: rgb(237, 51, 59);\n'
+        'background: transparent;\nborder: none;\nfont-weight: 400;\n'
         ''
     )
 

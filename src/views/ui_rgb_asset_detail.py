@@ -1,4 +1,4 @@
-# pylint: disable=too-many-instance-attributes, too-many-statements, unused-import
+# pylint: disable=too-many-instance-attributes, too-many-statements
 """This module contains the RGBAssetDetailWidget class,
  which represents the UI for RGB asset detail.
  """
@@ -24,7 +24,18 @@ from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
-import src.resources_rc
+from accessible_constant import ASSET_CLOSE_BUTTON
+from accessible_constant import ASSET_ID_COPY_BUTTON
+from accessible_constant import ASSET_LIGHTNING_SPENDABLE_BALANCE
+from accessible_constant import ASSET_LIGHTNING_TOTAL_BALANCE
+from accessible_constant import ASSET_ON_CHAIN_SPENDABLE_BALANCE
+from accessible_constant import ASSET_ON_CHAIN_TOTAL_BALANCE
+from accessible_constant import ASSET_RECEIVE_BUTTON
+from accessible_constant import ASSET_REFRESH_BUTTON
+from accessible_constant import ASSET_SEND_BUTTON
+from accessible_constant import RGB_TRANSACTION_DETAIL_LIGHTNING_FRAME
+from accessible_constant import RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME
+from accessible_constant import TRANSACTION_DETAIL_CLOSE_BUTTON
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import NetworkEnumModel
@@ -107,7 +118,6 @@ class RGBAssetDetailWidget(QWidget):
             'rgb_asset_detail_widget',
         )
         self.rgb_asset_detail_widget.setMinimumSize(QSize(499, 770))
-
         self.rgb_asset_detail_widget_layout = QGridLayout(
             self.rgb_asset_detail_widget,
         )
@@ -121,7 +131,6 @@ class RGBAssetDetailWidget(QWidget):
         self.rgb_asset_detail_widget_layout.addWidget(
             self.top_line, 1, 0, 1, 1,
         )
-
         self.send_receive_button_layout = QHBoxLayout()
         self.send_receive_button_layout.setSpacing(18)
         self.send_receive_button_layout.setObjectName('horizontal_layout_11')
@@ -130,18 +139,18 @@ class RGBAssetDetailWidget(QWidget):
             40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum,
         )
         self.send_receive_button_layout.addItem(self.horizontal_spacer)
-
         self.receive_rgb_asset = AssetTransferButton(
             'receive_assets', ':/assets/bottom_left.png',
         )
+        self.receive_rgb_asset.setAccessibleName(ASSET_RECEIVE_BUTTON)
         self.receive_rgb_asset.setCursor(
             QCursor(Qt.CursorShape.PointingHandCursor),
         )
         self.send_receive_button_layout.addWidget(self.receive_rgb_asset)
-
         self.send_asset = AssetTransferButton(
             'send_assets', ':/assets/top_right.png',
         )
+        self.send_asset.setAccessibleName(ASSET_SEND_BUTTON)
         self.send_asset.setCursor(
             QCursor(Qt.CursorShape.PointingHandCursor),
         )
@@ -153,7 +162,6 @@ class RGBAssetDetailWidget(QWidget):
         self.rgb_asset_detail_widget_layout.addLayout(
             self.send_receive_button_layout, 4, 0, 1, 1,
         )
-
         self.asset_image_layout = QVBoxLayout()
         self.asset_image_layout.setSpacing(0)
         self.asset_image_layout.setObjectName('vertical_layout_7')
@@ -161,7 +169,6 @@ class RGBAssetDetailWidget(QWidget):
         self.rgb_asset_detail_widget_layout.addLayout(
             self.asset_image_layout, 2, 0, 1, 1,
         )
-
         self.vertical_layout_8 = QVBoxLayout()
         self.vertical_layout_8.setSpacing(0)
         self.vertical_layout_8.setObjectName('vertical_layout_8')
@@ -171,7 +178,6 @@ class RGBAssetDetailWidget(QWidget):
         self.transactions_label.setMaximumSize(QSize(97, 30))
         self.transactions_label.setMargin(0)
         self.vertical_layout_8.addWidget(self.transactions_label)
-
         self.scroll_area = QScrollArea(self.rgb_asset_detail_widget)
         self.scroll_area.setObjectName('scroll_area')
         self.scroll_area.setMinimumSize(QSize(350, 74))
@@ -232,6 +238,7 @@ class RGBAssetDetailWidget(QWidget):
         self.asset_id_frame_layout.addWidget(self.asset_id_detail, 1, 0, 1, 1)
         self.copy_button = QPushButton(self.asset_id_frame)
         self.copy_button.setObjectName('copy_button')
+        self.copy_button.setAccessibleName(ASSET_ID_COPY_BUTTON)
         self.copy_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.copy_button.setStyleSheet('border:none;')
         icon2 = QIcon()
@@ -239,7 +246,6 @@ class RGBAssetDetailWidget(QWidget):
         self.copy_button.setIcon(icon2)
         self.asset_id_frame_layout.addWidget(self.copy_button, 0, 1, 1, 1)
         self.vertical_layout.addWidget(self.asset_id_frame, 0, Qt.AlignHCenter)
-
         self.asset_balance_frame.setObjectName('frame_4')
         self.asset_balance_frame.setMinimumSize(QSize(158, 66))
         self.asset_balance_frame.setFrameShape(QFrame.StyledPanel)
@@ -260,6 +266,9 @@ class RGBAssetDetailWidget(QWidget):
         )
         self.asset_total_balance = QLabel(self.asset_balance_frame)
         self.asset_total_balance.setObjectName('asset_total_balance')
+        self.asset_total_balance.setAccessibleDescription(
+            ASSET_ON_CHAIN_TOTAL_BALANCE,
+        )
         self.asset_total_balance.setMinimumSize(QSize(60, 18))
         self.asset_balance_frame_layout.addWidget(
             self.asset_total_balance, 2, 0, 1, 1, Qt.AlignLeft,
@@ -273,6 +282,9 @@ class RGBAssetDetailWidget(QWidget):
         )
         self.asset_spendable_amount = QLabel(self.asset_balance_frame)
         self.asset_spendable_amount.setObjectName('asset_spendable_amount')
+        self.asset_spendable_amount.setAccessibleDescription(
+            ASSET_ON_CHAIN_SPENDABLE_BALANCE,
+        )
         self.asset_balance_frame_layout.addWidget(
             self.asset_spendable_amount, 4, 0, 1, 1, Qt.AlignLeft,
         )
@@ -303,6 +315,9 @@ class RGBAssetDetailWidget(QWidget):
         )
         self.lightning_total_balance = QLabel(self.lightning_balance_frame)
         self.lightning_total_balance.setObjectName('lightning_total_balance')
+        self.lightning_total_balance.setAccessibleDescription(
+            ASSET_LIGHTNING_TOTAL_BALANCE,
+        )
         self.vertical_layout_lightning_frame.addWidget(
             self.lightning_total_balance,
         )
@@ -315,10 +330,12 @@ class RGBAssetDetailWidget(QWidget):
         self.vertical_layout_lightning_frame.addWidget(
             self.lightning_spendable_balance_label,
         )
-
         self.lightning_spendable_balance = QLabel(self.lightning_balance_frame)
         self.lightning_spendable_balance.setObjectName(
             'lightning_spendable_balance',
+        )
+        self.lightning_spendable_balance.setAccessibleDescription(
+            ASSET_LIGHTNING_SPENDABLE_BALANCE,
         )
         self.vertical_layout_lightning_frame.addWidget(
             self.lightning_spendable_balance,
@@ -330,7 +347,6 @@ class RGBAssetDetailWidget(QWidget):
         self.rgb_asset_detail_widget_layout.addLayout(
             self.vertical_layout, 3, 0, 1, 1,
         )
-
         self.rgb_asset_detail_title_layout = QHBoxLayout()
         self.rgb_asset_detail_title_layout.setSpacing(0)
         self.rgb_asset_detail_title_layout.setObjectName('horizontal_layout_1')
@@ -347,7 +363,6 @@ class RGBAssetDetailWidget(QWidget):
         self.rgb_asset_detail_title_layout.addWidget(
             self.widget_title_asset_name,
         )
-
         self.asset_refresh_button = QPushButton(
             self.rgb_asset_detail_widget,
         )
@@ -355,8 +370,8 @@ class RGBAssetDetailWidget(QWidget):
             QCursor(Qt.CursorShape.PointingHandCursor),
         )
         self.asset_refresh_button.setObjectName('refresh_button')
+        self.asset_refresh_button.setAccessibleName(ASSET_REFRESH_BUTTON)
         self.asset_refresh_button.setMinimumSize(QSize(50, 65))
-
         icon = QIcon()
         icon.addFile(
             ':/assets/refresh_2x.png',
@@ -368,6 +383,7 @@ class RGBAssetDetailWidget(QWidget):
         )
         self.close_btn = QPushButton(self.rgb_asset_detail_widget)
         self.close_btn.setObjectName('close_btn')
+        self.close_btn.setAccessibleName(ASSET_CLOSE_BUTTON)
         self.close_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.close_btn.setMinimumSize(QSize(24, 24))
         self.close_btn.setMaximumSize(QSize(50, 65))
@@ -452,7 +468,7 @@ class RGBAssetDetailWidget(QWidget):
         rgb_on_chain_logo_path = ':/assets/on_chain.png'
         rgb_on_chain_logo_title = TransferType.ON_CHAIN.value
         rgb_off_chain_logo_path = ':/assets/off_chain.png'
-        rgb_of_chain_logo_title = TransferType.LIGHTNING.value
+        rgb_off_chain_logo_title = TransferType.LIGHTNING.value
         rgb_asset_page_load_model = RgbAssetPageLoadModel(
             asset_type=self.asset_type, asset_id=self.asset_id_detail.toPlainText(), asset_name=self.asset_name, image_path=self.image_path,
         )
@@ -461,7 +477,7 @@ class RGBAssetDetailWidget(QWidget):
             logo_1_path=rgb_on_chain_logo_path,
             logo_1_title=rgb_on_chain_logo_title,
             logo_2_path=rgb_off_chain_logo_path,
-            logo_2_title=rgb_of_chain_logo_title,
+            logo_2_title=rgb_off_chain_logo_title,
             asset_id=self.asset_id_detail.toPlainText(),
             asset_name=self.asset_name,
             callback=navigation,
@@ -602,7 +618,6 @@ class RGBAssetDetailWidget(QWidget):
                 self.set_lightning_transaction_frame(
                     transaction, asset_name, asset_type,
                 )
-
             self.transaction_detail_frame.click_frame.connect(
                 self.handle_asset_frame_click,
             )
@@ -755,9 +770,7 @@ class RGBAssetDetailWidget(QWidget):
         confirmation_dialog.exec()
 
     def _confirm_fail_transfer(self, idx):
-        """
-        Confirms the fail transfer action and closes the confirmation dialog.
-        """
+        """Confirms the fail transfer action and closes the confirmation dialog."""
         self._view_model.rgb25_view_model.on_fail_transfer(idx)
 
     def handle_img_path(self, image_path):
@@ -790,9 +803,7 @@ class RGBAssetDetailWidget(QWidget):
             self.transactions_label.setMinimumWidth(305)
 
     def set_on_chain_transaction_frame(self, transaction, asset_name, asset_type, asset_id, image_path):
-        """
-        Handles and updates the UI for on-chain transaction details.
-        """
+        """Handles and updates the UI for on-chain transaction details."""
         tx_id = str(transaction.txid)
         amount = str(transaction.amount_status)
         self.transaction_detail_frame = TransactionDetailFrame(
@@ -813,6 +824,12 @@ class RGBAssetDetailWidget(QWidget):
                 change_utxo=transaction.change_utxo,
                 receive_utxo=transaction.receive_utxo,
             ),
+        )
+        self.transaction_detail_frame.setAccessibleName(
+            RGB_TRANSACTION_DETAIL_ON_CHAIN_FRAME,
+        )
+        self.transaction_detail_frame.close_button.setAccessibleName(
+            TRANSACTION_DETAIL_CLOSE_BUTTON,
         )
         self.transaction_date = str(transaction.updated_at_date)
         self.transaction_time = str(transaction.created_at_time)
@@ -899,9 +916,7 @@ class RGBAssetDetailWidget(QWidget):
         self.handle_show_hide(self.transaction_detail_frame)
 
     def set_lightning_transaction_frame(self, transaction, asset_name, asset_type):
-        """
-        Handles and updates the UI for off-chain (lightning) transaction details.
-        """
+        """Handles and updates the UI for off-chain (lightning) transaction details."""
         amount = str(transaction.asset_amount_status)
         self.transaction_detail_frame = TransactionDetailFrame(
             self.scroll_area_widget_contents,
@@ -919,6 +934,9 @@ class RGBAssetDetailWidget(QWidget):
                 updated_date=transaction.updated_at_date,
                 updated_time=transaction.updated_at_time,
             ),
+        )
+        self.transaction_detail_frame.setAccessibleName(
+            RGB_TRANSACTION_DETAIL_LIGHTNING_FRAME,
         )
         self.transfer_amount = amount
         self.transaction_date = str(transaction.updated_at_date)
