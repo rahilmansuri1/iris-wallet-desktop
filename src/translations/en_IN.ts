@@ -1334,7 +1334,7 @@ If you understand the above remarks and wish to proceed, press the button below 
     </message>
     <message>
         <source>wrong_password</source>
-        <translation>The provided password is not correct</translation>
+        <translation>The provided password is incorrect</translation>
     </message>
     <message>
         <source>invalid_invoice_error</source>
@@ -1681,24 +1681,38 @@ If you understand the above remarks and wish to proceed, press the button below 
         <translation>Asset</translation>
     </message>
     <message>
-            <source>data_directory_path_label</source>
-            <translation>Data directory path:</translation>
+        <source>data_directory_path_label</source>
+        <translation>Data directory path:</translation>
     </message>
     <message>
-            <source>remote</source>
-            <translation>Remote</translation>
+        <source>remote</source>
+        <translation>Remote</translation>
     </message>
     <message>
-            <source>embedded_connection_info</source>
-            <translation>With embedded connection, an RGB Lightning Node is automatically run in the background.</translation>
+        <source>embedded_connection_info</source>
+        <translation>With embedded connection, an RGB Lightning Node is automatically run in the background.</translation>
     </message>
     <message>
-            <source>remote_connection_info</source>
-            <translation>With remote connection, an RGB Lightning Node needs to be hosted separately and its URL will need to be provided.</translation>
+        <source>remote_connection_info</source>
+        <translation>With remote connection, an RGB Lightning Node needs to be hosted separately and its URL will need to be provided.</translation>
     </message>
     <message>
-            <source>rln_node_connection_description</source>
-            <translation>An RLN (RGB Lightning Node) instance is necessary to support the app's functionalities. Clicking an option reveals details about it.</translation>
+        <source>rln_node_connection_description</source>
+        <translation>An RLN (RGB Lightning Node) instance is necessary to support the app's functionalities. Clicking an option reveals details about it.</translation>
+    </message>
+    <message>
+        <source>rgb_ln_node_connection_failed</source>
+        <translation>The RGB Lightning Node unexpectedly crashed or was terminated, causing the connection to the provided Lightning Node to fail. The application requires the RGB Lightning Node to function properly, and it must be running for a successful connection. You can report this issue on {} for assistance.
+
+        {}You can try to restart the RGB Lightning Node or close the application.</translation>
+    </message>
+    <message>
+        <source>crash_dialog_close_app</source>
+        <translation>Close the application</translation>
+    </message>
+    <message>
+        <source>crash_dialog_restart_node</source>
+        <translation>Restart RGB Lightning Node</translation>
     </message>
 </context>
 </TS>

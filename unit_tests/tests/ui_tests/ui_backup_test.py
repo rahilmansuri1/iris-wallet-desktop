@@ -14,6 +14,7 @@ from PySide6.QtWidgets import QApplication
 
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.views.ui_backup import Backup
 
 
@@ -218,7 +219,7 @@ def test_handle_mnemonic_visibility_show(backup_widget, qtbot):
         # Set the button text to "Show Mnemonic" for initial state
         backup_widget.show_mnemonic_button.setText(
             QApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'show_mnemonic', 'Show Mnemonic',
             ),
         )

@@ -43,7 +43,7 @@ class LnNodeChannelManagement:
             block_value (int): The number of blocks for fee estimation. Default is medium transaction fee blocks.
 
         Returns:
-            int | float: The fee rate in sats/byte.
+            int: The fee rate in sats/byte.
         """
         try:
             # Request fee estimation
@@ -84,7 +84,7 @@ class LnNodeChannelManagement:
         Retrieves the default fee rate from settings.
 
         Returns:
-            float | int: The default fee rate in sats/byte.
+            int: The default fee rate in sats/byte.
         """
         default_fee_rate: DefaultFeeRate = SettingCardRepository.get_default_fee_rate()
         return default_fee_rate.fee_rate

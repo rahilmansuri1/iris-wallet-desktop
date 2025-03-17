@@ -16,6 +16,7 @@ from PySide6.QtGui import QMovie
 from PySide6.QtGui import QPainter
 from PySide6.QtGui import QPixmap
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.views.components.buttons import AssetTransferButton
 from src.views.components.buttons import PrimaryButton
 from src.views.components.buttons import SecondaryButton
@@ -252,7 +253,7 @@ def test_primary_button_movie_infinite_loop(mocker):
 def test_sidebar_button_initialization(sidebar_button):
     """Test initialization of SidebarButton."""
     expected_title = QCoreApplication.translate(
-        'iris_wallet_desktop', 'test_key', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'test_key', None,
     )
     assert sidebar_button.text() == expected_title
     assert sidebar_button.objectName() == 'sidebar_button'

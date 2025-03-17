@@ -25,11 +25,13 @@ from PySide6.QtWidgets import QPlainTextEdit
 from src.flavour import __network__
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import TokenSymbol
+from src.model.enums.enums_model import WalletType
 from src.model.selection_page_model import SelectionPageModel
 from src.utils.common_utils import close_button_navigation
 from src.utils.common_utils import convert_hex_to_image
 from src.utils.common_utils import convert_timestamp
 from src.utils.common_utils import copy_text
+from src.utils.common_utils import disable_rln_node_termination_handling
 from src.utils.common_utils import download_file
 from src.utils.common_utils import find_files_with_name
 from src.utils.common_utils import generate_identicon
@@ -43,8 +45,11 @@ from src.utils.common_utils import translate_value
 from src.utils.common_utils import zip_logger_folder
 from src.utils.constant import APP_NAME
 from src.utils.constant import DEFAULT_LOCALE
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LOG_FOLDER_NAME
 from src.utils.custom_exception import CommonException
+from src.utils.ln_node_manage import LnNodeServerManager
+from src.utils.logging import logger
 from src.version import __version__
 from src.views.components.toast import ToastManager
 
@@ -962,7 +967,7 @@ def test_sigterm_handler(mock_qapp_instance, mock_ln_node_manager_get_instance, 
         None,
         'Are you sure you want to exit?',
         QApplication.translate(
-            'iris_wallet_desktop',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT,
             'sigterm_warning_message', None,
         ),
         QMessageBox.Ok | QMessageBox.Cancel,
@@ -984,7 +989,7 @@ def test_sigterm_handler(mock_qapp_instance, mock_ln_node_manager_get_instance, 
         None,
         'Are you sure you want to exit?',
         QApplication.translate(
-            'iris_wallet_desktop',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT,
             'sigterm_warning_message', None,
         ),
         QMessageBox.Ok | QMessageBox.Cancel,
@@ -1061,7 +1066,9 @@ def test_translate_value_valid_element(mock_translate):
     translate_value(element, key)
 
     element.setText.assert_called_once_with('Translated Text')
-    mock_translate.assert_called_once_with('iris_wallet_desktop', key, None)
+    mock_translate.assert_called_once_with(
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, key, None,
+    )
 
 
 def test_translate_value_invalid_element_type():
@@ -1091,3 +1098,41 @@ def test_translate_value_unexpected_exception(mock_logger):
 
     assert 'Unexpected Error' in str(excinfo.value)
     mock_logger.error.assert_not_called()
+
+
+@patch.object(LnNodeServerManager, 'get_instance')
+def test_disable_rln_node_termination_handling_embedded(mock_get_instance):
+    """Test that the RLN node process finished signal is disconnected for embedded wallets."""
+
+    # Create a mock instance of LnNodeServerManager
+    mock_ln_manager = MagicMock()
+    mock_get_instance.return_value = mock_ln_manager
+
+    # Call the function with an embedded wallet type
+    disable_rln_node_termination_handling(WalletType.EMBEDDED_TYPE_WALLET)
+
+    # Ensure process.finished.disconnect() was called
+    mock_ln_manager.process.finished.disconnect.assert_called_once()
+
+
+@patch.object(LnNodeServerManager, 'get_instance')
+@patch.object(logger, 'error')
+def test_disable_rln_node_termination_handling_exception(mock_logger_error, mock_get_instance):
+    """Test that an exception in disconnecting the signal is logged."""
+
+    # Create a mock instance of LnNodeServerManager
+    mock_ln_manager = MagicMock()
+    mock_get_instance.return_value = mock_ln_manager
+
+    # Simulate exception when disconnecting
+    mock_ln_manager.process.finished.disconnect.side_effect = CommonException(
+        'Test Error',
+    )
+
+    # Call the function with an embedded wallet type
+    disable_rln_node_termination_handling(WalletType.EMBEDDED_TYPE_WALLET)
+
+    # Ensure exception is logged
+    mock_logger_error.assert_called_once_with(
+        'Exception occurred: %s, Message: %s', 'CommonException', 'Test Error',
+    )

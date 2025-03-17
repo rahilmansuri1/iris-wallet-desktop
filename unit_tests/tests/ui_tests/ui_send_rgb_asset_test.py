@@ -14,6 +14,7 @@ from rgb_lib import RgbLibError
 from src.model.enums.enums_model import ToastPreset
 from src.model.rgb_model import Balance
 from src.model.rgb_model import ListTransferAssetWithBalanceResponseModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SEND_ASSET
 from src.utils.error_message import ERROR_UNEXPECTED
@@ -51,11 +52,11 @@ def test_retranslate_ui(send_rgb_asset_widget: SendRGBAssetWidget, qtbot):
     send_rgb_asset_widget.send_rgb_asset_page.retranslate_ui()
 
     expected_total_supply_text = QCoreApplication.translate(
-        'iris_wallet_desktop', 'amount_to_pay', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount_to_pay', None,
     )
 
     expected_pay_to_text = QCoreApplication.translate(
-        'iris_wallet_desktop', 'pay_to', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'pay_to', None,
     )
 
     assert send_rgb_asset_widget.send_rgb_asset_page.total_supply_label.text(
@@ -609,7 +610,7 @@ def test_validate_rgb_invoice(send_rgb_asset_widget: SendRGBAssetWidget):
         send_rgb_asset_widget.send_rgb_asset_page.asset_address_validation_label.show.assert_called_once()
         send_rgb_asset_widget.send_rgb_asset_page.asset_address_validation_label.setText.assert_called_once_with(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'invalid_invoice',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'invalid_invoice',
             ),
         )
         assert not send_rgb_asset_widget.send_rgb_asset_page.send_btn.isEnabled()

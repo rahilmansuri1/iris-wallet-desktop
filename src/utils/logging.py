@@ -13,7 +13,7 @@ from src.utils.constant import LOG_FOLDER_NAME
 from src.utils.local_store import local_store
 
 
-def setup_logging(application_status: str) -> logging.Logger:
+def setup_logger(logger_name: str, log_file_name: str, application_status: str | None = None) -> logging.Logger:
     """
     Sets up the logging configuration for the application.
 
@@ -22,16 +22,18 @@ def setup_logging(application_status: str) -> logging.Logger:
     size limit and backup count. For development, it logs both to a file and the console.
 
     Args:
-        application_status (str): The current status of the application, either 'production' or 'development'.
-
+        logger_name (str): Name of the logger.
+        log_file_name (str): Log file name.
+        application_status (str | None, optional): The current status of the application, either 'production',
+            'development', or None. If None, it defaults to 'development'.
     Returns:
-        logging.Logger: Configured logger instance for the application.
+        logging.Logger: Configured logger instance.
     """
     log_directory = LOG_FOLDER_NAME
     path = local_store.create_folder(log_directory)
 
     # Create a logger
-    logger_instance = logging.getLogger('iris-wallet')
+    logger_instance = logging.getLogger(logger_name)
     # Set to debug to capture all levels of messages
     logger_instance.setLevel(logging.DEBUG)
     # Prevent logging from propagating to the root logger
@@ -42,7 +44,7 @@ def setup_logging(application_status: str) -> logging.Logger:
         '%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
     )
-    file_name = os.path.join(path, 'iris_wallet_desktop.log')
+    file_name = os.path.join(path, log_file_name)
 
     # Define and add handlers based on network
     file_handler = RotatingFileHandler(
@@ -72,5 +74,11 @@ APPLICATION_STATUS = 'production' if getattr(
     sys, 'frozen', False,
 ) else 'development'
 
-# Set up logging based on the current network
-logger = setup_logging(APPLICATION_STATUS)
+# Set up loggers using the refactored function and capturing all logs without applying `APPLICATION_STATUS`
+logger = setup_logger(
+    'iris-wallet', 'iris_wallet_desktop.log',
+)
+
+rln_qprocess_logger = setup_logger(
+    'qprocess', 'rln_qprocess.log',
+)

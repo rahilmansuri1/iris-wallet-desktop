@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QObject
+from PySide6.QtCore import QProcess
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QApplication
 
@@ -15,22 +16,29 @@ from src.model.common_operation_model import NodeInfoResponseModel
 from src.model.common_operation_model import UnlockRequestModel
 from src.model.enums.enums_model import NativeAuthType
 from src.model.enums.enums_model import WalletType
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import NODE_PUB_KEY
 from src.utils.constant import WALLET_PASSWORD_KEY
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_CONNECTION_FAILED_WITH_LN
 from src.utils.error_message import ERROR_NATIVE_AUTHENTICATION
+from src.utils.error_message import ERROR_NODE_WALLET_NOT_INITIALIZED
+from src.utils.error_message import ERROR_PASSWORD_INCORRECT
 from src.utils.error_message import ERROR_REQUEST_TIMEOUT
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG_WHILE_UNLOCKING_LN_ON_SPLASH
 from src.utils.helpers import get_bitcoin_config
 from src.utils.keyring_storage import get_value
+from src.utils.ln_node_manage import LnNodeServerManager
 from src.utils.local_store import local_store
 from src.utils.logging import logger
+from src.utils.logging import rln_qprocess_logger
+from src.utils.page_navigation_events import PageNavigationEventManager
 from src.utils.render_timer import RenderTimer
 from src.utils.worker import ThreadManager
 from src.viewmodels.wallet_and_transfer_selection_viewmodel import WalletTransferSelectionViewModel
 from src.views.components.message_box import MessageBox
+from src.views.components.node_crash_dialog import CrashDialogBox
 from src.views.components.toast import ToastManager
 
 
@@ -41,12 +49,29 @@ class SplashViewModel(QObject, ThreadManager):
     decline_button_clicked = Signal(str)
     splash_screen_message = Signal(str)
     sync_chain_info_label = Signal(bool)
+    show_main_window_loader = Signal(bool)
 
     def __init__(self, page_navigation):
         super().__init__()
         self._page_navigation = page_navigation
         self.wallet_transfer_selection_view_model: WalletTransferSelectionViewModel = None
         self.render_timer = RenderTimer(task_name='SplashScreenWidget')
+        self.is_from_retry: bool = False
+        self.is_error_handled = False
+        self.ln_node_manager = LnNodeServerManager.get_instance()
+        self.ln_node_manager.process.finished.connect(self.on_node_failure)
+
+    def load_wallet_transfer_selection_view_model(self, view_model: WalletTransferSelectionViewModel):
+        """
+        Loads the WalletTransferSelectionViewModel into the splash view.
+
+        This method assigns the provided WalletTransferSelectionViewModel instance to the splash view model.
+        preventing duplicate instances and maintaining consistency across the application.
+
+        Args:
+            view_model (WalletTransferSelectionViewModel): The singleton instance of WalletTransferSelectionViewModel.
+        """
+        self.wallet_transfer_selection_view_model = view_model
 
     def on_success(self, response):
         """Callback after successful of native login authentication"""
@@ -70,10 +95,9 @@ class SplashViewModel(QObject, ThreadManager):
         ToastManager.error(description=description)
         QApplication.instance().exit()
 
-    def is_login_authentication_enabled(self, view_model: WalletTransferSelectionViewModel):
+    def is_login_authentication_enabled(self):
         """Check login authentication enabled"""
         try:
-            self.wallet_transfer_selection_view_model = view_model
             if SettingRepository.native_login_enabled().is_enabled:
                 self.splash_screen_message.emit(
                     'Please authenticate the application..',
@@ -102,6 +126,7 @@ class SplashViewModel(QObject, ThreadManager):
         node_pub_key: NodeInfoResponseModel = CommonOperationRepository.node_info()
         if node_pub_key is not None:
             local_store.set_value(NODE_PUB_KEY, node_pub_key.pubkey)
+        self.show_main_window_loader.emit(False)
 
     def on_error_of_unlock_api(self, error: Exception):
         """Handle error of unlock API."""
@@ -109,38 +134,57 @@ class SplashViewModel(QObject, ThreadManager):
             error, CommonException,
         ) else ERROR_SOMETHING_WENT_WRONG_WHILE_UNLOCKING_LN_ON_SPLASH
 
-        if error_message == QCoreApplication.translate('iris_wallet_desktop', 'already_unlocked', None):
+        ToastManager.error(
+            description=error_message,
+        )
+
+        if error_message == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'already_unlocked', None):
             # Node is already unlocked, treat it as a success
             self.on_success_of_unlock_api()
             return
 
-        if error_message == QCoreApplication.translate('iris_wallet_desktop', 'not_initialized', None):
+        if error_message == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'not_initialized', None):
             self.render_timer.stop()
             self._page_navigation.term_and_condition_page()
             return
 
-        if error_message in [ERROR_CONNECTION_FAILED_WITH_LN, ERROR_REQUEST_TIMEOUT]:
+        if error_message is ERROR_REQUEST_TIMEOUT:
             MessageBox('critical', message_text=ERROR_CONNECTION_FAILED_WITH_LN)
             QApplication.instance().exit()
+
+        if error_message == ERROR_CONNECTION_FAILED_WITH_LN and not self.is_error_handled:
+            if self.ln_node_manager.process.state() == QProcess.Running:
+                self.wallet_transfer_selection_view_model.on_ln_node_start()
+            else:
+                self.restart_ln_node_after_crash()
+
+        if error_message == ERROR_PASSWORD_INCORRECT:
+            PageNavigationEventManager.get_instance().enter_wallet_password_page_signal.emit()
+
+        if error_message == ERROR_NODE_WALLET_NOT_INITIALIZED:
+            PageNavigationEventManager.get_instance().set_wallet_password_page_signal.emit()
 
         # Log the error and display a toast message
         logger.error(
             'Error while unlocking node on splash page: %s, Message: %s',
             type(error).__name__, str(error),
         )
-        ToastManager.error(
-            description=error_message,
-        )
-        self._page_navigation.enter_wallet_password_page()
+        if not self.is_from_retry and not self.is_error_handled:
+            self._page_navigation.enter_wallet_password_page()
+        self.show_main_window_loader.emit(False)
+
+        self.is_from_retry = False
 
     def handle_application_open(self):
         """This method handle application start"""
         try:
+            self.show_main_window_loader.emit(True)
+            self.is_error_handled = False
             wallet_type: WalletType = SettingRepository.get_wallet_type()
             if WalletType.EMBEDDED_TYPE_WALLET.value == wallet_type.value:
                 self.splash_screen_message.emit(
                     QCoreApplication.translate(
-                        'iris_wallet_desktop', 'wait_node_to_start', None,
+                        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wait_node_to_start', None,
                     ),
                 )
                 self.wallet_transfer_selection_view_model.start_node_for_embedded_option()
@@ -152,7 +196,7 @@ class SplashViewModel(QObject, ThreadManager):
 
                     self.splash_screen_message.emit(
                         QCoreApplication.translate(
-                            'iris_wallet_desktop', 'wait_for_node_to_unlock', None,
+                            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wait_for_node_to_unlock', None,
                         ),
                     )
                     self.sync_chain_info_label.emit(True)
@@ -171,6 +215,7 @@ class SplashViewModel(QObject, ThreadManager):
                         },
                     )
         except CommonException as error:
+            self.show_main_window_loader.emit(False)
             logger.error(
                 'Exception occurred at handle_application_open: %s, Message: %s',
                 type(error).__name__, str(error),
@@ -179,6 +224,7 @@ class SplashViewModel(QObject, ThreadManager):
                 description=error.message,
             )
         except Exception as error:
+            self.show_main_window_loader.emit(False)
             logger.error(
                 'Exception occurred at handle_application_open: %s, Message: %s',
                 type(error).__name__, str(error),
@@ -186,3 +232,37 @@ class SplashViewModel(QObject, ThreadManager):
             ToastManager.error(
                 description=ERROR_SOMETHING_WENT_WRONG,
             )
+
+    def restart_ln_node_after_crash(self):
+        """
+        Attempts to restart the RGB Lightning Node after it crashes, exits, or is killed.
+        If the user chooses to retry, the application will attempt to restart the node.
+        Otherwise, the application will exit.
+        """
+        if not self.is_error_handled:
+            self.is_error_handled = True
+
+            rln_qprocess_logger.error(
+                'RLN node process was KILLED or CRASHED!',
+            )
+
+            crash_dialog_box = CrashDialogBox()
+
+            if crash_dialog_box.message_box.clickedButton() == crash_dialog_box.retry_button:
+                self.is_from_retry = True
+
+                logger.info(
+                    'Restarting RGB Lightning Node',
+                )
+
+                self.handle_application_open()
+            else:
+                QApplication.instance().exit()
+
+    def on_node_failure(self, exit_code, exit_status):
+        """This method handles crash exits of RGB LN Node"""
+        if exit_status == QProcess.ExitStatus.CrashExit:
+            rln_qprocess_logger.error(
+                'RLN node process was KILLED or CRASHED! Exit Code: %s', exit_code,
+            )
+            self.restart_ln_node_after_crash()

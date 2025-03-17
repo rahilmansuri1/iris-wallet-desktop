@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QStyle
 from PySide6.QtWidgets import QStyleOptionButton
 
 import src.resources_rc
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 
 
@@ -148,7 +149,7 @@ class SidebarButton(QPushButton):
         self.setStyleSheet(load_stylesheet('views/qss/button.qss'))
         self.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 self.translation_key,
                 None,
             ),
@@ -200,7 +201,7 @@ class AssetTransferButton(QPushButton):
         self.setObjectName('transfer_button')
         self.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', text, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, text, None,
             ),
         )
         self.set_icon(icon_path)  # Set icon if provided

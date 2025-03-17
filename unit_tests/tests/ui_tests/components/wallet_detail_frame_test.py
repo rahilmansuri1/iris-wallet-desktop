@@ -14,6 +14,7 @@ from PySide6.QtWidgets import QLabel
 from PySide6.QtWidgets import QPushButton
 from PySide6.QtWidgets import QVBoxLayout
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.views.components.wallet_detail_frame import NodeInfoWidget
 
 
@@ -33,7 +34,7 @@ def test_node_info_widget_initialization(node_info_widget):
     # Check if the value label text is set correctly
     assert node_info_widget.value_label.text() == 'some-public-key'
     expected_title = QCoreApplication.translate(
-        'iris_wallet_desktop', 'public_key_label', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'public_key_label', None,
     )
 
     # Check if the key label text is set correctly by translation
@@ -44,7 +45,7 @@ def test_node_info_widget_initialization(node_info_widget):
 
     # Check if the copy button has the correct tooltip text
     expected_tooltip = QCoreApplication.translate(
-        'iris_wallet_desktop', 'copy public_key_label', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copy public_key_label', None,
     )
     assert node_info_widget.node_pub_key_copy_button.toolTip() == expected_tooltip
 

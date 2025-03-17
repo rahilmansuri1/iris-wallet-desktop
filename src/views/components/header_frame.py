@@ -26,6 +26,7 @@ from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import WalletType
 from src.model.setting_model import IsBackupConfiguredModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.gauth import TOKEN_PICKLE_PATH
 from src.utils.helpers import load_stylesheet
 from src.utils.page_navigation_events import PageNavigationEventManager
@@ -180,17 +181,17 @@ class HeaderFrame(QFrame, QObject):
         """Retranslate the UI elements."""
         self.title_name.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self.title, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self.title, None,
             ),
         )
         self.network_error_info_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'connection_error_message', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'connection_error_message', None,
             ),
         )
         self.action_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'issue_new_asset', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'issue_new_asset', None,
             ),
         )
 
@@ -208,7 +209,7 @@ class HeaderFrame(QFrame, QObject):
             # Show network error frame for internet connection issue
             self.network_error_info_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'connection_error_message', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'connection_error_message', None,
                 ),
             )
             self.network_error_frame.show()
@@ -275,7 +276,7 @@ class HeaderFrame(QFrame, QObject):
             """)
             self.network_error_info_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'backup_not_configured', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'backup_not_configured', None,
                 ),
             )
             self.network_error_frame.setMinimumSize(QSize(220, 42))
@@ -290,7 +291,7 @@ class HeaderFrame(QFrame, QObject):
             )
             self.network_error_frame.setToolTip(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'backup_tooltip_text', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'backup_tooltip_text', None,
                 ),
             )
 

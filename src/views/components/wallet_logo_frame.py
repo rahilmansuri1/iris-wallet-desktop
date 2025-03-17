@@ -1,4 +1,4 @@
-# pylint: disable=unused-import
+# pylint: disable=unused-import, too-few-public-methods
 """This module contains the WalletLogoFrame classes,
 which represents the WalletLogo of the application.
 """
@@ -14,6 +14,7 @@ from PySide6.QtWidgets import QLabel
 
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 
 
 class WalletLogoFrame(QFrame):
@@ -70,7 +71,7 @@ class WalletLogoFrame(QFrame):
             }" if self.network != NetworkEnumModel.MAINNET.value else ''
         )
         self.logo_text.setText(
-            f"{QCoreApplication.translate('iris_wallet_desktop', 'iris_wallet', None)}{
+            f"{QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'iris_wallet', None)}{
                 network_text
             }",
         )

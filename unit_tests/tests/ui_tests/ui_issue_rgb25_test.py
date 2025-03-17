@@ -13,6 +13,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtGui import QPixmap
 
 from src.model.common_operation_model import NodeInfoResponseModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.ui_issue_rgb25 import IssueRGB25Widget
 from unit_tests.tests.ui_tests.ui_helper_test.issue_asset_helper_test import assert_success_page_called
@@ -193,7 +194,7 @@ def test_show_file_preview(mock_node_info_model, mock_qpix_map, mock_resize_imag
 
     # Assert that the validation message is shown for large files
     expected_validation_text = QCoreApplication.translate(
-        'iris_wallet_desktop', 'image_validation', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'image_validation', None,
     ).format(mock_node_info.node_info.max_media_upload_size_mb)
     issue_rgb25_widget.file_path.setText.assert_called_once_with(
         expected_validation_text,
@@ -239,6 +240,6 @@ def test_show_file_preview(mock_node_info_model, mock_qpix_map, mock_resize_imag
     # Assert that the "change uploaded file" text is set
     issue_rgb25_widget.upload_file.setText.assert_called_once_with(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'change_uploaded_file', 'CHANGE UPLOADED FILE',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'change_uploaded_file', 'CHANGE UPLOADED FILE',
         ),
     )

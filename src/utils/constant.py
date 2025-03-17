@@ -121,4 +121,7 @@ SYNCING_CHAIN_LABEL_TIMER = 5000
 
 # Email and github issue url for error report
 CONTACT_EMAIL = 'iriswalletdesktop@gmail.com'
-GITHUB_ISSUE_LINK = 'https://github.com/RGB-Tools/iris-wallet-desktop/issues/new?template=Blank+issue'
+GITHUB_ISSUE_LINK = 'https://github.com/RGB-Tools/iris-wallet-desktop/issues/new/choose'
+
+# Translation context key
+IRIS_WALLET_TRANSLATIONS_CONTEXT = 'iris_wallet_desktop'

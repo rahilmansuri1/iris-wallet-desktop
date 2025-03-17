@@ -11,6 +11,7 @@ from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.send_asset import SendAssetWidget
 
@@ -82,7 +83,7 @@ def test_show_fee_estimation_error(send_asset_widget):
     send_asset_widget.show_fee_estimation_error()
     assert not send_asset_widget.estimate_fee_error_label.isHidden()
     expected_title = QCoreApplication.translate(
-        'iris_wallet_desktop', 'estimation_error', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'estimation_error', None,
     )
     assert send_asset_widget.estimate_fee_error_label.text() == expected_title
 

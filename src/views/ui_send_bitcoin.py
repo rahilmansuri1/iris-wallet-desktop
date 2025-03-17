@@ -16,6 +16,7 @@ from src.data.repository.setting_card_repository import SettingCardRepository
 from src.data.repository.setting_repository import SettingRepository
 from src.model.setting_model import DefaultFeeRate
 from src.utils.constant import FEE_RATE
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.loading_screen import LoadingTranslucentScreen
@@ -223,6 +224,6 @@ class SendBitcoinWidget(QWidget):
             self.send_bitcoin_page.asset_address_validation_label.show()
             self.send_bitcoin_page.asset_address_validation_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'invalid_address',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'invalid_address',
                 ),
             )

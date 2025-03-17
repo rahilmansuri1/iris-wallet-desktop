@@ -24,6 +24,7 @@ from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import ToastPreset
 from src.utils.clickable_frame import ClickableFrame
 from src.utils.common_utils import copy_text
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
@@ -85,7 +86,7 @@ class ViewUnspentList(QWidget):
 
         self.sub_title.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'unspent_list', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'unspent_list', None,
             ),
         )
         self.vertical_layout_2_unspent.addWidget(self.sub_title)
@@ -247,7 +248,7 @@ class ViewUnspentList(QWidget):
         asset_name = QLabel(unspent_clickable_frame)
         asset_name.setToolTip(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'Click here to copy', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'Click here to copy', None,
             ),
         )
         asset_name.setText(_list.utxo.outpoint)

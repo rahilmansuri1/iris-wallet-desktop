@@ -24,6 +24,7 @@ import src.resources_rc
 from src.model.success_model import SuccessPageModel
 from src.utils.common_utils import set_number_validator
 from src.utils.common_utils import set_placeholder_value
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
@@ -318,56 +319,56 @@ class IssueRGB20Widget(QWidget):
         self.issue_rgb20_btn.setDisabled(True)
         self.issue_rgb20_title.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'issue_new_rgb20_asset',
                 None,
             ),
         )
         self.asset_ticker_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'asset_ticker',
                 None,
             ),
         )
         self.short_identifier_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'short_identifier',
                 None,
             ),
         )
         self.asset_name_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'asset_name',
                 None,
             ),
         )
         self.asset_name_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'name_of_the_asset',
                 None,
             ),
         )
         self.total_supply_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'total_supply',
                 None,
             ),
         )
         self.amount_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'amount_to_issue',
                 None,
             ),
         )
         self.issue_rgb20_btn.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'issue_asset', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'issue_asset', None,
             ),
         )
 

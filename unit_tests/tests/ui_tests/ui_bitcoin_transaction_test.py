@@ -15,6 +15,7 @@ from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import TransferStatusEnumModel
 from src.model.transaction_detail_page_model import TransactionDetailPageModel
 from src.utils.common_utils import network_info
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
 from src.utils.helpers import load_stylesheet
@@ -69,7 +70,7 @@ def test_retranslate_ui(bitcoin_transaction_detail_widget, qtbot):
         # Test bitcoin_text construction
         expected_bitcoin_text = f'{
             QCoreApplication.translate(
-                "iris_wallet_desktop", "bitcoin", None
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, "bitcoin", None
             )
         } (mainnet)'
         assert bitcoin_transaction_detail_widget.bitcoin_text == expected_bitcoin_text
@@ -79,11 +80,11 @@ def test_retranslate_ui(bitcoin_transaction_detail_widget, qtbot):
 
         # Test all label texts
         assert bitcoin_transaction_detail_widget.tx_id_label.text(
-        ) == QCoreApplication.translate('iris_wallet_desktop', 'transaction_id', None)
+        ) == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'transaction_id', None)
         assert bitcoin_transaction_detail_widget.btc_amount_label.text(
-        ) == QCoreApplication.translate('iris_wallet_desktop', 'amount', None)
+        ) == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount', None)
         assert bitcoin_transaction_detail_widget.date_label.text(
-        ) == QCoreApplication.translate('iris_wallet_desktop', 'date', None)
+        ) == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'date', None)
         assert bitcoin_transaction_detail_widget.bitcoin_title_value.text() == expected_bitcoin_text
 
         # Test tx_id_value text for mainnet
@@ -161,7 +162,7 @@ def test_set_btc_tx_value_ongoing_transfer_status(bitcoin_transaction_detail_wid
 
     # Check if the status text appears in the date value
     assert bitcoin_transaction_detail_widget.date_label.text(
-    ) == QCoreApplication.translate('iris_wallet_desktop', 'status', None)
+    ) == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'status', None)
     assert bitcoin_transaction_detail_widget.date_value.text() == 'Pending'
 
 
@@ -212,7 +213,7 @@ def test_set_btc_tx_value_missing_confirmation(bitcoin_transaction_detail_widget
 
     # Ensure that the date label and value reflect 'Unconfirmed'
     assert bitcoin_transaction_detail_widget.date_label.text(
-    ) == QCoreApplication.translate('iris_wallet_desktop', 'status', None)
+    ) == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'status', None)
     assert bitcoin_transaction_detail_widget.date_value.text() == 'Unconfirmed'
 
 

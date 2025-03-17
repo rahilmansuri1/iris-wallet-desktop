@@ -15,6 +15,7 @@ from requests.exceptions import HTTPError
 from src.utils.constant import INTERVAL
 from src.utils.constant import MAX_ATTEMPTS_FOR_CLOSE
 from src.utils.ln_node_manage import LnNodeServerManager
+from src.utils.logging import rln_qprocess_logger
 
 
 @pytest.fixture
@@ -22,6 +23,37 @@ def ln_node_manager():
     """Fixture to create an instance of LnNodeServerManager."""
     manager = LnNodeServerManager()
     return manager
+
+
+@pytest.fixture
+def mock_process():
+    """Fixture to create a mock QProcess."""
+    mock_proc = MagicMock()
+    mock_proc.readAllStandardOutput.return_value.data.return_value.decode.return_value = 'stdout message'
+    mock_proc.readAllStandardError.return_value.data.return_value.decode.return_value = 'stderr message'
+    return mock_proc
+
+
+@pytest.fixture
+def instance(mock_process):
+    """Fixture to create an instance of LnNodeServerManager with a mocked QProcess."""
+    obj = LnNodeServerManager()
+    obj.process = mock_process  # Inject mock process
+    return obj
+
+
+@patch.object(rln_qprocess_logger, 'info')
+def test_handle_stdout(mock_logger, instance):
+    """Test that handle_stdout logs the correct standard output."""
+    instance.handle_stdout()
+    mock_logger.assert_called_once_with('stdout message')
+
+
+@patch.object(rln_qprocess_logger, 'error')
+def test_handle_stderr(mock_logger, instance):
+    """Test that handle_stderr logs the correct standard error output."""
+    instance.handle_stderr()
+    mock_logger.assert_called_once_with('stderr message')
 
 
 def test_check_node_status_success(ln_node_manager):
@@ -35,10 +67,8 @@ def test_check_node_status_success(ln_node_manager):
         mock_slot = MagicMock()
         ln_node_manager.process_started.connect(mock_slot)
 
-        ln_node_manager.check_node_status()  # Call the method
-
-        # Verify the mock slot was called once
-        mock_slot.assert_called_once()  # Check the slot invocation
+        ln_node_manager.check_node_status()
+        mock_slot.assert_called_once()
 
 
 def test_check_node_status_http_error(ln_node_manager):
@@ -97,16 +127,14 @@ def test_check_process_on_close_button_click_max_attempts(ln_node_manager):
 
 def test_stop_server_from_close_button_running(ln_node_manager):
     """Test stopping the server when it is running."""
-    ln_node_manager.process.state = MagicMock(
-        return_value=QProcess.Running,
-    )  # Mock process state
-    ln_node_manager.process.terminate = MagicMock()  # Mock terminate method
+    ln_node_manager.process.state = MagicMock(return_value=QProcess.Running)
+    ln_node_manager.process.terminate = MagicMock()
 
-    ln_node_manager.stop_server_from_close_button()  # Call the method
+    ln_node_manager.stop_server_from_close_button()
 
     # Assert that the process is terminated
     ln_node_manager.process.terminate.assert_called_once()
-    assert ln_node_manager.is_stop is True  # Check if is_stop is set to True
+    assert ln_node_manager.is_stop is True
 
 
 def test_stop_server_from_close_button_not_running(ln_node_manager):
@@ -126,27 +154,21 @@ def test_stop_server_from_close_button_not_running(ln_node_manager):
 
 def test_check_process_on_close_button_click(ln_node_manager):
     """Test the _check_process_on_close_button_click method."""
-    ln_node_manager.process.state = MagicMock(
-        return_value=QProcess.NotRunning,
-    )  # Mock process state
-    ln_node_manager.attempts_for_close = 0  # Set attempts for close to 0
+    ln_node_manager.process.state = MagicMock(return_value=QProcess.NotRunning)
+    ln_node_manager.attempts_for_close = 0
 
-    ln_node_manager._check_process_on_close_button_click()  # Call the method
-
-    # Assert that the finished signal is emitted
+    ln_node_manager._check_process_on_close_button_click()
     ln_node_manager.process_finished_on_request_app_close.emit()
 
 
 def test_start_server_not_running(ln_node_manager):
     """Test starting the server when it is not running."""
-    ln_node_manager.process.state = MagicMock(
-        return_value=QProcess.NotRunning,
-    )  # Mock process state
-    ln_node_manager.process.start = MagicMock()  # Mock start method
+    ln_node_manager.process.state = MagicMock(return_value=QProcess.NotRunning)
+    ln_node_manager.process.start = MagicMock()
 
-    arguments = ['--arg1', 'value1']  # Example arguments to pass
+    arguments = ['--arg1', 'value1']
 
-    ln_node_manager.start_server(arguments)  # Call the method
+    ln_node_manager.start_server(arguments)
 
     # Assert that the process is started with the given arguments
     ln_node_manager.process.start.assert_called_once_with(
@@ -187,10 +209,10 @@ def test_get_instance_creates_new_instance():
 
 def test_get_instance_returns_existing_instance():
     """Test that get_instance returns the existing instance."""
-    existing_instance = LnNodeServerManager()  # Create an instance
-    LnNodeServerManager._instance = existing_instance  # Set the instance
+    existing_instance = LnNodeServerManager()
+    LnNodeServerManager._instance = existing_instance
 
-    instance = LnNodeServerManager.get_instance()  # Call the method
+    instance = LnNodeServerManager.get_instance()
 
     # Assert that the existing instance is returned
     assert instance is existing_instance
@@ -198,12 +220,10 @@ def test_get_instance_returns_existing_instance():
 
 def test_on_process_started_success(ln_node_manager):
     """Test on_process_started when the server process starts successfully."""
-    ln_node_manager.process.state = MagicMock(
-        return_value=QProcess.Running,
-    )  # Mock process state
-    ln_node_manager.timer.start = MagicMock()  # Mock timer start method
+    ln_node_manager.process.state = MagicMock(return_value=QProcess.Running)
+    ln_node_manager.timer.start = MagicMock()
 
-    ln_node_manager.on_process_started()  # Call the method
+    ln_node_manager.on_process_started()
 
     # Assert that attempts are reset and timer is started
     assert ln_node_manager.attempts == 0
@@ -212,13 +232,11 @@ def test_on_process_started_success(ln_node_manager):
 
 def test_on_process_started_failure(ln_node_manager):
     """Test on_process_started when the server process fails to start."""
-    ln_node_manager.process.state = MagicMock(
-        return_value=QProcess.NotRunning,
-    )  # Mock process state
+    ln_node_manager.process.state = MagicMock(return_value=QProcess.NotRunning)
 
     # Ensure the signal is correctly mocked and connected
     with patch.object(ln_node_manager, 'process_error', MagicMock()) as mock_signal_handler:
-        ln_node_manager.on_process_started()  # Call the method
+        ln_node_manager.on_process_started()
 
         # Ensure that the signal was emitted
         mock_signal_handler.emit.assert_called_once_with(

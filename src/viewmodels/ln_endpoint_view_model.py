@@ -13,6 +13,7 @@ from src.model.common_operation_model import UnlockRequestModel
 from src.model.common_operation_model import UnlockResponseModel
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import WalletType
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LIGHTNING_URL_KEY
 from src.utils.constant import WALLET_PASSWORD_KEY
 from src.utils.custom_exception import CommonException
@@ -77,15 +78,15 @@ class LnEndpointViewModel(QObject, ThreadManager):
         """This method navigate the page on error"""
         if isinstance(error, CommonException):
             self.stop_loading_message.emit(False)
-            if error.message == QCoreApplication.translate('iris_wallet_desktop', 'not_initialized', None):
+            if error.message == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'not_initialized', None):
                 self._page_navigation.set_wallet_password_page(
                     WalletType.REMOTE_TYPE_WALLET.value,
                 )
-            elif error.message == QCoreApplication.translate('iris_wallet_desktop', 'wrong_password', None):
+            elif error.message == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wrong_password', None):
                 self._page_navigation.enter_wallet_password_page()
-            elif error.message == QCoreApplication.translate('iris_wallet_desktop', 'unlocked_node', None):
+            elif error.message == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'unlocked_node', None):
                 self.lock_wallet()
-            elif error.message == QCoreApplication.translate('iris_wallet_desktop', 'locked_node', None):
+            elif error.message == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'locked_node', None):
                 self._page_navigation.enter_wallet_password_page()
             ToastManager.info(
                 description=error.message,

@@ -22,6 +22,7 @@ from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
 from src.utils.common_utils import set_qr_code
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.wallet_logo_frame import WalletLogoFrame
@@ -212,30 +213,34 @@ class ReceiveAssetWidget(QWidget):
     def retranslate_ui(self):
         """Retranslate the UI elements."""
         self.asset_title.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'receive', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'receive', None,
+            ),
         )
         self.receive_asset_close_button.setText('')
         self.label.setText('')
         self.address_label.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'address', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'address', None,
+            ),
         )
         self.wallet_address_description_text.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 self.address_info,
                 None,
             ),
         )
         self.copy_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'copy_address', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copy_address', None,
             ),
         )
 
         self.copy_button.clicked.connect(
             lambda: self.copy_button.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'copied', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copied', None,
                 ),
             ),
         )
@@ -247,7 +252,7 @@ class ReceiveAssetWidget(QWidget):
         self.label.setPixmap(pixmap)
         self.receiver_address.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', str(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, str(
                     address,
                 ), None,
             ),

@@ -32,6 +32,7 @@ from src.model.setting_model import DefaultExpiryTime
 from src.utils.common_utils import extract_amount
 from src.utils.common_utils import sat_to_msat
 from src.utils.common_utils import set_placeholder_value
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
@@ -325,12 +326,12 @@ class CreateLnInvoiceWidget(QWidget):
             )
             self.amount_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'asset_amount', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_amount', None,
                 ),
             )
             self.amount_input.setPlaceholderText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'asset_amount', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_amount', None,
                 ),
             )
 
@@ -363,41 +364,47 @@ class CreateLnInvoiceWidget(QWidget):
         """Retranslate the UI elements."""
         self.create_ln_invoice_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'create_ln_invoice', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'create_ln_invoice', None,
             ),
         )
         self.asset_name_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_name', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_name', None,
             ),
         )
         self.amount_label.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'amount', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount', None,
+            ),
         )
         self.amount_input.setPlaceholderText(
-            QCoreApplication.translate('iris_wallet_desktop', 'amount', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount', None,
+            ),
         )
         self.expiry_label.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'expiry', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'expiry', None,
+            ),
         )
         self.expiry_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'expiry_in_second', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'expiry_in_second', None,
             ),
         )
         self.create_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'create_button', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'create_button', None,
             ),
         )
         self.msat_amount_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'msat_amount_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'msat_amount_label', None,
             ),
         )
         self.msat_amount_value.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'msat_amount_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'msat_amount_label', None,
             ),
         )
         self.add_translated_item('minutes')
@@ -405,7 +412,7 @@ class CreateLnInvoiceWidget(QWidget):
         self.add_translated_item('days')
         self.asset_balance_validation_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_amount_validation_invoice', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_amount_validation_invoice', None,
             ),
         )
 
@@ -532,7 +539,7 @@ class CreateLnInvoiceWidget(QWidget):
 
             self.msat_error_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'msat_lower_bound_limit', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'msat_lower_bound_limit', None,
                 ).format(self.node_info.rgb_htlc_min_msat//1000),
             )
             self.msat_error_label.show()
@@ -540,7 +547,7 @@ class CreateLnInvoiceWidget(QWidget):
         if push_amount > max_inbound_balance:
             self.msat_error_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'msat_uper_bound_limit', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'msat_uper_bound_limit', None,
                 ).format(max_inbound_balance//1000),
             )
             self.msat_error_label.show()
@@ -567,7 +574,7 @@ class CreateLnInvoiceWidget(QWidget):
     def add_translated_item(self, text: str):
         """Adds a translated item to the time unit combo box."""
         translated_text = QCoreApplication.translate(
-            'iris_wallet_desktop', text, None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, text, None,
         )
         self.time_unit_combobox.addItem(translated_text)
         self.time_unit_combobox.setCurrentText(

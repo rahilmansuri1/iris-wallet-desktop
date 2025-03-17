@@ -34,6 +34,7 @@ from src.model.setting_model import IsShowHiddenAssetEnabled
 from src.model.setting_model import NativeAuthenticationStatus
 from src.model.setting_model import SettingPageLoadModel
 from src.utils.constant import FEE_RATE
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LN_INVOICE_EXPIRY_TIME
 from src.utils.constant import LN_INVOICE_EXPIRY_TIME_UNIT
 from src.utils.constant import MIN_CONFIRMATION
@@ -449,7 +450,7 @@ class SettingViewModel(QObject, ThreadManager):
 
             local_store.set_value(key, value)
             key = QCoreApplication.translate(
-                'iris_wallet_desktop', key_mapping.get(key), None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, key_mapping.get(key), None,
             )
             ToastManager.success(
                 description=INFO_SET_ENDPOINT_SUCCESSFULLY.format(key),
@@ -460,7 +461,7 @@ class SettingViewModel(QObject, ThreadManager):
     def _on_error_of_unlock(self, error: CommonException):
         """Callback for failed unlock."""
         try:
-            if error.message == QCoreApplication.translate('iris_wallet_desktop', 'wrong_password', None):
+            if error.message == QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wrong_password', None):
 
                 ToastManager.error(
                     description=error.message,

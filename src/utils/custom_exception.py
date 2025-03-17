@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import QCoreApplication
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.error_mapping import ERROR_MAPPING
 
 
@@ -18,7 +19,7 @@ class CommonException(Exception):
             self.name = exc.get('name')
             self.error_message = ERROR_MAPPING.get(self.name)
             self.message = QCoreApplication.translate(
-                'iris_wallet_desktop', self.error_message, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self.error_message, None,
             )
 
 

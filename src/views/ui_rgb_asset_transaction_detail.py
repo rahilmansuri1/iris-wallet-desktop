@@ -27,6 +27,7 @@ from src.model.rgb_model import RgbAssetPageLoadModel
 from src.model.transaction_detail_page_model import TransactionDetailPageModel
 from src.utils.common_utils import get_bitcoin_explorer_url
 from src.utils.common_utils import insert_zero_width_spaces
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.wallet_logo_frame import WalletLogoFrame
@@ -308,27 +309,27 @@ class RGBAssetTransactionDetail(QWidget):
         """Retranslate the UI elements."""
         self.date_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'date', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'date', None,
             ),
         )
         self.blinded_utxo_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'blinded_utxo', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'blinded_utxo', None,
             ),
         )
         self.unblinded_and_change_utxo_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'unblinded_utxo', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'unblinded_utxo', None,
             ),
         )
         self.consignment_endpoints_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'consignment_endpoints', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'consignment_endpoints', None,
             ),
         )
         self.rgb_amount_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'amount', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount', None,
             ),
         )
 
@@ -338,7 +339,7 @@ class RGBAssetTransactionDetail(QWidget):
         """
         self.tx_id_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'transaction_id', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'transaction_id', None,
             ),
         )
         self.rgb_asset_name_value.setText(self.params.asset_name)
@@ -424,7 +425,7 @@ class RGBAssetTransactionDetail(QWidget):
                 )
                 self.date_label.setText(
                     QCoreApplication.translate(
-                        'iris_wallet_desktop', 'status', None,
+                        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'status', None,
                     ),
                 )
                 self.date_value.setText(self.params.transaction_status)
@@ -458,7 +459,7 @@ class RGBAssetTransactionDetail(QWidget):
         self.vertical_layout_tx_detail_frame.setSpacing(4)
         self.tx_id_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'payee_pubkey', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'payee_pubkey', None,
             ),
         )
         if self.params.transaction_status == PaymentStatus.SUCCESS.value:
@@ -483,7 +484,7 @@ class RGBAssetTransactionDetail(QWidget):
         )
         self.date_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'confirmation_date', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'confirmation_date', None,
             ),
         )
         date_time_concat = f'{self.params.confirmation_date} | {
@@ -493,7 +494,7 @@ class RGBAssetTransactionDetail(QWidget):
 
         self.blinded_utxo_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'update_date', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'update_date', None,
             ),
         )
         date_time_concat = f'{self.params.updated_date} | {
@@ -507,7 +508,7 @@ class RGBAssetTransactionDetail(QWidget):
 
         self.unblinded_and_change_utxo_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'status', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'status', None,
             ),
         )
         self.unblinded_and_change_utxo_label.setMinimumSize(QSize(295, 20))

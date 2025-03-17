@@ -14,6 +14,7 @@ from src.model.enums.enums_model import AssetType
 from src.model.enums.enums_model import ToastPreset
 from src.model.selection_page_model import AssetDataModel
 from src.utils.common_utils import copy_text
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.loading_screen import LoadingTranslucentScreen
@@ -74,12 +75,12 @@ class ReceiveRGBAssetWidget(QWidget):
         self.show_receive_rgb_loading()
         self.receive_rgb_asset_page.copy_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'copy_rgb_invoice', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copy_rgb_invoice', None,
             ),
         )
         self.receive_rgb_asset_page.address_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'rgb_invoice_label', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'rgb_invoice_label', None,
             ),
         )
         self.receive_rgb_asset_page.copy_button.clicked.connect(
@@ -149,16 +150,16 @@ class ReceiveRGBAssetWidget(QWidget):
         if ln_invoice:
             self.receive_rgb_asset_page.copy_button.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'copy_ln_invoice', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copy_ln_invoice', None,
                 ),
             )
             self.receive_rgb_asset_page.address_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'ln_invoice_label', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'ln_invoice_label', None,
                 ),
             )
             self.receive_rgb_asset_page.wallet_address_description_text.setText(
-                QCoreApplication.translate('iris_wallet_desktop', 'ln_invoice_info', None).format(
+                QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'ln_invoice_info', None).format(
                     self.expiry_time, self.expiry_unit,
                 ),
             )

@@ -24,6 +24,7 @@ from src.model.rgb_model import RgbAssetPageLoadModel
 from src.utils.clickable_frame import ClickableFrame
 from src.utils.common_utils import convert_hex_to_image
 from src.utils.common_utils import resize_image
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.logging import logger
 from src.utils.render_timer import RenderTimer
@@ -324,12 +325,12 @@ class CollectiblesAssetWidget(QWidget):
         self.show_collectible_asset_loading()
         self.collectible_header_frame.action_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'issue_new_collectibles', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'issue_new_collectibles', None,
             ),
         )
         self.collectibles_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'collectibles', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'collectibles', None,
             ),
         )
 

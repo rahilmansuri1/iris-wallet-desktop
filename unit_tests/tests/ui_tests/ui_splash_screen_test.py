@@ -9,6 +9,7 @@ from unittest.mock import MagicMock
 import pytest
 from PySide6.QtCore import QCoreApplication
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import SYNCING_CHAIN_LABEL_TIMER
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.ui_splash_screen import SplashScreenWidget
@@ -28,7 +29,7 @@ def test_retranslate_ui(splash_screen_widget: SplashScreenWidget):
     """Test the retranslation of UI elements in SplashScreenWidget."""
     splash_screen_widget.retranslate_ui()
     expected_title = QCoreApplication.translate(
-        'iris_wallet_desktop', 'iris_wallet Regtest', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'iris_wallet Regtest', None,
     )
     assert splash_screen_widget.logo_text_label.text() == expected_title
     assert splash_screen_widget.note_text_label.text() == 'auth_message'
@@ -75,7 +76,7 @@ def test_set_sync_chain_info_label(splash_screen_widget: SplashScreenWidget, moc
 
     # Ensure QCoreApplication.translate was called with the correct parameters
     mock_translate.assert_called_once_with(
-        'iris_wallet_desktop', 'syncing_chain_info', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'syncing_chain_info', None,
     )
 
     # Ensure that setText was called on the label with the translated text

@@ -18,6 +18,7 @@ from PySide6.QtWidgets import QTextBrowser
 from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import PRIVACY_POLICY_URL
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
@@ -184,14 +185,14 @@ class TermConditionWidget(QWidget):
         """Retranslate the UI elements."""
         self.wallet_logo_tnc.logo_text.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'iris_wallet',
                 None,
             ),
         )
         self.tnc_label_text.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'terms_and_conditions',
                 None,
             ),
@@ -200,14 +201,14 @@ class TermConditionWidget(QWidget):
         self.load_terms_conditions()
         self.decline_btn.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'decline',
                 None,
             ),
         )
         self.accept_btn.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'accept',
                 None,
             ),
@@ -222,12 +223,12 @@ class TermConditionWidget(QWidget):
     def load_terms_conditions(self):
         """Load Terms & Conditions text and format 'Privacy Policy' as a hyperlink while preserving formatting."""
         get_translated_privacy_policy = QCoreApplication.translate(
-            'iris_wallet_desktop',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT,
             'privacy_policy_tnc',
             None,
         )
         terms_text = QCoreApplication.translate(
-            'iris_wallet_desktop',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT,
             'terms_and_conditions_content',
             None,
         ).format(get_translated_privacy_policy)

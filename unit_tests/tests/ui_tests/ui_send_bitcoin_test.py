@@ -10,6 +10,7 @@ from PySide6.QtCore import QCoreApplication
 from rgb_lib import RgbLibError
 
 from src.model.setting_model import DefaultFeeRate
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.ui_send_bitcoin import SendBitcoinWidget
 
@@ -306,6 +307,6 @@ def test_validate_bitcoin_address(send_bitcoin_widget: SendBitcoinWidget):
         send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.show.assert_called_once()
         send_bitcoin_widget.send_bitcoin_page.asset_address_validation_label.setText.assert_called_once_with(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'invalid_address',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'invalid_address',
             ),
         )
