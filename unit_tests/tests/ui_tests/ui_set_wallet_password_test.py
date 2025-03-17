@@ -76,14 +76,12 @@ def test_show_password_validation_label(set_wallet_password_widget: SetWalletPas
     assert set_wallet_password_widget.password_validation.text() == message
     assert set_wallet_password_widget.password_validation.objectName() == 'password_validation'
     assert set_wallet_password_widget.password_validation.minimumSize() == QSize(0, 25)
-    assert set_wallet_password_widget.password_validation.styleSheet() == (
-        'font: 12px "Inter";\n'
-        'color: rgb(237, 51, 59);\n'
-        'background: transparent;\n'
-        'border: none;\n'
-        'font-weight: 400;\n'
-        ''
-    )
+    style = set_wallet_password_widget.password_validation.styleSheet()
+    assert 'font: 12px "Inter"' in style
+    assert 'color: rgb(237, 51, 59);' in style
+    assert 'background: transparent;' in style
+    assert 'border: none;' in style
+    assert 'font-weight: 400;' in style
 
 
 def test_handle_button_enabled(set_wallet_password_widget: SetWalletPasswordWidget):
@@ -106,7 +104,7 @@ def test_handle_message(set_wallet_password_widget: SetWalletPasswordWidget):
     with patch('src.views.ui_set_wallet_password.ToastManager') as mock_toast_manager:
         # Test error message
         set_wallet_password_widget.handle_message(
-            ToastPreset.ERROR.value, 'Test Error Message',
+            ToastPreset.ERROR, 'Test Error Message',
         )
         mock_toast_manager.error.assert_called_once_with('Test Error Message')
         mock_toast_manager.success.assert_not_called()
@@ -116,7 +114,7 @@ def test_handle_message(set_wallet_password_widget: SetWalletPasswordWidget):
 
         # Test success message
         set_wallet_password_widget.handle_message(
-            ToastPreset.SUCCESS.value, 'Test Success Message',
+            ToastPreset.SUCCESS, 'Test Success Message',
         )
         mock_toast_manager.success.assert_called_once_with(
             'Test Success Message',

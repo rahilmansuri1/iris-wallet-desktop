@@ -11,6 +11,8 @@ from __future__ import annotations
 from unittest.mock import Mock
 from unittest.mock import patch
 
+from PySide6.QtCore import QCoreApplication
+
 from src.model.enums.enums_model import WalletType
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_CONNECTION_FAILED_WITH_LN
@@ -81,7 +83,7 @@ def test_is_login_authentication_enabled_true(mock_qapp, mock_toast_manager, moc
     )
 
     with patch.object(view_model, 'run_in_thread') as mock_run_in_thread:
-        view_model.is_login_authentication_enabled(view_model)
+        view_model.is_login_authentication_enabled()
 
     mock_run_in_thread.assert_called_once()
     mock_toast_manager.show_toast.assert_not_called()
@@ -96,7 +98,7 @@ def test_is_login_authentication_enabled_false(mock_qapp, mock_toast_manager, mo
     view_model = SplashViewModel(page_navigation)
     mock_setting_repo.native_login_enabled.return_value = False
 
-    view_model.is_login_authentication_enabled(view_model)
+    view_model.is_login_authentication_enabled()
     # mock_toast_manager.show_toast.assert_not_called()
 
 
@@ -111,7 +113,7 @@ def test_is_login_authentication_enabled_common_exception(mock_qapp, mock_toast_
         'Custom error message',
     )
 
-    view_model.is_login_authentication_enabled(view_model)
+    view_model.is_login_authentication_enabled()
 
     page_navigation.fungibles_asset_page.assert_not_called()
     mock_toast_manager.error.assert_called_once_with(
@@ -130,7 +132,7 @@ def test_is_login_authentication_enabled_general_exception(mock_qapp, mock_toast
         'General error message',
     )
 
-    view_model.is_login_authentication_enabled(view_model)
+    view_model.is_login_authentication_enabled()
 
     page_navigation.fungibles_asset_page.assert_not_called()
     mock_toast_manager.error.assert_called_once_with(
@@ -141,31 +143,47 @@ def test_is_login_authentication_enabled_general_exception(mock_qapp, mock_toast
 @patch('src.viewmodels.splash_view_model.CommonOperationRepository')
 @patch('src.viewmodels.splash_view_model.ToastManager')
 @patch('src.viewmodels.splash_view_model.QApplication')
-# Mock MessageBox
 @patch('src.viewmodels.splash_view_model.MessageBox', autospec=True)
+@patch('src.viewmodels.splash_view_model.logger')
 def test_on_error_of_unlock_api_connection_failed(
-    mock_message_box, mock_qapp, mock_toast_manager, mock_common_repo,
+    mock_logger, mock_message_box, mock_qapp, mock_toast_manager, mock_common_repo,
 ):
     """Tests the on_error_of_unlock_api method for connection failure."""
     page_navigation = Mock()
     view_model = SplashViewModel(page_navigation)
-    error = CommonException(ERROR_CONNECTION_FAILED_WITH_LN)
+    view_model.is_error_handled = False
+    view_model.is_from_retry = False
+    view_model.render_timer = Mock()
+    view_model.restart_ln_node_after_crash = Mock()
+    view_model.show_main_window_loader = Mock()
 
-    # Act
-    view_model.on_error_of_unlock_api(error)
+    # Mock QCoreApplication.translate to return expected error messages
+    with patch.object(QCoreApplication, 'translate', side_effect=lambda ctx, msg, _: msg):
+        error = CommonException(ERROR_CONNECTION_FAILED_WITH_LN)
 
-    # Assert that MessageBox was called with correct arguments
-    mock_message_box.assert_called_once_with(
-        'critical', ERROR_CONNECTION_FAILED_WITH_LN,
-    )
+        # Act
+        view_model.on_error_of_unlock_api(error)
 
-    # Assert that ToastManager.error was called
-    mock_toast_manager.error.assert_called_once_with(
-        description=ERROR_CONNECTION_FAILED_WITH_LN,
-    )
+        # Assert that ToastManager.error was called
+        mock_toast_manager.error.assert_called_once_with(
+            description=ERROR_CONNECTION_FAILED_WITH_LN,
+        )
 
-    # Assert that page navigation went to the enter wallet password page
-    page_navigation.enter_wallet_password_page.assert_called_once()
+        # Assert that restart_ln_node_after_crash is called for ERROR_CONNECTION_FAILED_WITH_LN
+        view_model.restart_ln_node_after_crash.assert_called_once()
+
+        # Assert that error is logged
+        mock_logger.error.assert_called_once_with(
+            'Error while unlocking node on splash page: %s, Message: %s',
+            type(error).__name__, str(error),
+        )
+
+        # Assert navigation to enter wallet password page
+        page_navigation.enter_wallet_password_page.assert_called_once()
+
+        # Assert that main window loader is hidden
+        assert view_model.is_from_retry is False
+        view_model.show_main_window_loader.emit.assert_called_once_with(False)
 
 
 @patch('src.viewmodels.splash_view_model.CommonOperationRepository')
@@ -340,3 +358,62 @@ def test_handle_application_open_keyring_disabled(mock_common_repo, mock_bitcoin
     mock_get_value.assert_called_once()
     mock_bitcoin_config.assert_called_once()
     assert hasattr(view_model, 'worker')
+
+
+@patch('src.viewmodels.splash_view_model.QApplication')
+@patch('src.viewmodels.splash_view_model.CrashDialogBox', autospec=True)
+@patch('src.viewmodels.splash_view_model.logger')
+def test_restart_ln_node_after_crash_retry(
+    mock_logger, mock_crash_dialog, mock_qapp,
+):
+    """Test restart_ln_node_after_crash when user clicks Retry."""
+    view_model = SplashViewModel(Mock())
+    view_model.is_error_handled = False
+    view_model.is_from_retry = False
+    view_model.handle_application_open = Mock()
+
+    # Mock CrashDialogBox instance
+    mock_dialog_instance = mock_crash_dialog.return_value
+    mock_dialog_instance.message_box = Mock()
+    mock_dialog_instance.retry_button = Mock()
+
+    # Simulate user clicking "Retry"
+    mock_dialog_instance.message_box.clickedButton.return_value = (
+        mock_dialog_instance.retry_button
+    )
+
+    # Act
+    view_model.restart_ln_node_after_crash()
+
+    # Assert
+    assert view_model.is_error_handled is True
+    mock_logger.info.assert_called_once_with('Restarting RGB Lightning Node')
+    view_model.handle_application_open.assert_called_once()
+    mock_qapp.instance().exit.assert_not_called()
+
+
+@patch('src.viewmodels.splash_view_model.QApplication')
+@patch('src.viewmodels.splash_view_model.CrashDialogBox', autospec=True)
+@patch('src.viewmodels.splash_view_model.logger')
+def test_restart_ln_node_after_crash_exit(
+    mock_logger, mock_crash_dialog, mock_qapp,
+):
+    """Test restart_ln_node_after_crash when user clicks Exit."""
+    view_model = SplashViewModel(Mock())
+    view_model.is_error_handled = False
+
+    # Mock CrashDialogBox instance
+    mock_dialog_instance = mock_crash_dialog.return_value
+    mock_dialog_instance.message_box = Mock()
+    mock_dialog_instance.retry_button = Mock()
+
+    # Simulate user clicking a button other than Retry (Exit case)
+    mock_dialog_instance.message_box.clickedButton.return_value = Mock()
+
+    # Act
+    view_model.restart_ln_node_after_crash()
+
+    # Assert
+    assert view_model.is_error_handled is True
+    mock_qapp.instance().exit.assert_called_once()
+    mock_logger.info.assert_not_called()

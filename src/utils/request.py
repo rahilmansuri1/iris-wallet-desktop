@@ -60,6 +60,9 @@ class Request:
         params = params if params is not None else {}
         url = f'{Request.load_base_url()}{endpoint}'
 
+        # Log request initiation
+        logger.info('Starting GET request to %s', url)
+
         response = requests.get(
             url,
             headers=headers,
@@ -89,6 +92,9 @@ class Request:
         headers = Request._merge_headers(headers)
         params = params if params is not None else {}
         url = f'{Request.load_base_url()}{endpoint}'
+
+        # Log request initiation
+        logger.info('Starting POST request to %s', url)
 
         if files is not None:
             response = requests.post(url, files=files, timeout=REQUEST_TIMEOUT)
@@ -122,6 +128,9 @@ class Request:
         params = params if params is not None else {}
         url = f'{Request.load_base_url()}{endpoint}'
 
+        # Log request initiation
+        logger.info('Starting PUT request to %s', url)
+
         response = requests.put(
             url,
             json=body,
@@ -149,6 +158,9 @@ class Request:
         headers = Request._merge_headers(headers)
         params = params if params is not None else {}
         url = f'{Request.load_base_url()}{endpoint}'
+
+        # Log request initiation
+        logger.info('Starting DELETE request to %s', url)
 
         response = requests.delete(
             url,

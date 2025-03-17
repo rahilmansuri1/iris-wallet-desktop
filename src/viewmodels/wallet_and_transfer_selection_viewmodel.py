@@ -8,7 +8,6 @@ import os
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QObject
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QApplication
 
 import src.flavour as bitcoin_network
 from src.data.repository.common_operations_repository import CommonOperationRepository
@@ -19,7 +18,6 @@ from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import WALLET_PASSWORD_KEY
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
-from src.utils.error_message import ERROR_UNABLE_TO_START_NODE
 from src.utils.helpers import get_bitcoin_config
 from src.utils.helpers import get_node_arg_config
 from src.utils.info_message import INFO_LN_NODE_STOPPED
@@ -29,7 +27,6 @@ from src.utils.keyring_storage import get_value
 from src.utils.ln_node_manage import LnNodeServerManager
 from src.utils.logging import logger
 from src.utils.worker import ThreadManager
-from src.views.components.message_box import MessageBox
 from src.views.components.toast import ToastManager
 
 
@@ -67,8 +64,10 @@ class WalletTransferSelectionViewModel(QObject, ThreadManager):
             )
             keyring_status = SettingRepository.get_keyring_status()
             stored_network: NetworkEnumModel = SettingRepository.get_wallet_network()
+
             if self.is_node_data_exits and wallet.is_wallet_initialized:
                 if keyring_status is True:
+                    self.splash_view_model.show_main_window_loader.emit(False)
                     self._page_navigation.enter_wallet_password_page()
                 else:
                     bitcoin_config = get_bitcoin_config(
@@ -91,6 +90,7 @@ class WalletTransferSelectionViewModel(QObject, ThreadManager):
                             },
                         )
             else:
+                self.splash_view_model.show_main_window_loader.emit(False)
                 self._page_navigation.welcome_page()
         except CommonException as exc:
             logger.error(
@@ -100,6 +100,7 @@ class WalletTransferSelectionViewModel(QObject, ThreadManager):
             ToastManager.error(
                 description=exc.message,
             )
+            self.splash_view_model.show_main_window_loader.emit(False)
         except Exception as exc:
             logger.error(
                 'Exception occurred at on_ln_node_start: %s, Message: %s',
@@ -108,6 +109,7 @@ class WalletTransferSelectionViewModel(QObject, ThreadManager):
             ToastManager.error(
                 description=ERROR_SOMETHING_WENT_WRONG,
             )
+            self.splash_view_model.show_main_window_loader.emit(False)
 
     def on_error_of_unlock_node(self, error: Exception):
         """Call back function to handle error of unlock api"""
@@ -131,8 +133,7 @@ class WalletTransferSelectionViewModel(QObject, ThreadManager):
             'Exception occurred while stating ln node:Message: %s,Code:%s',
             str(error), str(code),
         )
-        MessageBox('critical', message_text=ERROR_UNABLE_TO_START_NODE)
-        QApplication.instance().exit()
+        self.splash_view_model.restart_ln_node_after_crash()
 
     def on_ln_node_already_running(self):
         """Log and toast when node already running"""

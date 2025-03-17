@@ -12,6 +12,7 @@ import pytest
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
 from src.viewmodels.wallet_and_transfer_selection_viewmodel import WalletTransferSelectionViewModel
+from src.views.components.toast import ToastManager
 
 
 @pytest.fixture
@@ -33,23 +34,22 @@ def test_on_ln_node_stop(wallet_transfer_selection_view_model):
 
 def test_on_ln_node_error(wallet_transfer_selection_view_model):
     """Test the on_ln_node_error method"""
-    with patch('src.viewmodels.wallet_and_transfer_selection_viewmodel.MessageBox') as mock_message_box:
-        with patch('src.viewmodels.wallet_and_transfer_selection_viewmodel.QApplication') as mock_qapp:
-            mock_instance = Mock()
-            mock_qapp.instance.return_value = mock_instance
-            wallet_transfer_selection_view_model.ln_node_process_status = Mock()
+    with patch('src.viewmodels.wallet_and_transfer_selection_viewmodel.logger') as mock_logger:
+        wallet_transfer_selection_view_model.ln_node_process_status = Mock()
+        wallet_transfer_selection_view_model.splash_view_model = Mock()
 
-            wallet_transfer_selection_view_model.on_ln_node_error(
-                1, 'Error occurred',
-            )
+        wallet_transfer_selection_view_model.on_ln_node_error(
+            1, 'Error occurred',
+        )
 
-            wallet_transfer_selection_view_model.ln_node_process_status.emit.assert_called_once_with(
-                False,
-            )
-            mock_message_box.assert_called_once_with(
-                'critical', message_text='Unable to start node,Please close application and restart',
-            )
-            mock_instance.exit.assert_called_once()
+        wallet_transfer_selection_view_model.ln_node_process_status.emit.assert_called_once_with(
+            False,
+        )
+        mock_logger.error.assert_called_once_with(
+            'Exception occurred while stating ln node:Message: %s,Code:%s',
+            'Error occurred', '1',
+        )
+        wallet_transfer_selection_view_model.splash_view_model.restart_ln_node_after_crash.assert_called_once()
 
 
 def test_on_ln_node_already_running(wallet_transfer_selection_view_model):
@@ -148,15 +148,17 @@ def test_on_ln_node_start_common_exception(mock_logger, wallet_transfer_selectio
     wallet_transfer_selection_view_model.ln_node_process_status = Mock()
     error_message = 'Something went wrong'
 
-    with patch('src.views.components.toast.ToastManager.error') as mock_toast:
-        with patch('src.data.repository.setting_repository.SettingRepository') as mock_setting_repo:
-            mock_setting_repo.is_wallet_initialized.side_effect = CommonException(
-                error_message,
-            )
+    with patch.object(ToastManager, 'error') as mock_toast:
+        with patch(
+            'src.data.repository.setting_repository.SettingRepository.is_wallet_initialized',
+            side_effect=CommonException(error_message),
+        ):
 
             wallet_transfer_selection_view_model.on_ln_node_start()
 
-            mock_toast.assert_called_once_with(description=error_message)
+            mock_toast.assert_called_once_with(
+                description=error_message,
+            )  # Verify toast
             mock_logger.assert_called_once()
 
 
@@ -165,8 +167,11 @@ def test_on_ln_node_start_generic_exception(mock_logger, wallet_transfer_selecti
     """Test on_ln_node_start with generic Exception"""
     wallet_transfer_selection_view_model.ln_node_process_status = Mock()
 
-    with patch('src.views.components.toast.ToastManager.error') as mock_toast:
-        with patch('src.data.repository.setting_repository.SettingRepository') as mock_setting_repo:
+    with patch.object(ToastManager, 'error') as mock_toast:
+        with patch(
+            'src.data.repository.setting_repository.SettingRepository.is_wallet_initialized',
+            side_effect=Exception('Unexpected error'),
+        ) as mock_setting_repo:
             mock_setting_repo.is_wallet_initialized.side_effect = Exception(
                 'Unexpected error',
             )

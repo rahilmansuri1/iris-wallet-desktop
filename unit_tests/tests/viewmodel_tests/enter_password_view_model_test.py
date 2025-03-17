@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 import pytest
 from PySide6.QtWidgets import QLineEdit
+from PySide6.QtWidgets import QWidget
 
 from src.model.common_operation_model import UnlockResponseModel
 from src.model.enums.enums_model import ToastPreset
@@ -16,6 +17,7 @@ from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_NETWORK_MISMATCH
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
 from src.viewmodels.enter_password_view_model import EnterWalletPasswordViewModel
+from src.views.components.custom_toast import ToasterManager
 
 
 @pytest.fixture
@@ -97,18 +99,21 @@ def test_on_success_failure(enter_wallet_password_view_model, mocker):
 
 def test_on_error(enter_wallet_password_view_model, mocker):
     """Test for on_error method"""
-    mock_message = Mock()
-    enter_wallet_password_view_model.message.connect(mock_message)
-
     exception = CommonException('Test error')
+
+    # Ensure the main window is set properly
+    ToasterManager.main_window = QWidget()
 
     with patch('src.utils.local_store.local_store.clear_settings') as mock_clear_settings, \
             patch('src.views.components.message_box.MessageBox') as mock_message_box, \
-            patch('PySide6.QtWidgets.QApplication.instance') as mock_qt_app:
+            patch('PySide6.QtWidgets.QApplication.instance') as mock_qt_app, \
+            patch('src.views.components.toast.ToastManager.error') as mock_toast_error:
 
         enter_wallet_password_view_model.on_error(exception)
 
-        mock_message.assert_called_once_with(ToastPreset.ERROR, 'Test error')
+        mock_toast_error.assert_called_once_with(
+            'Test error',
+        )  # Check toast notification
         mock_clear_settings.assert_not_called()
         mock_message_box.assert_not_called()
         mock_qt_app.return_value.quit.assert_not_called()
@@ -116,16 +121,12 @@ def test_on_error(enter_wallet_password_view_model, mocker):
 
 def test_on_error_common_exception(enter_wallet_password_view_model, mocker):
     """Test for on_error method handling CommonException"""
-    mock_message = Mock()
-    enter_wallet_password_view_model.message.connect(mock_message)
-
     common_exception = CommonException('Test error')
 
-    enter_wallet_password_view_model.on_error(common_exception)
+    with patch('src.views.components.toast.ToastManager.error') as mock_toast_error:
+        enter_wallet_password_view_model.on_error(common_exception)
 
-    mock_message.assert_called_once_with(
-        ToastPreset.ERROR, 'Test error',
-    )
+        mock_toast_error.assert_called_once_with('Test error')
 
 
 def test_on_success_with_keyring_status_false(enter_wallet_password_view_model, mocker):
@@ -284,8 +285,6 @@ def test_on_error_network_mismatch(
 ):
     """Test on_error method when network mismatch error occurs"""
     # Arrange
-    mock_message = Mock()
-    enter_wallet_password_view_model.message.connect(mock_message)
     mock_is_loading = Mock()
     enter_wallet_password_view_model.is_loading.connect(mock_is_loading)
     mock_clear_settings = mocker.patch(
@@ -294,59 +293,50 @@ def test_on_error_network_mismatch(
 
     error = CommonException(ERROR_NETWORK_MISMATCH)
 
-    # Act
-    enter_wallet_password_view_model.on_error(error)
+    with patch('src.views.components.toast.ToastManager.error') as mock_toast_error:
+        # Act
+        enter_wallet_password_view_model.on_error(error)
 
-    # Assert
-    mock_is_loading.assert_called_once_with(False)
-    mock_clear_settings.assert_called_once()
-    mock_message.assert_called_once_with(
-        ToastPreset.ERROR,
-        ERROR_NETWORK_MISMATCH,
-    )
+        # Assert
+        mock_is_loading.assert_called_once_with(False)
+        mock_clear_settings.assert_called_once()
+        mock_toast_error.assert_called_once_with(ERROR_NETWORK_MISMATCH)
 
-    # Ensure MessageBox was called with the correct arguments
-    mock_message_box.assert_called_once_with(
-        'critical', ERROR_NETWORK_MISMATCH,
-    )
+        # Ensure MessageBox was called with the correct arguments
+        mock_message_box.assert_called_once_with(
+            'critical', ERROR_NETWORK_MISMATCH,
+        )
 
 
 def test_on_error_other_error(enter_wallet_password_view_model):
     """Test on_error method with non-network mismatch error"""
     # Arrange
-    mock_message = Mock()
-    enter_wallet_password_view_model.message.connect(mock_message)
     mock_is_loading = Mock()
     enter_wallet_password_view_model.is_loading.connect(mock_is_loading)
     error_message = 'Test error'
     error = CommonException(error_message)
 
-    # Act
-    enter_wallet_password_view_model.on_error(error)
+    with patch('src.views.components.toast.ToastManager.error') as mock_toast_error:
+        # Act
+        enter_wallet_password_view_model.on_error(error)
 
-    # Assert
-    mock_is_loading.assert_called_once_with(False)
-    mock_message.assert_called_once_with(
-        ToastPreset.ERROR,
-        error_message,
-    )
+        # Assert
+        mock_is_loading.assert_called_once_with(False)
+        mock_toast_error.assert_called_once_with(error_message)
 
 
 def test_on_error_empty_message(enter_wallet_password_view_model):
     """Test on_error method when error message is empty"""
     # Arrange
-    mock_message = Mock()
-    enter_wallet_password_view_model.message.connect(mock_message)
     mock_is_loading = Mock()
     enter_wallet_password_view_model.is_loading.connect(mock_is_loading)
+
     error = CommonException('')
 
-    # Act
-    enter_wallet_password_view_model.on_error(error)
+    with patch('src.views.components.toast.ToastManager.error') as mock_toast_error:
+        # Act
+        enter_wallet_password_view_model.on_error(error)
 
-    # Assert
-    mock_is_loading.assert_called_once_with(False)
-    mock_message.assert_called_once_with(
-        ToastPreset.ERROR,
-        ERROR_SOMETHING_WENT_WRONG,
-    )
+        # Assert
+        mock_is_loading.assert_called_once_with(False)
+        mock_toast_error.assert_called_once_with(ERROR_SOMETHING_WENT_WRONG)

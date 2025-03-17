@@ -480,12 +480,9 @@ class SetWalletPasswordWidget(QWidget):
         self.password_validation.setObjectName('password_validation')
         self.password_validation.setMinimumSize(QSize(0, 25))
         self.password_validation.setStyleSheet(
-            'font: 12px "Inter";\n'
-            'color: rgb(237, 51, 59);\n'
-            'background: transparent;\n'
-            'border: none;\n'
-            'font-weight: 400;\n'
-            '',
+            load_stylesheet(
+                'views/qss/style.qss',
+            ),
         )
         self.password_validation.show()
         self.vertical_layout_setup_wallet_password.insertWidget(
@@ -548,9 +545,9 @@ class SetWalletPasswordWidget(QWidget):
         else:
             self.proceed_wallet_password.setDisabled(True)
 
-    def handle_message(self, msg_type: int, message: str):
+    def handle_message(self, msg_type, message: str):
         """This method handled to show message."""
-        if msg_type == ToastPreset.ERROR.value:
+        if msg_type == ToastPreset.ERROR:
             ToastManager.error(message)
         else:
             ToastManager.success(message)
