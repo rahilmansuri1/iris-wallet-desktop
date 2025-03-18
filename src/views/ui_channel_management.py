@@ -15,10 +15,8 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QComboBox
 from PySide6.QtWidgets import QFrame
 from PySide6.QtWidgets import QGraphicsBlurEffect
-from PySide6.QtWidgets import QGridLayout
 from PySide6.QtWidgets import QHBoxLayout
 from PySide6.QtWidgets import QLabel
-from PySide6.QtWidgets import QPushButton
 from PySide6.QtWidgets import QScrollArea
 from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtWidgets import QSpacerItem
@@ -30,7 +28,7 @@ from src.model.channels_model import ChannelDetailDialogModel
 from src.utils.clickable_frame import ClickableFrame
 from src.utils.common_utils import generate_identicon
 from src.utils.common_utils import get_bitcoin_info_by_network
-from src.utils.common_utils import translate_value
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import create_circular_pixmap
 from src.utils.helpers import load_stylesheet
 from src.utils.render_timer import RenderTimer
@@ -346,11 +344,11 @@ class ChannelManagement(QWidget):
             )
 
             self.status_pixmap.setToolTip(
-                QCoreApplication.translate('iris_wallet_desktop', 'closing', None) if color == QColor(235, 90, 90) else
-                QCoreApplication.translate('iris_wallet_desktop', 'opening', None) if color == QColor(0, 201, 145) else
-                QCoreApplication.translate('iris_wallet_desktop', 'offline', None) if color == QColor(169, 169, 169) else
+                QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'closing', None) if color == QColor(235, 90, 90) else
+                QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'opening', None) if color == QColor(0, 201, 145) else
+                QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'offline', None) if color == QColor(169, 169, 169) else
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'pending', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'pending', None,
                 ),
             )
             self.status_pixmap.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -425,33 +423,33 @@ class ChannelManagement(QWidget):
         """Retranslate the UI elements."""
         self.header_frame.action_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'create_channel', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'create_channel', None,
             ),
         )
         self.status_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'status', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'status', None,
             ),
         )
 
         self.asset_id_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_id', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_id', None,
             ),
         )
         self.asset_name_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset', None,
             ),
         )
         self.local_balance_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'local_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'local_balance', None,
             ),
         )
         self.remote_balance_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'remote_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'remote_balance', None,
             ),
         )
 

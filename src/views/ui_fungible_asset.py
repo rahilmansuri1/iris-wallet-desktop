@@ -33,6 +33,7 @@ from src.model.enums.enums_model import WalletType
 from src.model.rgb_model import RgbAssetPageLoadModel
 from src.utils.clickable_frame import ClickableFrame
 from src.utils.common_utils import generate_identicon
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.info_message import INFO_FAUCET_NOT_AVAILABLE
 from src.utils.info_message import INFO_TITLE
@@ -242,27 +243,27 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         )
         self.name_header.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_name', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_name', None,
             ),
         )
         self.address_header.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_id', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_id', None,
             ),
         )
         self.amount_header.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'on_chain_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'on_chain_balance', None,
             ),
         )
         self.outbound_amount_header.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'lightning_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'lightning_balance', None,
             ),
         )
         self.symbol_header.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'symbol_header', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'symbol_header', None,
             ),
         )
 
@@ -422,7 +423,7 @@ class FungibleAssetWidget(QWidget, ThreadManager):
         self.show_fungible_loading_screen()
         self.fungibles_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'fungibles', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'fungibles', None,
             ),
         )
 

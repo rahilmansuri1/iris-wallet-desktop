@@ -25,6 +25,7 @@ import src.resources_rc
 from src.model.enums.enums_model import ToastPreset
 from src.model.enums.enums_model import WalletType
 from src.model.selection_page_model import SelectionPageModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import SYNCING_CHAIN_LABEL_TIMER
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
@@ -363,32 +364,34 @@ class SetWalletPasswordWidget(QWidget):
         """Retranslate the UI elements."""
         self.set_wallet_password_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'set_your_wallet_password',
                 None,
             ),
         )
         self.enter_password_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'enter_your_password',
                 None,
             ),
         )
         self.confirm_password_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'confirm_your_password',
                 None,
             ),
         )
         self.proceed_wallet_password.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'proceed', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'proceed', None,
+            ),
         )
         self.setup_ui_connection()
         self.syncing_chain_info_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'syncing_chain_info', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'syncing_chain_info', None,
             ),
         )
 
@@ -477,12 +480,9 @@ class SetWalletPasswordWidget(QWidget):
         self.password_validation.setObjectName('password_validation')
         self.password_validation.setMinimumSize(QSize(0, 25))
         self.password_validation.setStyleSheet(
-            'font: 12px "Inter";\n'
-            'color: rgb(237, 51, 59);\n'
-            'background: transparent;\n'
-            'border: none;\n'
-            'font-weight: 400;\n'
-            '',
+            load_stylesheet(
+                'views/qss/style.qss',
+            ),
         )
         self.password_validation.show()
         self.vertical_layout_setup_wallet_password.insertWidget(
@@ -545,9 +545,9 @@ class SetWalletPasswordWidget(QWidget):
         else:
             self.proceed_wallet_password.setDisabled(True)
 
-    def handle_message(self, msg_type: int, message: str):
+    def handle_message(self, msg_type, message: str):
         """This method handled to show message."""
-        if msg_type == ToastPreset.ERROR.value:
+        if msg_type == ToastPreset.ERROR:
             ToastManager.error(message)
         else:
             ToastManager.success(message)

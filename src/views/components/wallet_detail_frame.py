@@ -1,4 +1,4 @@
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes, too-few-public-methods
 """This module contains the NodeInfoWidget classes,
 Component for the wallet details.
 """
@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QWidget
 
 from src.utils.common_utils import copy_text
 from src.utils.common_utils import translate_value
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 
 
 class NodeInfoWidget(QWidget):
@@ -77,7 +78,7 @@ class NodeInfoWidget(QWidget):
 
         # Set tooltip for the copy button
         self.translated_copy_text = QCoreApplication.translate(
-            'iris_wallet_desktop', 'copy', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'copy', None,
         )
         self.tooltip_text = f"{self.translated_copy_text} {
             self.key_label.text().replace(':', '').lower()

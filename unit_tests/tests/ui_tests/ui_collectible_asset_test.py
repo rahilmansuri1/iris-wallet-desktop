@@ -22,6 +22,7 @@ from PySide6.QtWidgets import QWidget
 
 from src.model.enums.enums_model import ToastPreset
 from src.model.rgb_model import RgbAssetPageLoadModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.ui_collectible_asset import CollectiblesAssetWidget
 
@@ -187,10 +188,10 @@ def test_collectibles_asset_widget_initial_state(collectible_asset_widget):
     assert collectible_asset_widget.collectible_header_frame.title_name.text() == 'collectibles'
     assert collectible_asset_widget.collectible_header_frame.refresh_page_button.icon().isNull() is False
     assert collectible_asset_widget.collectible_header_frame.action_button.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'issue_new_collectibles', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'issue_new_collectibles', None,
     )
     assert collectible_asset_widget.collectibles_label.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'collectibles', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'collectibles', None,
     )
 
 
@@ -239,20 +240,11 @@ def test_create_collectible_frame(collectible_asset_widget, mocker):
     assert collectible_asset_name.minimumSize() == QSize(242, 42)
     assert collectible_asset_name.maximumSize() == QSize(242, 42)
     assert collectible_asset_name.styleSheet() == (
-        'QLabel{\n'
-        'font: 15px "Inter";\n'
-        'color: #FFFFFF;\n'
-        'font-weight:600;\n'
-        'border-top-left-radius: 0px;\n'
-        'border-top-right-radius: 0px;\n'
-        'border-bottom-left-radius: 8px;\n'
-        'border-bottom-right-radius: 8px;\n'
-        'background: transparent;\n'
-        'background-color: rgb(27, 35, 59);\n'
-        'padding: 10.5px, 10px, 10.5px, 10px;\n'
-        'padding-left: 11px\n'
-        '}\n'
-        ''
+        'QLabel{\nfont: 15px "Inter";\ncolor: #FFFFFF;\nfont-weight:600;\n'
+        'border-top-left-radius: 0px;\nborder-top-right-radius: 0px;\n'
+        'border-bottom-left-radius: 8px;\nborder-bottom-right-radius: 8px;\n'
+        'background: transparent;\nbackground-color: rgb(27, 35, 59);\n'
+        'padding: 10.5px, 10px, 10.5px, 10px;\npadding-left: 11px\n}\n'
     )
     assert collectible_asset_name.text() == 'Mock Asset'
 
@@ -261,14 +253,8 @@ def test_create_collectible_frame(collectible_asset_widget, mocker):
     assert image_label.minimumSize() == QSize(242, 242)
     assert image_label.maximumSize() == QSize(242, 242)
     assert image_label.styleSheet() == (
-        'QLabel{\n'
-        'border-top-left-radius: 8px;\n'
-        'border-top-right-radius: 8px;\n'
-        'border-bottom-left-radius: 0px;\n'
-        'border-bottom-right-radius: 0px;\n'
-        'background: transparent;\n'
-        'background-color: rgb(27, 35, 59);\n'
-        '}\n'
+        'QLabel{\nborder-top-left-radius: 8px;\nborder-top-right-radius: 8px;\nborder-bottom-left-radius: 0px;'
+        '\nborder-bottom-right-radius: 0px;\nbackground: transparent;\nbackground-color: rgb(27, 35, 59);\n}\n'
     )
     assert image_label.pixmap() is not None
 

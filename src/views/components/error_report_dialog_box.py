@@ -23,6 +23,7 @@ from src.utils.common_utils import download_file
 from src.utils.common_utils import zip_logger_folder
 from src.utils.constant import CONTACT_EMAIL
 from src.utils.constant import GITHUB_ISSUE_LINK
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.local_store import local_store
 
@@ -166,51 +167,51 @@ class ErrorReportDialog(QDialog):
         """translations for the error report dialog"""
         self.setWindowTitle(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'error_report', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'error_report', None,
             ),
         )
         self.were_sorry_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'something_went_wrong_mb', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'something_went_wrong_mb', None,
             ),
         )
         self.help_us_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'please_help_us', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'please_help_us', None,
             ),
         )
         self.open_issue_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'open_an_issue', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'open_an_issue', None,
             ),
         )
         self.github_issue_label.setText(
             f"""<a href="{GITHUB_ISSUE_LINK}" style="text-decoration:underline;color:green;">
                     {
                 QCoreApplication.translate(
-                    "iris_wallet_desktop", "github_issue_label", None
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, "github_issue_label", None
                 )
             }</a>
                     """,
         )
         self.email_us_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'email_us_at', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'email_us_at', None,
             ),
         )
         self.no_reply_label.setText(f"({
             QCoreApplication.translate(
-                "iris_wallet_desktop", "do_not_expect_reply", None
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, "do_not_expect_reply", None
             )
         })")
         self.thank_you_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'thank_you_for_your_support', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'thank_you_for_your_support', None,
             ),
         )
         self.download_debug_logs.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'download_debug_log', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'download_debug_log', None,
             ),
         )
 

@@ -21,6 +21,7 @@ from PySide6.QtWidgets import QVBoxLayout
 
 import src.resources_rc
 from src.utils.common_utils import copy_text
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.ui_close_channel_dialog import CloseChannelDialog
@@ -300,27 +301,27 @@ class ChannelDetailDialogBox(QDialog):
         """Retranslate the UI elements."""
         self.channel_detail_title_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'channel_details', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_details', None,
             ),
         )
         self.btc_local_balance_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'bitcoin_local_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'bitcoin_local_balance', None,
             ),
         )
         self.btc_remote_balance_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'bitcoin_remote_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'bitcoin_remote_balance', None,
             ),
         )
         self.pub_key_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'peer_pubkey', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'peer_pubkey', None,
             ),
         )
         self.close_channel_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'close_channel', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'close_channel', None,
             ),
         )
 

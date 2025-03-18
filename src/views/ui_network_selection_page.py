@@ -26,6 +26,7 @@ from src.model.enums.enums_model import NetworkEnumModel
 from src.model.setting_model import IsWalletInitialized
 from src.utils.clickable_frame import ClickableFrame
 from src.utils.common_utils import close_button_navigation
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.custom_exception import CommonException
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
@@ -263,34 +264,34 @@ class NetworkSelectionWidget(QWidget):
         self.setup_ui_connection()
         self.set_frame_click()
         self.ln_message = QApplication.translate(
-            'iris_wallet_desktop', 'ln_message', 'Starting LN node',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'ln_message', 'Starting LN node',
         )
 
     def retranslate_ui(self):
         """Retranslate the UI elements."""
         self.title_text_1.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'select_network_type', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'select_network_type', None,
             ),
         )
         self.regtest_text_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'regtest', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'regtest', None,
             ),
         )
         self.testnet_text_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'testnet', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'testnet', None,
             ),
         )
         self.mainnet_text_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'mainnet', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'mainnet', None,
             ),
         )
         self.regtest_note_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'regtest_note', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'regtest_note', None,
             ),
         )
 

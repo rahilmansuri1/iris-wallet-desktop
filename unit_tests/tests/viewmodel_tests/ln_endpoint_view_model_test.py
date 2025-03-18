@@ -15,6 +15,7 @@ from PySide6.QtCore import QCoreApplication
 from src.data.repository.common_operations_repository import CommonOperationRepository
 from src.model.common_operation_model import UnlockResponseModel
 from src.model.enums.enums_model import WalletType
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LIGHTNING_URL_KEY
 from src.utils.constant import WALLET_PASSWORD_KEY
 from src.utils.custom_exception import CommonException
@@ -252,7 +253,7 @@ def test_on_error_common_exception_not_initialized(ln_endpoint_vm, mocker):
         'src.viewmodels.ln_endpoint_view_model.logger.error',
     )
     error_msg = QCoreApplication.translate(
-        'iris_wallet_desktop', 'not_initialized', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'not_initialized', None,
     )
     error = CommonException(error_msg)
 
@@ -282,7 +283,7 @@ def test_on_error_common_exception_wrong_password(ln_endpoint_vm, mocker):
         'src.viewmodels.ln_endpoint_view_model.logger.error',
     )
     error_msg = QCoreApplication.translate(
-        'iris_wallet_desktop', 'wrong_password', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wrong_password', None,
     )
     error = CommonException(error_msg)
 
@@ -311,7 +312,7 @@ def test_on_error_common_exception_unlocked_node(ln_endpoint_vm, mocker):
         'src.viewmodels.ln_endpoint_view_model.logger.error',
     )
     error_msg = QCoreApplication.translate(
-        'iris_wallet_desktop', 'unlocked_node', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'unlocked_node', None,
     )
     error = CommonException(error_msg)
 
@@ -339,7 +340,7 @@ def test_on_error_common_exception_locked_node(ln_endpoint_vm, mocker):
         'src.viewmodels.ln_endpoint_view_model.logger.error',
     )
     error_msg = QCoreApplication.translate(
-        'iris_wallet_desktop', 'locked_node', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'locked_node', None,
     )
     error = CommonException(error_msg)
 

@@ -23,6 +23,7 @@ from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
 from src.model.success_model import SuccessPageModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.views.components.buttons import PrimaryButton
 from src.views.components.wallet_logo_frame import WalletLogoFrame
@@ -192,22 +193,22 @@ class SuccessWidget(QWidget):
         self.close_button.clicked.connect(self._params.callback)
         self.success_page_header.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self._params.header, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self._params.header, None,
             ),
         )
 
         self.bold_title.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self._params.title, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self._params.title, None,
             ),
         )
         self.desc_msg.setPlainText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self._params.description, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self._params.description, None,
             ),
         )
         self.home_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self._params.button_text, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self._params.button_text, None,
             ),
         )

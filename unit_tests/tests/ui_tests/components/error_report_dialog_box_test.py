@@ -12,6 +12,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel
 from PySide6.QtWidgets import QPushButton
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.local_store import local_store
 from src.version import __version__
 from src.views.components.error_report_dialog_box import ErrorReportDialog
@@ -32,7 +33,7 @@ def test_dialog_initialization(error_report_dialog):
 
     # Test window title
     expected_title = QCoreApplication.translate(
-        'iris_wallet_desktop', 'error_report', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'error_report', None,
     )
     assert dialog.windowTitle() == expected_title
 
@@ -44,7 +45,7 @@ def test_dialog_initialization(error_report_dialog):
 
     # Test labels content
     assert QCoreApplication.translate(
-        'iris_wallet_desktop', 'something_went_wrong_mb', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'something_went_wrong_mb', None,
     ) == dialog.were_sorry_label.text()
 
     # Test button properties

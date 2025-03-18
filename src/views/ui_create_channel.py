@@ -33,6 +33,7 @@ from src.model.node_info_model import NodeInfoModel
 from src.model.success_model import SuccessPageModel
 from src.utils.common_utils import sat_to_msat
 from src.utils.common_utils import set_placeholder_value
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import handle_asset_address
 from src.utils.helpers import load_stylesheet
 from src.utils.node_url_validator import NodeValidator
@@ -479,77 +480,95 @@ class CreateChannelWidget(QWidget):
         """This method handled to retranslate the ui initially"""
         self.open_channel_title.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'open_channel', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'open_channel', None,
             ),
         )
         self.node_info.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'open_channel_desc',
                 None,
             ),
         )
         self.pub_key_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'node_uri', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'node_uri', None,
             ),
         )
         self.public_key_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'node_uri', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
+                'node_uri',
+                None,
             ),
         )
         self.slow_checkbox.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'slow', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
+                'slow',
+                None,
+            ),
         )
         self.medium_checkbox.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'medium', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
+                'medium',
+                None,
+            ),
         )
         self.fast_checkbox.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'fast', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'fast', None,
+            ),
         )
         self.amount_line_edit.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'enter_amount', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'enter_amount', None,
             ),
         )
 
         self.txn_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'Transaction fees', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'Transaction fees', None,
             ),
         )
         self.amount_label.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'amount', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount', None,
+            ),
         )
         self.channel_prev_button.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'go_back', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'go_back', None,
+            ),
         )
         self.channel_next_button.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'next', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'next', None,
+            ),
         )
         self.push_msat_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'initial_push_amount', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'initial_push_amount', None,
             ),
         )
         self.capacity_sat_value.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'amount_in_sat', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount_in_sat', None,
             ),
         )
         self.push_msat_value.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'amount_in_sat', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount_in_sat', None,
             ),
         )
         self.capacity_sat_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'capacity_of_channel', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'capacity_of_channel', None,
             ),
         )
         channel_capacity_validation_text = QCoreApplication.translate(
-            'iris_wallet_desktop', 'channel_capacity_validation', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_capacity_validation', None,
         ).format(self.node_validation_info.channel_capacity_min_sat, self.node_validation_info.channel_capacity_max_sat)
 
         self.channel_capacity_validation_label.setText(
@@ -557,7 +576,7 @@ class CreateChannelWidget(QWidget):
         )
         self.push_msat_validation_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'push_amount_validation', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'push_amount_validation', None,
             ),
         )
 
@@ -603,13 +622,13 @@ class CreateChannelWidget(QWidget):
         """This method handled after channel created"""
         header = 'Open Channel'
         title = QCoreApplication.translate(
-            'iris_wallet_desktop', 'channel_open_request_title', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_open_request_title', None,
         )
         button_name = QCoreApplication.translate(
-            'iris_wallet_desktop', 'finish', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'finish', None,
         )
         description = QCoreApplication.translate(
-            'iris_wallet_desktop', 'channel_open_request_desc', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_open_request_desc', None,
         )
         params = SuccessPageModel(
             header=header,
@@ -664,7 +683,7 @@ class CreateChannelWidget(QWidget):
         else:
             self.error_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'valid_node_prompt', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'valid_node_prompt', None,
                 ),
             )
             self.error_label.show()
@@ -774,7 +793,7 @@ class CreateChannelWidget(QWidget):
                 if capacity_value < self.node_validation_info.channel_capacity_min_sat or \
                         capacity_value > self.node_validation_info.channel_capacity_max_sat:
                     channel_capacity_validation_text = QCoreApplication.translate(
-                        'iris_wallet_desktop', 'channel_capacity_validation', None,
+                        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_capacity_validation', None,
                     ).format(self.node_validation_info.channel_capacity_min_sat, self.node_validation_info.channel_capacity_max_sat)
 
                     self.channel_capacity_validation_label.setText(
@@ -790,7 +809,7 @@ class CreateChannelWidget(QWidget):
                 if capacity_value < self.node_validation_info.rgb_channel_capacity_min_sat or \
                         capacity_value > self.node_validation_info.channel_capacity_max_sat:
                     channel_capacity_validation_text = QCoreApplication.translate(
-                        'iris_wallet_desktop', 'channel_capacity_validation', None,
+                        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_capacity_validation', None,
                     ).format(self.node_validation_info.rgb_channel_capacity_min_sat, self.node_validation_info.channel_capacity_max_sat)
                     self.channel_capacity_validation_label.setText(
                         channel_capacity_validation_text,
@@ -827,7 +846,7 @@ class CreateChannelWidget(QWidget):
         if entered_amount > 0:
             if asset_amount is not None and (channel_asset_max_amount < entered_amount or channel_asset_min_amount > entered_amount):
                 channel_amount_validation_text = QCoreApplication.translate(
-                    'iris_wallet_desktop', 'channel_amount_validation', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_amount_validation', None,
                 ).format(channel_asset_min_amount, channel_asset_max_amount)
                 self.amount_validation_label.setText(
                     channel_amount_validation_text,
@@ -839,7 +858,7 @@ class CreateChannelWidget(QWidget):
         else:
             self.amount_validation_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'channel_with_zero_amount_validation', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_with_zero_amount_validation', None,
                 ),
             )
 

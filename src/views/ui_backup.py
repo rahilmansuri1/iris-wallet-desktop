@@ -25,13 +25,13 @@ import src.resources_rc
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import ToastPreset
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import MNEMONIC_KEY
 from src.utils.error_message import ERROR_G_DRIVE_CONFIG_FAILED
 from src.utils.gauth import authenticate
 from src.utils.gauth import TOKEN_PICKLE_PATH
 from src.utils.helpers import load_stylesheet
 from src.utils.info_message import INFO_G_DRIVE_CONFIG_SUCCESS
-from src.utils.info_message import INFO_GOOGLE_DRIVE
 from src.utils.keyring_storage import get_value
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.buttons import PrimaryButton
@@ -384,49 +384,51 @@ class Backup(QWidget):
     def retranslate_ui(self):
         """Retranslate ui"""
         self.hide_mnemonic_text = QCoreApplication.translate(
-            'iris_wallet_desktop', 'hide_mnemonic', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'hide_mnemonic', None,
         )
         self.show_mnemonic_text = QCoreApplication.translate(
-            'iris_wallet_desktop', 'show_mnemonic', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'show_mnemonic', None,
         )
         self.backup_title_label.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'backup', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'backup', None,
+            ),
         )
         self.backup_info_text.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'backup_info',
                 None,
             ),
         )
         self.show_mnemonic_text_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'mnemonic_info',
                 None,
             ),
         )
         self.show_mnemonic_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'show_mnemonic', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'show_mnemonic', None,
             ),
         )
         self.configure_backup_text.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'configure_backup_info',
                 None,
             ),
         )
         self.configure_backup_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'configure_backup', 'Configure Backup',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'configure_backup', 'Configure Backup',
             ),
         )
 
         self.back_node_data_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'take_backup', 'Backup node data',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'take_backup', 'Backup node data',
             ),
         )
 
@@ -485,7 +487,7 @@ class Backup(QWidget):
         Handles the visibility of the mnemonic and toggles the button text and icon accordingly.
         """
         show_mnemonic_text_val = QApplication.translate(
-            'iris_wallet_desktop', 'show_mnemonic', 'Show Mnemonic',
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'show_mnemonic', 'Show Mnemonic',
         )
         if self.show_mnemonic_button.text() == show_mnemonic_text_val:
             network: NetworkEnumModel = SettingRepository.get_wallet_network()

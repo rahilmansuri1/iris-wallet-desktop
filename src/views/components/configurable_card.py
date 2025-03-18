@@ -18,6 +18,7 @@ from PySide6.QtWidgets import QVBoxLayout
 
 from src.model.common_operation_model import ConfigurableCardModel
 from src.utils.clickable_frame import ClickableFrame
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.views.components.buttons import PrimaryButton
 
@@ -173,7 +174,9 @@ class ConfigurableCardFrame(ClickableFrame):
         )
 
         self.save_button.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'save', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'save', None,
+            ),
         )
         self.suggestion_desc.setText(
             self.params.suggestion_desc,
@@ -189,7 +192,7 @@ class ConfigurableCardFrame(ClickableFrame):
         """Adds a translated item to the time unit combo box."""
         if self.time_unit_combobox:
             translated_text = QCoreApplication.translate(
-                'iris_wallet_desktop', text, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, text, None,
             )
             self.time_unit_combobox.addItem(translated_text)
 

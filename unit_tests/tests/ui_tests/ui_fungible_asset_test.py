@@ -24,6 +24,7 @@ from src.model.enums.enums_model import ToastPreset
 from src.model.enums.enums_model import TokenSymbol
 from src.model.enums.enums_model import WalletType
 from src.model.rgb_model import RgbAssetPageLoadModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.info_message import INFO_FAUCET_NOT_AVAILABLE
 from src.views.ui_fungible_asset import FungibleAssetWidget
 
@@ -71,7 +72,7 @@ def test_fungible_asset_widget_initialization(create_fungible_asset_widget):
     # Check if the issue new assets button is present
     assert isinstance(widget.title_frame.action_button, QPushButton)
     assert widget.title_frame.action_button.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'issue_new_asset', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'issue_new_asset', None,
     )
 
 
@@ -181,19 +182,19 @@ def test_show_assets_with_various_assets(create_fungible_asset_widget, qtbot):
 
     # Check headers text
     assert widget.name_header.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'asset_name', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_name', None,
     )
     assert widget.address_header.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'asset_id', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_id', None,
     )
     assert widget.amount_header.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'on_chain_balance', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'on_chain_balance', None,
     )
     assert widget.outbound_amount_header.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'lightning_balance', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'lightning_balance', None,
     )
     assert widget.symbol_header.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'symbol_header', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'symbol_header', None,
     )
 
     # Ensure the spacer was added

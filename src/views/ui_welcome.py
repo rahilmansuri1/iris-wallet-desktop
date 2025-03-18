@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QWidget
 
 import src.resources_rc
 from src.model.enums.enums_model import ToastPreset
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.buttons import PrimaryButton
@@ -192,35 +193,35 @@ class WelcomeWidget(QWidget):
         """Retranslate the UI elements."""
         self.wallet_logo.logo_text.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'iris_wallet',
                 None,
             ),
         )
         self.welcome_text.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'welcome_label',
                 None,
             ),
         )
         self.welcome_text_desc.setPlainText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'welcome_text_description',
                 None,
             ),
         )
         self.restore_btn.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'restore_button',
                 None,
             ),
         )
         self.create_btn.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'create_button',
                 None,
             ),
@@ -235,7 +236,7 @@ class WelcomeWidget(QWidget):
         else:
             self.create_btn.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'create_button',
                     None,
                 ),

@@ -34,7 +34,14 @@ def main_window(qtbot, mock_main_window_view_model):
     window.setup_ui(QMainWindow())  # Ensure UI is set up before using it
     if isinstance(window.main_window, QWidget):
         qtbot.addWidget(window.main_window)
+
+    # Properly mock the view model with required attributes
+    mock_main_window_view_model.splash_view_model = MagicMock()
+    mock_main_window_view_model.wallet_transfer_selection_view_model = MagicMock()
+
+    # Now set the mocked view model
     window.set_ui_and_model(mock_main_window_view_model)
+
     return window
 
 

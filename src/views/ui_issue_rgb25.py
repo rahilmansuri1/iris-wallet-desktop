@@ -14,7 +14,6 @@ from PySide6.QtGui import QIcon
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QFrame
 from PySide6.QtWidgets import QGridLayout
-from PySide6.QtWidgets import QHBoxLayout
 from PySide6.QtWidgets import QLabel
 from PySide6.QtWidgets import QLineEdit
 from PySide6.QtWidgets import QPushButton
@@ -30,11 +29,11 @@ from src.model.success_model import SuccessPageModel
 from src.utils.common_utils import resize_image
 from src.utils.common_utils import set_number_validator
 from src.utils.common_utils import set_placeholder_value
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.buttons import PrimaryButton
-from src.views.components.toast import ToastManager
 from src.views.components.wallet_logo_frame import WalletLogoFrame
 
 
@@ -289,52 +288,52 @@ class IssueRGB25Widget(QWidget):
         """Retranslate the UI elements."""
         self.issue_rgb25_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'issue_asset', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'issue_asset', None,
             ),
         )
         self.asset_name_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_name', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_name', None,
             ),
         )
         self.asset_description_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'description_of_the_asset', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'description_of_the_asset', None,
             ),
         )
         self.asset_description_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_description', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_description', None,
             ),
         )
         self.name_of_the_asset_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'name_of_the_asset', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'name_of_the_asset', None,
             ),
         )
         self.total_supply_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'total_supply', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'total_supply', None,
             ),
         )
         self.amount_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'amount_to_issue', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount_to_issue', None,
             ),
         )
         self.asset_file.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_files', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_files', None,
             ),
         )
         self.upload_file.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'upload_file', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'upload_file', None,
             ),
         )
         self.issue_rgb_25_asset_title_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'issue_new_rgb25_asset', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'issue_new_rgb25_asset', None,
             ),
         )
 
@@ -373,7 +372,7 @@ class IssueRGB25Widget(QWidget):
         file_size = os.path.getsize(file_upload_message)
         if file_size > max_file_size:
             validation_text = QCoreApplication.translate(
-                'iris_wallet_desktop', 'image_validation', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'image_validation', None,
             ).format(get_max_file_size.max_media_upload_size_mb)
             self.file_path.setText(validation_text)
             self.issue_rgb25_button.setDisabled(True)
@@ -387,7 +386,7 @@ class IssueRGB25Widget(QWidget):
             )
             self.upload_file.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'change_uploaded_file', 'CHANGE UPLOADED FILE',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'change_uploaded_file', 'CHANGE UPLOADED FILE',
                 ),
             )
             self.issue_rgb25_button.setDisabled(False)

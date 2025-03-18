@@ -25,6 +25,7 @@ from src.model.enums.enums_model import WalletType
 from src.model.setting_model import IsBackupConfiguredModel
 from src.model.setting_model import IsWalletInitialized
 from src.utils.cache import Cache
+from src.utils.common_utils import disable_rln_node_termination_handling
 from src.utils.common_utils import load_translator
 from src.utils.common_utils import sigterm_handler
 from src.utils.excluded_page import excluded_page
@@ -49,6 +50,7 @@ class IrisWalletMainWindow(QMainWindow):
         self.__init_ui__()
         self.progress_dialog = None
         self.ln_node_manager = LnNodeServerManager.get_instance()
+        self.wallet_type: WalletType = SettingRepository.get_wallet_type()
 
     def __init_ui__(self):
         """This method initializes the main window UI of the application."""
@@ -69,8 +71,7 @@ class IrisWalletMainWindow(QMainWindow):
         cache = Cache.get_cache_session()
         if cache is not None:
             cache.invalidate_cache()
-        wallet_type: WalletType = SettingRepository.get_wallet_type()
-        if wallet_type.value == WalletType.REMOTE_TYPE_WALLET.value or page_name in excluded_page:
+        if self.wallet_type.value == WalletType.REMOTE_TYPE_WALLET.value or page_name in excluded_page:
             QApplication.instance().exit()
         else:
             self.show_backup_progress()
@@ -94,6 +95,7 @@ class IrisWalletMainWindow(QMainWindow):
                 backup_configure_dialog_box.exec()
             else:
                 self.progress_dialog.exec(True)
+        disable_rln_node_termination_handling(self.wallet_type)
         self.progress_dialog.exec()
 
 

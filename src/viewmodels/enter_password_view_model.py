@@ -23,6 +23,7 @@ from src.utils.local_store import local_store
 from src.utils.logging import logger
 from src.utils.worker import ThreadManager
 from src.views.components.message_box import MessageBox
+from src.views.components.toast import ToastManager
 
 
 class EnterWalletPasswordViewModel(QObject, ThreadManager):
@@ -122,10 +123,8 @@ class EnterWalletPasswordViewModel(QObject, ThreadManager):
             local_store.clear_settings()
             MessageBox('critical', error.message)
             QApplication.instance().exit()
-        self.message.emit(
-            ToastPreset.ERROR,
-            error.message or ERROR_SOMETHING_WENT_WRONG,
-        )
+
+        ToastManager.error(error.message or ERROR_SOMETHING_WENT_WRONG)
 
     def set_wallet_password(self, enter_password_input: str):
         """Set the wallet password to the keychain and handle the unlocking process."""

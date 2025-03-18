@@ -20,6 +20,7 @@ from PySide6.QtWidgets import QWidget
 import src.resources_rc
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import SYNCING_CHAIN_LABEL_TIMER
 from src.utils.render_timer import RenderTimer
 from src.viewmodels.main_view_model import MainViewModel
@@ -32,6 +33,7 @@ class SplashScreenWidget(QWidget):
         self.render_timer = RenderTimer(task_name='SplashScreenWidget')
         self.render_timer.start()
         super().__init__()
+        self.setObjectName('splash_page')
         self._view_model: MainViewModel = view_model
         self.syncing_chain_label_timer = QTimer(self)
         self.syncing_chain_label_timer.setSingleShot(True)
@@ -130,21 +132,19 @@ class SplashScreenWidget(QWidget):
             }" if self.network != NetworkEnumModel.MAINNET.value else ''
         )
         self.logo_text_label.setText(
-            f"{QCoreApplication.translate('iris_wallet_desktop', 'iris_wallet', None)}{
+            f"{QCoreApplication.translate(IRIS_WALLET_TRANSLATIONS_CONTEXT, 'iris_wallet', None)}{
                 network_text
             }",
         )
         self.note_text_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'auth_message', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'auth_message', None,
             ),
         )
 
     def on_page_load(self):
         """Method run when page load"""
-        self._view_model.splash_view_model.is_login_authentication_enabled(
-            self._view_model.wallet_transfer_selection_view_model,
-        )
+        self._view_model.splash_view_model.is_login_authentication_enabled()
 
     def rotate_spinner(self):
         """This method rotate the iris logo"""
@@ -168,7 +168,7 @@ class SplashScreenWidget(QWidget):
         self.syncing_chain_label_timer.timeout.connect(
             lambda: self.note_text_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'syncing_chain_info', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'syncing_chain_info', None,
                 ),
             ),
         )

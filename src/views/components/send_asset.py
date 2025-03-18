@@ -26,6 +26,7 @@ import src.resources_rc
 from src.utils.common_utils import extract_amount
 from src.utils.common_utils import set_number_validator
 from src.utils.common_utils import set_placeholder_value
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.buttons import PrimaryButton
@@ -412,113 +413,121 @@ class SendAssetWidget(QWidget):
     def retranslate_ui(self):
         """Retranslate the UI elements."""
         self.asset_title.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'send', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'send', None,
+            ),
         )
         self.balance_value.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'total_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'total_balance', None,
             ),
         )
         self.pay_to_label.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'pay_to', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'pay_to', None,
+            ),
         )
         self.asset_address_value.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', self.address, None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, self.address, None,
             ),
         )
         self.total_supply_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'amount_to_pay', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'amount_to_pay', None,
             ),
         )
         self.fee_rate_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'fee_rate', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'fee_rate', None,
             ),
         )
         self.fee_rate_value.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', '0', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, '0', None,
             ),
         )
         self.asset_amount_value.setPlaceholderText(
-            QCoreApplication.translate('iris_wallet_desktop', '0', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, '0', None,
+            ),
         )
         self.asset_amount_validation.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'asset_amount_validation',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'asset_amount_validation',
             ),
         )
         self.send_btn.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'send', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'send', None,
+            ),
         )
         self.asset_balance_label_spendable.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', '0 SATS', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, '0 SATS', None,
             ),
         )
         self.balance_value_spendable.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'spendable_balance', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'spendable_balance', None,
             ),
         )
         self.spendable_balance_validation.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'spendable_balance_validation', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'spendable_balance_validation', None,
             ),
         )
         self.txn_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'transaction_fees', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'transaction_fees', None,
             ),
         )
 
         self.slow_checkbox.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'slow', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'slow', None,
             ),
         )
 
         self.medium_checkbox.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'medium', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'medium', None,
             ),
         )
 
         self.fast_checkbox.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'fast', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'fast', None,
             ),
         )
 
         self.custom_checkbox.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'custom', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'custom', None,
             ),
         )
 
         self.estimate_fee_error_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'estimation_error',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'estimation_error',
             ),
         )
 
         self.slow_checkbox.setToolTip(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'slow_transaction_speed',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'slow_transaction_speed',
             ),
         )
 
         self.medium_checkbox.setToolTip(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'medium_transaction_speed',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'medium_transaction_speed',
             ),
         )
 
         self.fast_checkbox.setToolTip(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'fast_transaction_speed',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'fast_transaction_speed',
             ),
         )
 

@@ -11,6 +11,7 @@ from PySide6.QtCore import QCoreApplication
 
 from src.data.repository.setting_repository import SettingRepository
 from src.model.enums.enums_model import NetworkEnumModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.ui_sidebar import Sidebar
 
@@ -91,9 +92,11 @@ def test_retranslate_ui(sidebar_widget: Sidebar, mocker):
     sidebar_widget.retranslate_ui()
 
     # Test if the translate method is called with correct parameters
-    mock_translate.assert_any_call('iris_wallet_desktop', 'iris_wallet', None)
     mock_translate.assert_any_call(
-        'iris_wallet_desktop', 'receive_assets', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'iris_wallet', None,
+    )
+    mock_translate.assert_any_call(
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'receive_assets', None,
     )
 
     # Ensure that MAINNET results in just the translated text (without appending network)
@@ -114,9 +117,11 @@ def test_retranslate_ui(sidebar_widget: Sidebar, mocker):
     sidebar_widget.retranslate_ui()
 
     # Ensure that QCoreApplication.translate is called again for 'iris_wallet' and 'receive_assets'
-    mock_translate.assert_any_call('iris_wallet_desktop', 'iris_wallet', None)
     mock_translate.assert_any_call(
-        'iris_wallet_desktop', 'receive_assets', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'iris_wallet', None,
+    )
+    mock_translate.assert_any_call(
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'receive_assets', None,
     )
 
     # Ensure that the text is now "translated_text {network}", where network is capitalized

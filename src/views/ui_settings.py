@@ -36,6 +36,7 @@ from src.utils.constant import FEE_RATE
 from src.utils.constant import INDEXER_URL_MAINNET
 from src.utils.constant import INDEXER_URL_REGTEST
 from src.utils.constant import INDEXER_URL_TESTNET
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LN_INVOICE_EXPIRY_TIME
 from src.utils.constant import LN_INVOICE_EXPIRY_TIME_UNIT
 from src.utils.constant import MIN_CONFIRMATION
@@ -304,15 +305,15 @@ class SettingsWidget(QWidget):
             self,
             ConfigurableCardModel(
                 title_label=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'set_default_fee', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'set_default_fee', None,
                 ),
                 title_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_default_fee_send',
                     None,
                 ),
                 suggestion_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_fee_rate_value_label',
                     None,
                 ),
@@ -325,15 +326,15 @@ class SettingsWidget(QWidget):
             self,
             ConfigurableCardModel(
                 title_label=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'set_default_expiry_time', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'set_default_expiry_time', None,
                 ),
                 title_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_default_expiry_time_desc',
                     None,
                 ),
                 suggestion_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'input_expiry_time_desc',
                     None,
                 ),
@@ -345,10 +346,10 @@ class SettingsWidget(QWidget):
             self,
             ConfigurableCardModel(
                 title_label=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'set_indexer_url', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'set_indexer_url', None,
                 ),
                 title_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_indexer_url_desc',
                     None,
                 ),
@@ -359,10 +360,10 @@ class SettingsWidget(QWidget):
             self,
             ConfigurableCardModel(
                 title_label=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'set_proxy_endpoint', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'set_proxy_endpoint', None,
                 ),
                 title_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_proxy_endpoint_desc',
                     None,
                 ),
@@ -373,10 +374,10 @@ class SettingsWidget(QWidget):
             self,
             ConfigurableCardModel(
                 title_label=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'set_bitcoind_host', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'set_bitcoind_host', None,
                 ),
                 title_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_bitcoind_host_desc',
                     None,
                 ),
@@ -387,10 +388,10 @@ class SettingsWidget(QWidget):
             self,
             ConfigurableCardModel(
                 title_label=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'set_bitcoind_port', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'set_bitcoind_port', None,
                 ),
                 title_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_bitcoind_port_desc',
                     None,
                 ),
@@ -401,10 +402,10 @@ class SettingsWidget(QWidget):
             self,
             ConfigurableCardModel(
                 title_label=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'set_announce_address', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'set_announce_address', None,
                 ),
                 title_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_announce_address_desc',
                     None,
                 ),
@@ -415,10 +416,10 @@ class SettingsWidget(QWidget):
             self,
             ConfigurableCardModel(
                 title_label=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'set_announce_alias', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'set_announce_alias', None,
                 ),
                 title_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_announce_alias_desc',
                     None,
                 ),
@@ -429,10 +430,10 @@ class SettingsWidget(QWidget):
             self,
             ConfigurableCardModel(
                 title_label=QCoreApplication.translate(
-                    'iris_wallet_desktop', 'set_minimum_confirmation', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'set_minimum_confirmation', None,
                 ),
                 title_desc=QCoreApplication.translate(
-                    'iris_wallet_desktop',
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT,
                     'set_minimum_confirmation_desc',
                     None,
                 ),
@@ -498,37 +499,37 @@ class SettingsWidget(QWidget):
         """Retranslate the UI elements."""
         self.settings_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'settings', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'settings', None,
             ),
         )
         self.imp_operation_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'auth_important_ops', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'auth_important_ops', None,
             ),
         )
         self.auth_imp_desc.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'auth_spending_ops', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'auth_spending_ops', None,
             ),
         )
         self.login_auth_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'auth_login', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'auth_login', None,
             ),
         )
         self.auth_login_desc.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'enable_auth_login', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'enable_auth_login', None,
             ),
         )
         self.hide_exhausted_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'hide_exhausted_assets', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'hide_exhausted_assets', None,
             ),
         )
         self.hide_asset_desc.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT,
                 'hide_zero_balance_assets',
                 None,
             ),
@@ -536,12 +537,12 @@ class SettingsWidget(QWidget):
 
         self.keyring_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'keyring_label', 'Keyring storage',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'keyring_label', 'Keyring storage',
             ),
         )
         self.keyring_desc.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'keyring_desc', 'Store sensitive data, such as passwords and mnemonics, in the keyring.',
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'keyring_desc', 'Store sensitive data, such as passwords and mnemonics, in the keyring.',
             ),
         )
         self.handle_keyring_toggle_status()
@@ -727,7 +728,7 @@ class SettingsWidget(QWidget):
         self.imp_operation_frame.setDisabled(stored_keyring_status)
         if stored_keyring_status is True:
             message = QCoreApplication.translate(
-                'iris_wallet_desktop', 'auth_keyring_message', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'auth_keyring_message', None,
             )
             self.auth_login_desc.setText(message)
             self.auth_imp_desc.setText(message)
@@ -811,7 +812,7 @@ class SettingsWidget(QWidget):
             )
             mnemonic_dialog.mnemonic_detail_text_label.setText(
                 QCoreApplication.translate(
-                    'iris_wallet_desktop', 'lock_unlock_password_required', None,
+                    IRIS_WALLET_TRANSLATIONS_CONTEXT, 'lock_unlock_password_required', None,
                 ),
             )
             mnemonic_dialog.mnemonic_detail_text_label.setFixedHeight(40)

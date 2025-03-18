@@ -30,6 +30,7 @@ from src.model.setting_model import IsDefaultExpiryTimeSet
 from src.model.setting_model import IsDefaultFeeRateSet
 from src.model.setting_model import IsDefaultMinConfirmationSet
 from src.utils.constant import FEE_RATE
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LN_INVOICE_EXPIRY_TIME
 from src.utils.constant import LN_INVOICE_EXPIRY_TIME_UNIT
 from src.utils.constant import MIN_CONFIRMATION
@@ -312,7 +313,7 @@ def test_on_error_of_unlock_wrong_password(mock_toast_manager, setting_view_mode
     setting_view_model.unlock_the_wallet = Mock()
     error = CommonException(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'wrong_password', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wrong_password', None,
         ),
     )
 

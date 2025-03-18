@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from unittest.mock import call
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
@@ -96,11 +97,13 @@ def test_get_request(mock_logger, mock_requests, mock_response):
         )
 
         # Verify logging
-        mock_logger.info.assert_called_once_with(
-            'GET request to %s took %.3f seconds',
-            mock_response.url,
-            mock_response.elapsed.total_seconds(),
-        )
+        mock_logger.info.assert_has_calls([
+            call('Starting GET request to %s', 'http://127.0.0.1:3001/test'),
+            call(
+                'GET request to %s took %.3f seconds', mock_response.url,
+                mock_response.elapsed.total_seconds(),
+            ),
+        ])
 
         assert response == mock_response
 
@@ -134,11 +137,13 @@ def test_post_request(mock_logger, mock_requests, mock_response):
         )
 
         # Verify logging
-        mock_logger.info.assert_called_once_with(
-            'POST request to %s took %.3f seconds',
-            mock_response.url,
-            mock_response.elapsed.total_seconds(),
-        )
+        mock_logger.info.assert_has_calls([
+            call('Starting POST request to %s', 'http://127.0.0.1:3001/test'),
+            call(
+                'POST request to %s took %.3f seconds',
+                mock_response.url, mock_response.elapsed.total_seconds(),
+            ),
+        ])
 
         assert response == mock_response
 
@@ -194,11 +199,13 @@ def test_put_request(mock_logger, mock_requests, mock_response):
         )
 
         # Verify logging
-        mock_logger.info.assert_called_once_with(
-            'PUT request to %s took %.3f seconds',
-            mock_response.url,
-            mock_response.elapsed.total_seconds(),
-        )
+        mock_logger.info.assert_has_calls([
+            call('Starting PUT request to %s', 'http://127.0.0.1:3001/test'),
+            call(
+                'PUT request to %s took %.3f seconds', mock_response.url,
+                mock_response.elapsed.total_seconds(),
+            ),
+        ])
 
         assert response == mock_response
 
@@ -229,11 +236,16 @@ def test_delete_request(mock_logger, mock_requests, mock_response):
         )
 
         # Verify logging
-        mock_logger.info.assert_called_once_with(
-            'DELETE request to %s took %.3f seconds',
-            mock_response.url,
-            mock_response.elapsed.total_seconds(),
-        )
+        mock_logger.info.assert_has_calls([
+            call(
+                'Starting DELETE request to %s',
+                'http://127.0.0.1:3001/test',
+            ),
+            call(
+                'DELETE request to %s took %.3f seconds',
+                mock_response.url, mock_response.elapsed.total_seconds(),
+            ),
+        ])
 
         assert response == mock_response
 

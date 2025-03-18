@@ -10,6 +10,7 @@ from unittest.mock import patch
 import pytest
 from PySide6.QtCore import QCoreApplication
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.viewmodels.channel_management_viewmodel import ChannelManagementViewModel
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.ui_create_channel import CreateChannelWidget
@@ -449,7 +450,7 @@ def test_handle_amount_validation(create_channel_widget):
     create_channel_widget.handle_amount_validation()
     create_channel_widget.amount_validation_label.setText.assert_called_with(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'channel_with_zero_amount_validation', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_with_zero_amount_validation', None,
         ),
     )
     create_channel_widget.amount_validation_label.show.assert_called()
@@ -464,7 +465,7 @@ def test_handle_amount_validation(create_channel_widget):
     create_channel_widget.handle_amount_validation()
     create_channel_widget.amount_validation_label.setText.assert_called_with(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'channel_amount_validation', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_amount_validation', None,
         ).format(100, 10000),
     )
     create_channel_widget.amount_validation_label.show.assert_called()
@@ -477,7 +478,7 @@ def test_handle_amount_validation(create_channel_widget):
     create_channel_widget.handle_amount_validation()
     create_channel_widget.amount_validation_label.setText.assert_called_with(
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'channel_amount_validation', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'channel_amount_validation', None,
         ).format(100, 10000),
     )
     create_channel_widget.amount_validation_label.show.assert_called()

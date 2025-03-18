@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.helpers import load_stylesheet
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.toast import ToastManager
@@ -137,25 +138,27 @@ class RestoreMnemonicWidget(QDialog):
         """Retranslate the UI elements."""
         self.mnemonic_detail_text_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'enter_mnemonic_phrase_info', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'enter_mnemonic_phrase_info', None,
             ),
         )
         self.mnemonic_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'input_phrase', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'input_phrase', None,
             ),
         )
         self.cancel_button.setText(
-            QCoreApplication.translate('iris_wallet_desktop', 'cancel', None),
+            QCoreApplication.translate(
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'cancel', None,
+            ),
         )
         self.continue_button.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'continue', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'continue', None,
             ),
         )
         self.password_input.setPlaceholderText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'enter_wallet_password', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'enter_wallet_password', None,
             ),
         )
 

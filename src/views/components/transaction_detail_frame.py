@@ -18,6 +18,7 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 from src.model.transaction_detail_page_model import TransactionDetailPageModel
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 
 
 class TransactionDetailFrame(QFrame):
@@ -184,7 +185,7 @@ class TransactionDetailFrame(QFrame):
         no_transaction_label = QLabel(no_transaction_widget)
         no_transaction_label.setText(
             QCoreApplication.translate(
-                'iris_wallet_desktop', 'no_transfer_history', None,
+                IRIS_WALLET_TRANSLATIONS_CONTEXT, 'no_transfer_history', None,
             ),
         )
         no_transaction_label.setAlignment(Qt.AlignCenter)

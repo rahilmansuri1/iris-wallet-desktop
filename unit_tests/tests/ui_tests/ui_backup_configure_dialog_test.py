@@ -9,6 +9,7 @@ from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog
 
+from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.views.ui_backup_configure_dialog import BackupConfigureDialog
 
 
@@ -31,14 +32,14 @@ def test_backup_configure_dialog_initial_state(backup_configure_dialog):
     assert backup_configure_dialog.windowFlags() & Qt.FramelessWindowHint
     assert backup_configure_dialog.mnemonic_detail_text_label.text() == (
         QCoreApplication.translate(
-            'iris_wallet_desktop', 'google_auth_not_found_message', None,
+            IRIS_WALLET_TRANSLATIONS_CONTEXT, 'google_auth_not_found_message', None,
         )
     )
     assert backup_configure_dialog.cancel_button.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'ignore_button', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'ignore_button', None,
     )
     assert backup_configure_dialog.continue_button.text() == QCoreApplication.translate(
-        'iris_wallet_desktop', 'configure_backup', None,
+        IRIS_WALLET_TRANSLATIONS_CONTEXT, 'configure_backup', None,
     )
 
 
