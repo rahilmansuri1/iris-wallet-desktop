@@ -125,3 +125,6 @@ GITHUB_ISSUE_LINK = 'https://github.com/RGB-Tools/iris-wallet-desktop/issues/new
 
 # Translation context key
 IRIS_WALLET_TRANSLATIONS_CONTEXT = 'iris_wallet_desktop'
+
+# Commit id of rgb lightning node
+RLN_NODE_COMMIT_ID = "a623edbd7c49639dc41c72c5aef98d808d6c1d00"
