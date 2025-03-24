@@ -54,7 +54,23 @@ jobs:
           sudo apt-get update && sudo apt-get install -y libfuse2 # Required for AppImage creation
 
       - name: Clone rgb-lightning-node repository with submodules
-        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+        run: |
+          RLN_NODE_COMMIT_ID=$(grep 'RLN_NODE_COMMIT_ID' ./src/utils/constant.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
+          
+          if [ -z "$RLN_NODE_COMMIT_ID" ]; then
+            echo "❌ Error: RLN_NODE_COMMIT_ID is empty or not found in constant.py"
+            exit 1
+          fi
+      
+          git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+          cd rgb-lightning-node
+          
+          if ! git checkout ${RLN_NODE_COMMIT_ID}; then
+            echo "❌ Error: Failed to checkout commit ${RLN_NODE_COMMIT_ID}"
+            exit 1
+          fi
+      
+          git submodule update --init --recursive
 
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node
@@ -166,7 +182,23 @@ jobs:
           python-version: "3.12.3"
 
       - name: Clone rgb-lightning-node repository with submodules
-        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+        run: |
+          RLN_NODE_COMMIT_ID=$(grep 'RLN_NODE_COMMIT_ID' ./src/utils/constant.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
+          
+          if [ -z "$RLN_NODE_COMMIT_ID" ]; then
+            echo "❌ Error: RLN_NODE_COMMIT_ID is empty or not found in constant.py"
+            exit 1
+          fi
+      
+          git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+          cd rgb-lightning-node
+          
+          if ! git checkout ${RLN_NODE_COMMIT_ID}; then
+            echo "❌ Error: Failed to checkout commit ${RLN_NODE_COMMIT_ID}"
+            exit 1
+          fi
+      
+          git submodule update --init --recursive
 
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node
