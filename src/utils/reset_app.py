@@ -8,6 +8,7 @@ import sys
 
 from src.utils.constant import APP_NAME
 from src.utils.local_store import local_store
+from src.utils.logging import logger
 
 
 def get_app_directory(app_name: str | None):
@@ -59,6 +60,8 @@ def delete_app_data(directory_path: str, network=None):
         config_file_name = f"{APP_NAME}-{network}.ini" if network else None
         # Corrected to match folder name
         data_directory_name = f"dataldk{network}" if network else None
+        # cache directory
+        cache_directory = 'cache'
 
         # Remove specific or all files and directories
         for item in os.listdir(directory_path):
@@ -66,24 +69,27 @@ def delete_app_data(directory_path: str, network=None):
 
             if network:
                 # Delete only network-specific files and directories
-                if (item == config_file_name and os.path.isfile(item_path)) or (
-                    item == data_directory_name and os.path.isdir(item_path)
-                ):
-                    if os.path.isfile(item_path):
-                        os.remove(item_path)  # Remove specific file
-                        print(f'Deleted file: {item_path}')
-                    elif os.path.isdir(item_path):
-                        shutil.rmtree(item_path)  # Remove specific directory
-                        print(f'Deleted directory: {item_path}')
+                items_to_delete = {
+                    config_file_name,
+                    data_directory_name, cache_directory,
+                }
+                if item in items_to_delete:
+                    delete_path(item_path)
             else:
                 # Delete everything
-                if os.path.isfile(item_path) or os.path.islink(item_path):
-                    os.remove(item_path)  # Remove file or symbolic link
-                elif os.path.isdir(item_path):
-                    # Remove directory and its contents
-                    shutil.rmtree(item_path)
+                delete_path(item_path)
     except Exception as e:
-        print(f'An error occurred while deleting files: {e}')
+        logger.error('An error occurred while deleting files: %s', e)
+
+
+def delete_path(path):
+    """Helper function to delete a file or directory."""
+    if os.path.isfile(path) or os.path.islink(path):
+        os.remove(path)
+        logger.info('Deleted file: %s', path)
+    elif os.path.isdir(path):
+        shutil.rmtree(path)
+        logger.info('Deleted directory: %s', path)
 
 
 def main():
@@ -93,7 +99,7 @@ def main():
     It retrieves the path to the iriswallet directory and then deletes all its contents.
 
     Note:
-        This script is intended for development and testing purposes only. Use with caution as it will
+        This method is intended for development and testing purposes only. Use with caution as it will
         permanently delete data in the specified directory.
     """
     parser = argparse.ArgumentParser(

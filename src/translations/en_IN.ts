@@ -1782,5 +1782,9 @@ If you understand the above remarks and wish to proceed, press the button below 
         <source>rln_node_commit_id</source>
         <translation>RGB Lightning Node Commit ID</translation>
     </message>
+    <message>
+        <source>exit</source>
+        <translation>Exit</translation>
+    </message>
 </context>
 </TS>

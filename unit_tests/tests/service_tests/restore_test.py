@@ -53,16 +53,16 @@ def teardown_directory_after_test():
 # Test function
 
 
-@patch('src.data.service.restore_service.hash_mnemonic')
+@patch('src.data.service.common_operation_service.CommonOperationService.get_hashed_mnemonic')
 @patch('src.utils.local_store.local_store.get_path')
 @patch('src.data.repository.common_operations_repository.CommonOperationRepository.restore')
 @patch('src.data.service.restore_service.GoogleDriveManager')
-def test_restore(mock_google_drive_manager, mock_restore, mock_get_path, mock_hash_mnemonic, setup_directory):
+def test_restore(mock_google_drive_manager, mock_restore, mock_get_path, mock_get_hashed_mnemonic, setup_directory):
     """Case 1: Test restore service"""
     test_dir, _ = setup_directory
 
     # Setup mocks
-    mock_hash_mnemonic.return_value = 'e23ddff3cc'
+    mock_get_hashed_mnemonic.return_value = 'e23ddff3cc'
     mock_get_path.return_value = test_dir
 
     mock_restore_instance = MagicMock()
@@ -79,16 +79,16 @@ def test_restore(mock_google_drive_manager, mock_restore, mock_get_path, mock_ha
 # Test function
 
 
-@patch('src.data.service.restore_service.hash_mnemonic')
+@patch('src.data.service.common_operation_service.CommonOperationService.get_hashed_mnemonic')
 @patch('src.utils.local_store.local_store.get_path')
 @patch('src.data.repository.common_operations_repository.CommonOperationRepository.restore')
 @patch('src.data.service.restore_service.GoogleDriveManager')
-def test_restore_when_file_not_exists(mock_google_drive_manager, mock_restore, mock_get_path, mock_hash_mnemonic, setup_directory):
+def test_restore_when_file_not_exists(mock_google_drive_manager, mock_restore, mock_get_path, mock_get_hashed_mnemonic, setup_directory):
     """Case 2: When restore file does not exist after download"""
     test_dir, _ = setup_directory
 
     # Setup mocks
-    mock_hash_mnemonic.return_value = 'e23ddff3cc'
+    mock_get_hashed_mnemonic.return_value = 'e23ddff3cc'
     mock_get_path.return_value = test_dir
 
     mock_restore_instance = MagicMock()
@@ -102,15 +102,22 @@ def test_restore_when_file_not_exists(mock_google_drive_manager, mock_restore, m
         RestoreService.restore(mock_valid_mnemonic, mock_password)
 
 
-@patch('src.data.service.restore_service.hash_mnemonic')
+@patch('src.data.service.common_operation_service.CommonOperationService.get_hashed_mnemonic')
 @patch('src.utils.local_store.local_store.get_path')
-def test_restore_no_mnemonic(mock_get_path, mock_hash_mnemonic):
+@patch('src.data.service.restore_service.GoogleDriveManager')
+@patch('src.data.repository.common_operations_repository.CommonOperationRepository.restore')
+def test_restore_no_mnemonic(mock_restore, mock_google_drive_manager, mock_get_path, mock_get_hashed_mnemonic):
     """Case 3: Test restore service with missing mnemonic"""
     # Setup mocks
-    mock_hash_mnemonic.return_value = None
+    mock_get_hashed_mnemonic.side_effect = CommonException(
+        ERROR_UNABLE_GET_MNEMONIC,
+    )
     mock_get_path.return_value = os.path.join(
         os.path.dirname(__file__), 'some_path',
     )
+    mock_google_drive_manager.return_value = MagicMock()
+    mock_google_drive_manager.return_value.download_from_drive.return_value = True
+    mock_restore.return_value = RestoreResponseModel(status=True)
 
     # Call the RestoreService.restore method
     mnemonic = None
@@ -120,13 +127,13 @@ def test_restore_no_mnemonic(mock_get_path, mock_hash_mnemonic):
         RestoreService.restore(mnemonic, password)
 
 
-@patch('src.data.service.restore_service.hash_mnemonic')
+@patch('src.data.service.common_operation_service.CommonOperationService.get_hashed_mnemonic')
 @patch('src.utils.local_store.local_store.get_path')
-def test_restore_no_password(mock_get_path, mock_hash_mnemonic):
+def test_restore_no_password(mock_get_path, mock_get_hashed_mnemonic):
     """Case 4: Test restore service with missing password"""
 
     # Setup mocks
-    mock_hash_mnemonic.return_value = 'e23ddff3cc'
+    mock_get_hashed_mnemonic.return_value = 'e23ddff3cc'
     mock_get_path.return_value = os.path.join(
         os.path.dirname(__file__), 'some_path',
     )
@@ -139,25 +146,32 @@ def test_restore_no_password(mock_get_path, mock_hash_mnemonic):
         RestoreService.restore(mnemonic, password)
 
 
-@patch('src.data.service.restore_service.hash_mnemonic')
-def test_restore_no_hashed_value(mock_hash_mnemonic):
+@patch('src.data.service.common_operation_service.CommonOperationService.get_hashed_mnemonic')
+@patch('src.data.service.restore_service.GoogleDriveManager')
+@patch('src.data.repository.common_operations_repository.CommonOperationRepository.restore')
+def test_restore_no_hashed_value(mock_restore, mock_google_drive_manager, mock_get_hashed_mnemonic):
     """Case 5: Test restore service with missing hashed value"""
 
     # Setup mocks
-    mock_hash_mnemonic.return_value = None
+    mock_get_hashed_mnemonic.side_effect = CommonException(
+        ERROR_UNABLE_TO_GET_HASHED_MNEMONIC,
+    )
+    mock_google_drive_manager.return_value = MagicMock()
+    mock_google_drive_manager.return_value.download_from_drive.return_value = True
+    mock_restore.return_value = RestoreResponseModel(status=True)
 
     # Call the RestoreService.restore method
     with pytest.raises(CommonException, match=ERROR_UNABLE_TO_GET_HASHED_MNEMONIC):
         RestoreService.restore(mock_valid_mnemonic, mock_password)
 
 
-@patch('src.data.service.restore_service.hash_mnemonic')
+@patch('src.data.service.common_operation_service.CommonOperationService.get_hashed_mnemonic')
 @patch('src.data.service.restore_service.GoogleDriveManager')
-def test_restore_download_error(mock_google_drive_manager, mock_hash_mnemonic):
+def test_restore_download_error(mock_google_drive_manager, mock_get_hashed_mnemonic):
     """Case 6: Test restore service with download failure"""
 
     # Setup mocks
-    mock_hash_mnemonic.return_value = 'e23ddff3cc'
+    mock_get_hashed_mnemonic.return_value = 'e23ddff3cc'
     mock_google_drive_manager.return_value = MagicMock()
     mock_google_drive_manager.return_value.download_from_drive.return_value = False
 

@@ -106,3 +106,29 @@ def test_copy_button(error_report_dialog, qtbot):
 
         # Verify copy_text was called with correct label
         mock_copy_text.assert_called_once_with(dialog.email_label)
+
+
+def test_setup_exit_button(error_report_dialog, mocker):
+    """Tests if the exit button is properly set up and triggers application exit."""
+
+    # Patch QApplication.exit at the class level before setting up the button
+    mock_exit = mocker.patch('PySide6.QtWidgets.QApplication.exit')
+
+    # Call the method that sets up the exit button
+    error_report_dialog.setup_exit_button()
+
+    # Ensure exit_button is created
+    assert hasattr(
+        error_report_dialog,
+        'exit_button',
+    ), 'Exit button was not created'
+    assert error_report_dialog.exit_button.text() == 'Exit'
+
+    # Ensure button is added to button box
+    assert error_report_dialog.exit_button in error_report_dialog.button_box.buttons()
+
+    # Simulate button click
+    error_report_dialog.exit_button.click()
+
+    # Ensure QApplication.exit() was called
+    mock_exit.assert_called_once()

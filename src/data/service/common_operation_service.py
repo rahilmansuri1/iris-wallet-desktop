@@ -17,8 +17,11 @@ from src.utils.custom_exception import CommonException
 from src.utils.decorators.unlock_required import is_node_locked
 from src.utils.error_message import ERROR_KEYRING_STORE_NOT_ACCESSIBLE
 from src.utils.error_message import ERROR_NETWORK_MISMATCH
+from src.utils.error_message import ERROR_UNABLE_GET_MNEMONIC
+from src.utils.error_message import ERROR_UNABLE_TO_GET_HASHED_MNEMONIC
 from src.utils.handle_exception import handle_exceptions
 from src.utils.helpers import get_bitcoin_config
+from src.utils.helpers import hash_mnemonic
 from src.utils.helpers import validate_mnemonic
 from src.utils.keyring_storage import set_value
 
@@ -119,3 +122,16 @@ class CommonOperationService:
         except Exception as exc:
             # Log and re-raise the exception if something goes wrong
             handle_exceptions(exc=exc)
+
+    @staticmethod
+    def get_hashed_mnemonic(mnemonic):
+        """This method returns the hashed mnemonic"""
+        if not mnemonic:
+            raise CommonException(ERROR_UNABLE_GET_MNEMONIC)
+
+        hashed_mnemonic = hash_mnemonic(mnemonic_phrase=mnemonic)
+
+        if not hashed_mnemonic:
+            raise CommonException(ERROR_UNABLE_TO_GET_HASHED_MNEMONIC)
+
+        return hashed_mnemonic
