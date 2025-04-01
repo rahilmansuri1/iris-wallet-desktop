@@ -6,6 +6,7 @@ import os
 import shutil
 import sys
 
+from src.utils.constant import APP_NAME
 from src.utils.local_store import local_store
 
 
@@ -30,12 +31,14 @@ def get_app_directory(app_name: str | None):
     return base_dir  # Default path if no app name is provided
 
 
-def delete_app_data(directory_path: str):
+def delete_app_data(directory_path: str, network=None):
     """
     Delete all files and directories in the specified directory.
+    If a network is specified, only delete files and directories related to that network.
 
     Args:
         directory_path (str): The path to the directory from which files and directories will be deleted.
+        network (str, optional): The network type ('testnet', 'regtest', or 'mainnet'). If None, deletes everything.
 
     Raises:
         Exception: If an error occurs during the deletion process.
@@ -46,19 +49,39 @@ def delete_app_data(directory_path: str):
             print(f'Directory does not exist: {directory_path}')
             return
 
-        # Remove all files and directories in the path
+        if network and network not in ('testnet', 'regtest', 'mainnet'):
+            print(
+                "Invalid network type. Choose either 'testnet', 'regtest', or 'mainnet'.",
+            )
+            return
+
+        # Define patterns for network-specific deletion
+        config_file_name = f"{APP_NAME}-{network}.ini" if network else None
+        # Corrected to match folder name
+        data_directory_name = f"dataldk{network}" if network else None
+
+        # Remove specific or all files and directories
         for item in os.listdir(directory_path):
             item_path = os.path.join(directory_path, item)
-            if os.path.isfile(item_path) or os.path.islink(item_path):
-                os.remove(item_path)  # Remove file or symbolic link
-            elif os.path.isdir(item_path):
-                shutil.rmtree(item_path)  # Remove directory and its contents
 
-        print(
-            f'All files and directories in {
-                directory_path
-            } have been deleted.',
-        )
+            if network:
+                # Delete only network-specific files and directories
+                if (item == config_file_name and os.path.isfile(item_path)) or (
+                    item == data_directory_name and os.path.isdir(item_path)
+                ):
+                    if os.path.isfile(item_path):
+                        os.remove(item_path)  # Remove specific file
+                        print(f'Deleted file: {item_path}')
+                    elif os.path.isdir(item_path):
+                        shutil.rmtree(item_path)  # Remove specific directory
+                        print(f'Deleted directory: {item_path}')
+            else:
+                # Delete everything
+                if os.path.isfile(item_path) or os.path.islink(item_path):
+                    os.remove(item_path)  # Remove file or symbolic link
+                elif os.path.isdir(item_path):
+                    # Remove directory and its contents
+                    shutil.rmtree(item_path)
     except Exception as e:
         print(f'An error occurred while deleting files: {e}')
 

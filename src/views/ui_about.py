@@ -46,6 +46,7 @@ from src.utils.common_utils import network_info
 from src.utils.common_utils import zip_logger_folder
 from src.utils.constant import ANNOUNCE_ADDRESS
 from src.utils.constant import ANNOUNCE_ALIAS
+from src.utils.constant import CURRENT_RLN_NODE_COMMIT
 from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LDK_PORT_KEY
 from src.utils.constant import PRIVACY_POLICY_URL
@@ -200,6 +201,10 @@ class AboutWidget(QWidget):
 
         self.rln_node_connection_type = NodeInfoWidget(
             translation_key='connection_type', value=connection_type.value.capitalize(), v_layout=self.about_vertical_layout,
+        )
+
+        self.rgb_ln_commit = NodeInfoWidget(
+            translation_key='rln_node_commit_id', value=CURRENT_RLN_NODE_COMMIT, v_layout=self.about_vertical_layout,
         )
 
         self.privacy_policy_label = QLabel(self.about_widget)

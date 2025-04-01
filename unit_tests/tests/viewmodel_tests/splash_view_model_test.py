@@ -1,6 +1,6 @@
 # Disable the redefined-outer-name warning as
 # it's normal to pass mocked object in tests function
-# pylint: disable=redefined-outer-name,unused-argument
+# pylint: disable=redefined-outer-name,unused-argument, protected-access
 """
 This module contains unit tests for the SplashViewModel class from the
 src.viewmodels.splash_view_model module. It tests the behavior of various methods
@@ -8,17 +8,31 @@ including authentication, error handling, and application startup flows.
 """
 from __future__ import annotations
 
+from unittest.mock import MagicMock
 from unittest.mock import Mock
 from unittest.mock import patch
 
+import pytest
 from PySide6.QtCore import QCoreApplication
 
 from src.model.enums.enums_model import WalletType
+from src.utils.constant import CURRENT_RLN_NODE_COMMIT
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_CONNECTION_FAILED_WITH_LN
 from src.utils.error_message import ERROR_NATIVE_AUTHENTICATION
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
+from src.utils.info_message import INFO_RESTARTING_RLN_NODE
+from src.utils.info_message import INFO_STARTING_RLN_NODE
 from src.viewmodels.splash_view_model import SplashViewModel
+
+
+@pytest.fixture
+def splash_viewmodel():
+    """Fixture to create a SplashViewModel instance with mocked dependencies."""
+    mock_navigation = MagicMock()
+    viewmodel = SplashViewModel(mock_navigation)
+    viewmodel.wallet_transfer_selection_view_model = MagicMock()
+    return viewmodel
 
 
 @patch('src.viewmodels.splash_view_model.SettingRepository')
@@ -183,7 +197,9 @@ def test_on_error_of_unlock_api_connection_failed(
 
         # Assert that main window loader is hidden
         assert view_model.is_from_retry is False
-        view_model.show_main_window_loader.emit.assert_called_once_with(False)
+        view_model.show_main_window_loader.emit.assert_called_once_with(
+            False, INFO_RESTARTING_RLN_NODE,
+        )
 
 
 @patch('src.viewmodels.splash_view_model.CommonOperationRepository')
@@ -246,23 +262,35 @@ def test_on_success_of_unlock_api_no_node_info(mock_set_value, mock_qapp, mock_t
     mock_set_value.assert_not_called()
 
 
+@patch('src.viewmodels.splash_view_model.NodeIncompatibility')
 @patch('src.viewmodels.splash_view_model.SettingRepository')
 @patch('src.viewmodels.splash_view_model.ToastManager')
 @patch('src.viewmodels.splash_view_model.QApplication')
-def test_handle_application_open_embedded_wallet(mock_qapp, mock_toast_manager, mock_setting_repo):
-    """Tests handle_application_open method with embedded wallet type."""
+def test_handle_application_open_embedded_wallet(mock_qapp, mock_toast_manager, mock_setting_repo, mock_node_incompatibility):
+    """Tests handle_application_open method with embedded wallet type, without showing UI dialogs."""
+
     # Arrange
     page_navigation = Mock()
     view_model = SplashViewModel(page_navigation)
     view_model.splash_screen_message = Mock()
     view_model.wallet_transfer_selection_view_model = Mock()
+
+    # Mock repository responses
     mock_setting_repo.get_wallet_type.return_value = WalletType.EMBEDDED_TYPE_WALLET
+    # Valid commit ID
+    mock_setting_repo.get_rln_node_commit_id.return_value = CURRENT_RLN_NODE_COMMIT[0]
+
+    # Mock `NodeIncompatibility` to prevent UI interactions
+    mock_node_instance = mock_node_incompatibility.return_value
+    mock_node_instance.node_incompatibility_dialog.clickedButton.return_value = None
+    mock_node_instance.confirmation_dialog.clickedButton.return_value = None
 
     # Act
     view_model.handle_application_open()
 
     # Assert
     mock_setting_repo.get_wallet_type.assert_called_once()
+    mock_setting_repo.get_rln_node_commit_id.assert_called_once()
     view_model.splash_screen_message.emit.assert_called_once()
     view_model.wallet_transfer_selection_view_model.start_node_for_embedded_option.assert_called_once()
 
@@ -417,3 +445,49 @@ def test_restart_ln_node_after_crash_exit(
     assert view_model.is_error_handled is True
     mock_qapp.instance().exit.assert_called_once()
     mock_logger.info.assert_not_called()
+
+
+@patch('src.viewmodels.splash_view_model.NodeIncompatibility', autospec=True)
+@patch('src.viewmodels.splash_view_model.delete_app_data')
+def test_delete_app_data(mock_delete_app_data, mock_node_incompatibility, splash_viewmodel, qtbot):
+    """Test delete_app_data method to ensure the correct flow when a node is incompatible."""
+
+    # Create a mock instance of the dialog
+    mock_dialog_instance = MagicMock()
+
+    # Ensure calling NodeIncompatibility() returns this instance
+    mock_node_incompatibility.return_value = mock_dialog_instance
+
+    # Prevent the dialog from being shown
+    mock_dialog_instance.exec_ = MagicMock()
+
+    # Simulate button clicks
+    mock_dialog_instance.node_incompatibility_dialog.clickedButton.return_value = (
+        mock_dialog_instance.delete_app_data_button
+    )
+    mock_dialog_instance.confirmation_dialog.clickedButton.return_value = (
+        mock_dialog_instance.confirm_delete_button
+    )
+
+    # Mock WalletTransferSelectionViewModel method
+    splash_viewmodel.wallet_transfer_selection_view_model = MagicMock()
+
+    # Use pytest-qt's waitSignal to capture the signal emission
+    with qtbot.waitSignal(splash_viewmodel.show_main_window_loader, timeout=1000) as signal_spy:
+        splash_viewmodel.delete_app_data()
+
+    # Ensure exec_() was never called
+    mock_dialog_instance.exec_.assert_not_called()
+
+    # Ensure delete_app_data() was called
+    mock_delete_app_data.assert_called_once()
+
+    # Ensure navigation to welcome page
+    splash_viewmodel._page_navigation.welcome_page.assert_called_once()
+
+    # Ensure the main window loader signal was emitted with correct arguments
+    assert signal_spy.args[0] is True
+    assert signal_spy.args[1] == INFO_STARTING_RLN_NODE
+
+    # Ensure start_node_for_embedded_option() is called
+    splash_viewmodel.wallet_transfer_selection_view_model.start_node_for_embedded_option.assert_called_once()
