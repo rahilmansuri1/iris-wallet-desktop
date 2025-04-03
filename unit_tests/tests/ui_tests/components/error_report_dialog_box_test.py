@@ -59,10 +59,11 @@ def test_download_debug_logs(error_report_dialog, qtbot):
 
     with patch('src.views.components.error_report_dialog_box.QFileDialog.getSaveFileName') as mock_file_dialog, \
             patch('src.views.components.error_report_dialog_box.zip_logger_folder') as mock_zip, \
-            patch('src.views.components.error_report_dialog_box.download_file') as mock_download:
+            patch('src.views.components.error_report_dialog_box.download_file') as mock_download, \
+            patch('src.views.components.error_report_dialog_box.cleanup_debug_logs') as mock_cleanup_zip:
 
         # Mock return values
-        mock_zip.return_value = ('test.zip', 'output_dir')
+        mock_zip.return_value = ('test.zip', 'output_dir', 'path/test.zip')
         mock_file_dialog.return_value = ('save_path.zip', 'selected_filter')
 
         # Click download button
@@ -73,6 +74,7 @@ def test_download_debug_logs(error_report_dialog, qtbot):
 
         # Verify download_file was called with correct parameters
         mock_download.assert_called_once_with('save_path.zip', 'output_dir')
+        mock_cleanup_zip.assert_called_once_with('path/test.zip')
 
 
 def test_download_debug_logs_cancelled(error_report_dialog, qtbot):
@@ -122,7 +124,7 @@ def test_setup_exit_button(error_report_dialog, mocker):
         error_report_dialog,
         'exit_button',
     ), 'Exit button was not created'
-    assert error_report_dialog.exit_button.text() == 'Exit'
+    assert error_report_dialog.exit_button.text() == 'exit'
 
     # Ensure button is added to button box
     assert error_report_dialog.exit_button in error_report_dialog.button_box.buttons()

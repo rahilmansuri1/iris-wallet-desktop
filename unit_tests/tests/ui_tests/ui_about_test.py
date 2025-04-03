@@ -199,6 +199,9 @@ def test_download_logs_with_save_path(about_widget, qtbot, mocker):
     mocker.patch('os.stat')
     mocker.patch('os.path.isdir', return_value=False)
     mocker.patch('shutil.copy')
+    mocker.patch('os.remove')
+    mocker.patch('os.path.exists', return_value=True)
+    mocker.patch('os.path.isfile', return_value=True)
     mocker.patch(
         'os.walk', return_value=[
             ('/mock/output/dir', [], ['file1', 'file2']),
@@ -228,10 +231,11 @@ def test_download_logs_with_save_path(about_widget, qtbot, mocker):
     # Mock zip_logger_folder at the module level
     zip_filename = 'mock/logs.zip'
     output_dir = '/mock/output/dir'
+    zip_file_path = '/mock/base/path.zip'
     mock_zip_logger = mocker.patch(
         'src.views.ui_about.zip_logger_folder', autospec=True,
     )
-    mock_zip_logger.return_value = (zip_filename, output_dir)
+    mock_zip_logger.return_value = (zip_filename, output_dir, zip_file_path)
 
     # Mock file dialog
     save_path = '/mock/save/path.zip'
@@ -279,13 +283,18 @@ def test_download_logs_cancelled(about_widget, qtbot, mocker):
     mocker.patch('os.path.isdir', return_value=False)
     mocker.patch('shutil.copy')
 
+    mocker.patch('os.path.exists', return_value=True)
+    mocker.patch('os.path.isfile', return_value=True)
+    mocker.patch('os.remove')
+
     # Mock zip_logger_folder at the module level
     zip_filename = 'mock/logs.zip'
     output_dir = '/mock/output/dir'
+    zip_file_path = '/mock/base/path.zip'
     mock_zip_logger = mocker.patch(
         'src.views.ui_about.zip_logger_folder', autospec=True,
     )
-    mock_zip_logger.return_value = (zip_filename, output_dir)
+    mock_zip_logger.return_value = (zip_filename, output_dir, zip_file_path)
 
     # Mock file dialog to simulate cancellation
     mock_file_dialog = mocker.patch(
@@ -312,7 +321,7 @@ def test_download_logs_cancelled(about_widget, qtbot, mocker):
     mock_rmtree.assert_not_called()
     mock_toast.assert_called_once_with(
         about_widget,
-        ToastPreset.ERROR,
+        ToastPreset.INFORMATION,
         description=INFO_DOWNLOAD_CANCELED,
     )
 

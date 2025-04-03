@@ -98,11 +98,17 @@ def test_get_available_port(mocker):
     assert get_available_port(1234) == 1235
 
 
-def test_get_path_of_ldk_success(mock_local_store):
+def test_get_path_of_ldk_success(mock_local_store, mocker):
     """Test the `get_path_of_ldk` function to ensure it returns the correct path when the base path is available."""
+    # Mock the network to always return REGTEST
+    mocker.patch(
+        'src.utils.common_utils.SettingRepository.get_wallet_network',
+        return_value=NetworkEnumModel.REGTEST,
+    )
     mock_local_store.get_path.return_value = '/mock/path'
     ldk_data_name = 'ldk_data_name'
-    expected_path = os.path.join('/mock/path', ldk_data_name)
+    network = NetworkEnumModel.REGTEST.value  # Use the value of the enum directly
+    expected_path = os.path.join('/mock/path', network, ldk_data_name)
     result = get_path_of_ldk(ldk_data_name)
     assert result == expected_path
 

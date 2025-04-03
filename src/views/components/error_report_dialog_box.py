@@ -20,6 +20,7 @@ from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 
+from src.utils.common_utils import cleanup_debug_logs
 from src.utils.common_utils import copy_text
 from src.utils.common_utils import download_file
 from src.utils.common_utils import translate_value
@@ -230,10 +231,12 @@ class ErrorReportDialog(QDialog):
         )
 
     def on_click_download_debug_log(self):
-        """This method opens the file dialog box and saves the debug logs to the selected path"""
-
+        """
+        This method opens the file dialog box and saves the debug logs to the selected path.
+        After the operation completes, it cleans up temporary files and the zip file.
+        """
         path = local_store.get_path()
-        zip_filename, output_dir = zip_logger_folder(path)
+        zip_filename, output_dir, zip_file_path = zip_logger_folder(path)
 
         save_path, _ = QFileDialog.getSaveFileName(
             self, 'Save logs File', zip_filename, 'Zip Files (*.zip)',
@@ -241,6 +244,7 @@ class ErrorReportDialog(QDialog):
 
         if save_path:
             download_file(save_path, output_dir)
+            cleanup_debug_logs(zip_file_path)
 
     # pylint disable(invalid-name) because of closeEvent is internal function of QWidget
     def closeEvent(self, event: QCloseEvent):  # pylint:disable=invalid-name, unused-argument

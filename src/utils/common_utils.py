@@ -35,6 +35,7 @@ from PySide6.QtWidgets import QMessageBox
 from PySide6.QtWidgets import QPlainTextEdit
 from PySide6.QtWidgets import QWidget
 
+import src.flavour as bitcoin_network
 from src.data.repository.setting_repository import SettingRepository
 from src.data.service.helpers.main_asset_page_helper import get_offline_asset_ticker
 from src.model.enums.enums_model import AssetType
@@ -42,16 +43,15 @@ from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import TokenSymbol
 from src.model.enums.enums_model import WalletType
 from src.model.selection_page_model import SelectionPageModel
+from src.utils.constant import APP_DIR
 from src.utils.constant import APP_NAME
 from src.utils.constant import BITCOIN_EXPLORER_URL
 from src.utils.constant import DEFAULT_LOCALE
 from src.utils.constant import FAST_TRANSACTION_FEE_BLOCKS
 from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
-from src.utils.constant import LDK_DATA_NAME_MAINNET
-from src.utils.constant import LDK_DATA_NAME_REGTEST
-from src.utils.constant import LDK_DATA_NAME_TESTNET
 from src.utils.constant import LOG_FOLDER_NAME
 from src.utils.constant import MEDIUM_TRANSACTION_FEE_BLOCKS
+from src.utils.constant import NODE_DIR
 from src.utils.constant import SLOW_TRANSACTION_FEE_BLOCKS
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SAVE_LOGS
@@ -193,7 +193,7 @@ def generate_identicon(data, size=40):
     return img_str
 
 
-def zip_logger_folder(base_path):
+def zip_logger_folder(base_path) -> tuple[str, str, str]:
     """
     Zips the logger folder along with an additional folder.
 
@@ -201,20 +201,23 @@ def zip_logger_folder(base_path):
     base_path (str): The base path where the logs folder is located.
 
     Returns:
-    tuple: The zip filename and the path to the logs folder.
+    tuple: A tuple containing (zip_filename, output_dir, zip_file_path)
+           - zip_filename: The name of the zip file
+           - output_dir: The temporary directory where logs were collected
+           - zip_file_path: The full path to the created zip file
     """
     # Generate the log folder name using the current epoch time value
     epoch_time = str(int(time.time()))
     network: NetworkEnumModel = SettingRepository.get_wallet_network()
-    ldk_data_name = (
-        LDK_DATA_NAME_MAINNET if network.value == NetworkEnumModel.MAINNET.value else
-        LDK_DATA_NAME_TESTNET if network.value == NetworkEnumModel.TESTNET.value else
-        LDK_DATA_NAME_REGTEST
+    current_network = NetworkEnumModel(bitcoin_network.__network__)
+    ln_node_logs_path = os.path.join(
+        base_path, current_network, NODE_DIR, LOG_FOLDER_NAME,
     )
-    ln_node_logs_path = os.path.join(base_path, ldk_data_name, LOG_FOLDER_NAME)
-    wallet_logs_path = QDir(base_path).filePath(LOG_FOLDER_NAME)
+    wallet_logs_path = QDir(base_path).filePath(
+        os.path.join(current_network, APP_DIR, LOG_FOLDER_NAME),
+    )
     ldk_logs_path = os.path.join(
-        base_path, f"dataldk{network.value}", '.ldk', 'logs', 'logs.txt',
+        base_path, current_network, NODE_DIR, '.ldk', 'logs', 'logs.txt',
     )
     zip_filename = f'{
         APP_NAME
@@ -265,7 +268,7 @@ def zip_logger_folder(base_path):
     # Finally, zip the folder
     zip_file_path = os.path.join(base_path, zip_filename)
     shutil.make_archive(zip_file_path.replace('.zip', ''), 'zip', output_dir)
-    return zip_filename, output_dir
+    return zip_filename, output_dir, zip_file_path
 
 
 def convert_hex_to_image(bytes_hex):
@@ -635,3 +638,20 @@ def disable_rln_node_termination_handling(wallet_type: WalletType):
                 'Exception occurred: %s, Message: %s',
                 type(exc).__name__, str(exc),
             )
+
+
+def cleanup_debug_logs(zip_file_path: str, logs_dir=None):
+    """
+    Deletes the generated zip file and the extracted logs directory after successful use.
+
+    Parameters:
+    zip_file_path (str): Path to the zip file that needs to be deleted.
+    logs_dir (str, optional): Path to the temporary logs directory to be removed. Defaults to None.
+    """
+    # Delete the zip file if it exists
+    if os.path.exists(zip_file_path) and os.path.isfile(zip_file_path):
+        os.remove(zip_file_path)
+
+    # Delete the logs directory if it exists
+    if logs_dir and os.path.exists(logs_dir) and os.path.isdir(logs_dir):
+        shutil.rmtree(logs_dir)

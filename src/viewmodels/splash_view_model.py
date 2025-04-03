@@ -37,7 +37,6 @@ from src.utils.keyring_storage import get_value
 from src.utils.ln_node_manage import LnNodeServerManager
 from src.utils.local_store import local_store
 from src.utils.logging import logger
-from src.utils.logging import rln_qprocess_logger
 from src.utils.page_navigation_events import PageNavigationEventManager
 from src.utils.render_timer import RenderTimer
 from src.utils.reset_app import delete_app_data
@@ -278,7 +277,7 @@ class SplashViewModel(QObject, ThreadManager):
         if not self.is_error_handled:
             self.is_error_handled = True
 
-            rln_qprocess_logger.error(
+            logger.error(
                 'RLN node process was KILLED or CRASHED!',
             )
 
@@ -298,7 +297,7 @@ class SplashViewModel(QObject, ThreadManager):
     def on_node_failure(self, exit_code, exit_status):
         """This method handles crash exits of RGB LN Node"""
         if exit_status == QProcess.ExitStatus.CrashExit:
-            rln_qprocess_logger.error(
+            logger.error(
                 'RLN node process was KILLED or CRASHED! Exit Code: %s', exit_code,
             )
             self.restart_ln_node_after_crash()

@@ -195,18 +195,6 @@ class HelpWidget(QWidget):
                 self.url.setTextInteractionFlags(Qt.TextBrowserInteraction)
                 self.url.setOpenExternalLinks(True)
                 self.url_vertical_layout.addWidget(self.url)
-        if links:
-            for link in links:
-                self.url = QLabel(self.help_card_frame)
-                self.url.setObjectName(str(link))
-                self.url.setText(
-                    f"<a style='color: #03CA9B;' href='{link}'>{link}</a>",
-                )
-                self.url.setMinimumSize(QSize(0, 15))
-                self.url.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-                self.url.setTextInteractionFlags(Qt.TextBrowserInteraction)
-                self.url.setOpenExternalLinks(True)
-                self.url_vertical_layout.addWidget(self.url)
 
         self.vertical_layout_3.addLayout(self.url_vertical_layout)
 

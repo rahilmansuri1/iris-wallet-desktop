@@ -7,6 +7,7 @@ import sys
 from logging import StreamHandler
 from logging.handlers import RotatingFileHandler
 
+from src.utils.constant import APP_DIR
 from src.utils.constant import LOG_FILE_MAX_BACKUP_COUNT
 from src.utils.constant import LOG_FILE_MAX_SIZE
 from src.utils.constant import LOG_FOLDER_NAME
@@ -29,7 +30,7 @@ def setup_logger(logger_name: str, log_file_name: str, application_status: str |
     Returns:
         logging.Logger: Configured logger instance.
     """
-    log_directory = LOG_FOLDER_NAME
+    log_directory = os.path.join(APP_DIR, LOG_FOLDER_NAME)
     path = local_store.create_folder(log_directory)
 
     # Create a logger
@@ -77,8 +78,4 @@ APPLICATION_STATUS = 'production' if getattr(
 # Set up loggers using the refactored function and capturing all logs without applying `APPLICATION_STATUS`
 logger = setup_logger(
     'iris-wallet', 'iris_wallet_desktop.log',
-)
-
-rln_qprocess_logger = setup_logger(
-    'qprocess', 'rln_qprocess.log',
 )
