@@ -50,11 +50,27 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libxcb-cursor0 -y # Required by the application
-          sudo apt-get install ruby-dev build-essential -y && sudo gem i fpm -f
+          sudo apt-get install ruby-dev build-essential libgirepository1.0-dev python3-dev -y && sudo gem i fpm -f
           sudo apt-get update && sudo apt-get install -y libfuse2 # Required for AppImage creation
 
       - name: Clone rgb-lightning-node repository with submodules
-        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+        run: |
+          CURRENT_RLN_NODE_COMMIT=$(grep 'CURRENT_RLN_NODE_COMMIT' ./src/utils/constant.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
+
+          if [ -z "$CURRENT_RLN_NODE_COMMIT" ]; then
+            echo "❌ Error: CURRENT_RLN_NODE_COMMIT is empty or not found in constant.py"
+            exit 1
+          fi
+
+          git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+          cd rgb-lightning-node
+
+          if ! git checkout ${CURRENT_RLN_NODE_COMMIT}; then
+            echo "❌ Error: Failed to checkout commit ${CURRENT_RLN_NODE_COMMIT}"
+            exit 1
+          fi
+
+          git submodule update --init --recursive
 
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node
@@ -166,7 +182,23 @@ jobs:
           python-version: "3.12.3"
 
       - name: Clone rgb-lightning-node repository with submodules
-        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+        run: |
+          CURRENT_RLN_NODE_COMMIT=$(grep 'CURRENT_RLN_NODE_COMMIT' ./src/utils/constant.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
+
+          if [ -z "$CURRENT_RLN_NODE_COMMIT" ]; then
+            echo "❌ Error: CURRENT_RLN_NODE_COMMIT is empty or not found in constant.py"
+            exit 1
+          fi
+
+          git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+          cd rgb-lightning-node
+
+          if ! git checkout ${CURRENT_RLN_NODE_COMMIT}; then
+            echo "❌ Error: Failed to checkout commit ${CURRENT_RLN_NODE_COMMIT}"
+            exit 1
+          fi
+
+          git submodule update --init --recursive
 
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node

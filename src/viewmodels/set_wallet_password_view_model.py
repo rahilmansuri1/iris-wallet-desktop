@@ -21,6 +21,7 @@ from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import ToastPreset
 from src.model.enums.enums_model import WalletType
 from src.model.set_wallet_password_model import SetWalletPasswordModel
+from src.utils.constant import CURRENT_RLN_NODE_COMMIT
 from src.utils.constant import MNEMONIC_KEY
 from src.utils.constant import WALLET_PASSWORD_KEY
 from src.utils.error_message import ERROR_NETWORK_MISMATCH
@@ -131,6 +132,9 @@ class SetWalletPasswordViewModel(QObject, ThreadManager):
             if response.mnemonic:
                 self.is_loading.emit(False)
                 SettingRepository.set_wallet_initialized()
+                SettingRepository.set_rln_node_commit_id(
+                    CURRENT_RLN_NODE_COMMIT,
+                )
                 network: NetworkEnumModel = SettingRepository.get_wallet_network()
                 wallet_type: WalletType = SettingRepository.get_wallet_type()
                 if wallet_type.value == WalletType.EMBEDDED_TYPE_WALLET.value:
