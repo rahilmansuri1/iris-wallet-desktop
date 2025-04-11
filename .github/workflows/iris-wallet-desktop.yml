@@ -74,8 +74,6 @@ jobs:
 
       - name: Call Clone RGB Node reusable workflow
         uses: ./.github/actions/clone-rln
-        with:
-          os: ubuntu-22.04
 
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node

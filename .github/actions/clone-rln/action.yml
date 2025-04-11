@@ -1,41 +1,36 @@
 name: Clone RGB Lightning Node
+description: Clone RGB Lightning Node repository based on commit ID
+outputs:
+  output-dir:
+    description: "The directory where the repository was cloned"
+    value: rgb-lightning-node
 
-on:
-  workflow_call:
-    inputs:
-      os:
-        description: "Operating System to run on"
-        required: true
-        type: string
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout main repository
+      uses: actions/checkout@v3
+      with:
+        submodules: true
+        fetch-depth: 1
 
-jobs:
-  clone:
-    runs-on: ${{ inputs.os }}
-    outputs:
-      output-dir: rgb-lightning-node
-    steps:
-      - name: Checkout main repository
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-          fetch-depth: 1
+    - name: Clone rgb-lightning-node repository with submodules
+      run: |
+        ls
+        CURRENT_RLN_NODE_COMMIT=$(grep 'CURRENT_RLN_NODE_COMMIT' ./src/utils/constant.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
 
-      - name: Clone rgb-lightning-node repository with submodules
-        run: |
-          ls
-          CURRENT_RLN_NODE_COMMIT=$(grep 'CURRENT_RLN_NODE_COMMIT' ./src/utils/constant.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
+        if [ -z "$CURRENT_RLN_NODE_COMMIT" ]; then
+          echo "❌ Error: CURRENT_RLN_NODE_COMMIT is empty or not found in constant.py"
+          exit 1
+        fi
 
-          if [ -z "$CURRENT_RLN_NODE_COMMIT" ]; then
-            echo "❌ Error: CURRENT_RLN_NODE_COMMIT is empty or not found in constant.py"
-            exit 1
-          fi
+        git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
+        cd rgb-lightning-node
 
-          git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
-          cd rgb-lightning-node
+        if ! git checkout ${CURRENT_RLN_NODE_COMMIT}; then
+          echo "❌ Error: Failed to checkout commit ${CURRENT_RLN_NODE_COMMIT}"
+          exit 1
+        fi
 
-          if ! git checkout ${CURRENT_RLN_NODE_COMMIT}; then
-            echo "❌ Error: Failed to checkout commit ${CURRENT_RLN_NODE_COMMIT}"
-            exit 1
-          fi
-
-          git submodule update --init --recursive
+        git submodule update --init --recursive
+      shell: bash
