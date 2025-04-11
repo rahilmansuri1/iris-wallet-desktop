@@ -1,0 +1,38 @@
+name: Set Environment Variables and Generate Config
+description: Set environment variables from GitHub Secrets and generate the config.py file
+
+inputs:
+  client-id:
+    required: true
+    type: string
+  project-id:
+    required: true
+    type: string
+  auth-uri:
+    required: true
+    type: string
+  token-uri:
+    required: true
+    type: string
+  auth-provider-cert-url:
+    required: true
+    type: string
+  client-secret:
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set environment variables and generate config.py
+      env:
+        CLIENT_ID: ${{ inputs.client-id }}
+        PROJECT_ID: ${{ inputs.project-id }}
+        AUTH_URI: ${{ inputs.auth-uri }}
+        TOKEN_URI: ${{ inputs.token-uri }}
+        AUTH_PROVIDER_CERT_URL: ${{ inputs.auth-provider-cert-url }}
+        CLIENT_SECRET: ${{ inputs.client-secret }}
+      run: |
+        cd src/utils
+        python generate_config.py
+      shell: bash
