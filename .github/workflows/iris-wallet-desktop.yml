@@ -2,8 +2,8 @@ name: Iris Wallet Desktop CI
 
 on:
   push:
-    branches:
-      - 'gh-action-code-duplication' 
+    tags:
+      - '*' # Trigger this workflow on any tag push
 
 jobs:
   build-iris-wallet-desktop-linux:
@@ -15,25 +15,8 @@ jobs:
           submodules: true # Include submodules in the checkout
           fetch-depth: 1 # Fetch the latest commit only
 
-      # - name: Validate Tag and Code Version
-      #   run: |
-      #     TAG_VERSION=$(git describe --tags)
-      #     echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
-
-      #     # Extract version from tag
-      #     echo "Tag version: $TAG_VERSION"
-
-      #     # Extract version from code
-      #     CODE_VERSION=$(grep '__version__' ./src/version.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
-      #     echo "Code version: $CODE_VERSION"
-
-      #     # Compare the tag and code version
-      #     if [ "$TAG_VERSION" != "$CODE_VERSION" ]; then
-      #       echo "❌ Tag version ($TAG_VERSION) does not match code version ($CODE_VERSION)."
-      #       exit 1
-      #     else
-      #       echo "✅ Tag version matches code version."
-      #     fi
+      - name: Validate Tag and Code Version
+        uses: ./.github/actions/validate-tag-version
 
       - name: Install Rust Programming Environment
         run: |
@@ -53,26 +36,7 @@ jobs:
           sudo apt-get install ruby-dev build-essential libgirepository1.0-dev python3-dev -y && sudo gem i fpm -f
           sudo apt-get update && sudo apt-get install -y libfuse2 # Required for AppImage creation
 
-      # - name: Clone rgb-lightning-node repository with submodules
-      #   run: |
-      #     CURRENT_RLN_NODE_COMMIT=$(grep 'CURRENT_RLN_NODE_COMMIT' ./src/utils/constant.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
-
-      #     if [ -z "$CURRENT_RLN_NODE_COMMIT" ]; then
-      #       echo "❌ Error: CURRENT_RLN_NODE_COMMIT is empty or not found in constant.py"
-      #       exit 1
-      #     fi
-
-      #     git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
-      #     cd rgb-lightning-node
-
-      #     if ! git checkout ${CURRENT_RLN_NODE_COMMIT}; then
-      #       echo "❌ Error: Failed to checkout commit ${CURRENT_RLN_NODE_COMMIT}"
-      #       exit 1
-      #     fi
-
-      #     git submodule update --init --recursive
-
-      - name: Call Clone RGB Node reusable workflow
+      - name: Clone rgb-lightning-node repository with submodules
         uses: ./.github/actions/clone-rln
 
       - name: Build the rgb-lightning-node binary
@@ -154,24 +118,7 @@ jobs:
           fetch-depth: 1
 
       - name: Validate Tag and Code Version
-        run: |
-          TAG_VERSION=$(git describe --tags)
-          echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
-
-          # Extract version from tag
-          echo "Tag version: $TAG_VERSION"
-
-          # Extract version from code
-          CODE_VERSION=$(grep '__version__' ./src/version.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
-          echo "Code version: $CODE_VERSION"
-
-          # Compare the tag and code version
-          if [ "$TAG_VERSION" != "$CODE_VERSION" ]; then
-            echo "❌ Tag version ($TAG_VERSION) does not match code version ($CODE_VERSION)."
-            exit 1
-          else
-            echo "✅ Tag version matches code version."
-          fi
+        uses: ./.github/actions/validate-tag-version
 
       - name: Install Rust
         run: |
@@ -185,23 +132,7 @@ jobs:
           python-version: "3.12.3"
 
       - name: Clone rgb-lightning-node repository with submodules
-        run: |
-          CURRENT_RLN_NODE_COMMIT=$(grep 'CURRENT_RLN_NODE_COMMIT' ./src/utils/constant.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
-
-          if [ -z "$CURRENT_RLN_NODE_COMMIT" ]; then
-            echo "❌ Error: CURRENT_RLN_NODE_COMMIT is empty or not found in constant.py"
-            exit 1
-          fi
-
-          git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
-          cd rgb-lightning-node
-
-          if ! git checkout ${CURRENT_RLN_NODE_COMMIT}; then
-            echo "❌ Error: Failed to checkout commit ${CURRENT_RLN_NODE_COMMIT}"
-            exit 1
-          fi
-
-          git submodule update --init --recursive
+        uses: ./.github/actions/clone-rln
 
       - name: Build the rgb-lightning-node binary
         working-directory: rgb-lightning-node
