@@ -22,6 +22,7 @@ jobs:
 
       - name: Clone rgb-lightning-node repository with submodules
         run: |
+          ls
           CURRENT_RLN_NODE_COMMIT=$(grep 'CURRENT_RLN_NODE_COMMIT' ./src/utils/constant.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
 
           if [ -z "$CURRENT_RLN_NODE_COMMIT" ]; then
