@@ -23,18 +23,22 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
+import src.flavour as bitcoin_network
 from accessible_constant import BACKUP_WINDOW
 from config import client_config
+from src.model.enums.enums_model import NetworkEnumModel
+from src.utils.constant import APP_DIR
 from src.utils.constant import G_SCOPES as SCOPES
 from src.utils.local_store import local_store
 from src.utils.logging import logger
 
+current_network = NetworkEnumModel(bitcoin_network.__network__)
 application_local_store_base_path = local_store.get_path()
 CREDENTIALS_JSON_PATH = os.path.join(
     os.path.dirname(__file__), '../../credentials.json',
 )
 TOKEN_PICKLE_PATH = os.path.join(
-    application_local_store_base_path, 'token.pickle',
+    application_local_store_base_path, current_network, APP_DIR, 'token.pickle',
 )
 
 

@@ -9,7 +9,6 @@ import pytest
 
 from src.utils.constant import APP_NAME
 from src.utils.constant import ORGANIZATION_DOMAIN
-from src.utils.constant import ORGANIZATION_NAME
 from src.utils.local_store import LocalStore
 
 
@@ -34,7 +33,7 @@ def local_store(mock_qsettings, mock_qdir):
     """Fixture to initialize LocalStore."""
     # Mock the writableLocation return value
     with patch('PySide6.QtCore.QStandardPaths.writableLocation', return_value='/mock/path'):
-        return LocalStore(APP_NAME, ORGANIZATION_NAME, ORGANIZATION_DOMAIN)
+        return LocalStore(APP_NAME, ORGANIZATION_DOMAIN)
 
 
 def test_set_value(local_store):
@@ -96,8 +95,25 @@ def test_get_path(local_store):
     assert result == '/mock/path'
 
 
-def test_create_folder(local_store, mock_qdir):
+def test_create_folder(local_store, mock_qdir, mocker):
     """Test that create_folder creates a folder and returns its path."""
+    # Mock the network to always return REGTEST
+    mocker.patch(
+        'src.utils.common_utils.SettingRepository.get_wallet_network', return_value='regtest',
+    )
+
+    # Mock the QDir instance and its mkpath method
+    mock_qdir_instance = mock_qdir()
+    mock_qdir_instance.filePath = MagicMock(
+        return_value='/mock/path/regtest/test_folder',
+    )
     mock_qdir().mkpath = MagicMock()
+
+    # Call the create_folder method
     result = local_store.create_folder('test_folder')
-    assert result == '/mock/path/test_folder'
+
+    # Construct the expected return value
+    return_value = '/mock/path/regtest/test_folder'
+
+    # Assert the result
+    assert result == return_value

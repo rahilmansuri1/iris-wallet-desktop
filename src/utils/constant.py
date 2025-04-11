@@ -28,9 +28,9 @@ NETWORK_KET = 'network'
 IS_EMBEDDED_KEY = 'embedded'
 IS_REMOTE_KEY = 'remote'
 CACHE_FILE_NAME = {
-    NetworkEnumModel.MAINNET: 'iris-wallet-catch-mainnet',
-    NetworkEnumModel.TESTNET: 'iris-wallet-catch-testnet',
-    NetworkEnumModel.REGTEST: 'iris-wallet-catch-regtest',
+    NetworkEnumModel.MAINNET: 'iris-wallet-cache-mainnet',
+    NetworkEnumModel.TESTNET: 'iris-wallet-cache-testnet',
+    NetworkEnumModel.REGTEST: 'iris-wallet-cache-regtest',
 }
 DEFAULT_CACHE_FILENAME = 'iris-wallet-cache-default'
 CACHE_FOLDER_NAME = 'cache'
@@ -125,3 +125,14 @@ GITHUB_ISSUE_LINK = 'https://github.com/RGB-Tools/iris-wallet-desktop/issues/new
 
 # Translation context key
 IRIS_WALLET_TRANSLATIONS_CONTEXT = 'iris_wallet_desktop'
+
+# RGB lightning node commit ID
+RGB_LN_COMMIT_ID_KEY = 'rgb_ln_commit_id'
+CURRENT_RLN_NODE_COMMIT = 'a623edbd7c49639dc41c72c5aef98d808d6c1d00'
+COMPATIBLE_RLN_NODE_COMMITS = [
+    'a623edbd7c49639dc41c72c5aef98d808d6c1d00',
+]
+
+# Directory names used in paths
+APP_DIR = 'app'
+NODE_DIR = 'node'

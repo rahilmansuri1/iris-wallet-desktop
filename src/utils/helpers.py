@@ -20,6 +20,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtGui import QPainter
 from PySide6.QtGui import QPixmap
 
+import src.flavour as bitcoin_network
 from src.data.repository.setting_repository import SettingRepository
 from src.flavour import __ldk_port__
 from src.model.common_operation_model import UnlockRequestModel
@@ -42,12 +43,10 @@ from src.utils.constant import DAEMON_PORT
 from src.utils.constant import INDEXER_URL_MAINNET
 from src.utils.constant import INDEXER_URL_REGTEST
 from src.utils.constant import INDEXER_URL_TESTNET
-from src.utils.constant import LDK_DATA_NAME_MAINNET
-from src.utils.constant import LDK_DATA_NAME_REGTEST
-from src.utils.constant import LDK_DATA_NAME_TESTNET
 from src.utils.constant import LDK_PORT
 from src.utils.constant import LDK_PORT_KEY
 from src.utils.constant import LIGHTNING_URL_KEY
+from src.utils.constant import NODE_DIR
 from src.utils.constant import PROXY_ENDPOINT_MAINNET
 from src.utils.constant import PROXY_ENDPOINT_REGTEST
 from src.utils.constant import PROXY_ENDPOINT_TESTNET
@@ -240,11 +239,14 @@ def get_path_of_ldk(ldk_data_name: str) -> str:
         CommonException: If an error occurs while accessing or creating the folder.
     """
     try:
+        current_network = NetworkEnumModel(bitcoin_network.__network__)
         local_storage_base_path = local_store.get_path()
         if not local_storage_base_path:
             raise CommonException('Unable to get base path of application')
 
-        data_ldk_path = os.path.join(local_storage_base_path, ldk_data_name)
+        data_ldk_path = os.path.join(
+            local_storage_base_path, current_network, ldk_data_name,
+        )
 
         return data_ldk_path
     except CommonException as exc:
@@ -271,18 +273,12 @@ def get_node_arg_config(network: NetworkEnumModel) -> list:
     Exception: If any error occurs during the retrieval of configuration arguments.
     """
     try:
-        ldk_data_name = (
-            LDK_DATA_NAME_MAINNET if network == NetworkEnumModel.MAINNET else
-            LDK_DATA_NAME_TESTNET if network == NetworkEnumModel.TESTNET else
-            LDK_DATA_NAME_REGTEST
-        )
-
         daemon_port = get_available_port(DAEMON_PORT)
         if __ldk_port__ is None:
             ldk_port = get_available_port(LDK_PORT)
         else:
             ldk_port = __ldk_port__
-        data_ldk_path = get_path_of_ldk(ldk_data_name)
+        data_ldk_path = get_path_of_ldk(NODE_DIR)
         node_url = f'http://127.0.0.1:{daemon_port}'
         local_store.set_value(LIGHTNING_URL_KEY, node_url)
         local_store.set_value(LDK_PORT_KEY, ldk_port)

@@ -23,6 +23,7 @@ from PySide6.QtCore import QCoreApplication
 
 import src.flavour as bitcoin_network
 from src.model.enums.enums_model import NetworkEnumModel
+from src.utils.constant import APP_DIR
 from src.utils.constant import CACHE_EXPIRE_TIMEOUT
 from src.utils.constant import CACHE_FILE_NAME
 from src.utils.constant import CACHE_FOLDER_NAME
@@ -76,10 +77,12 @@ class Cache:
                 )
             }.sqlite"
             base_path = local_store.get_path()
-            cache_dir_path = os.path.join(base_path, CACHE_FOLDER_NAME)
+            cache_dir_path = os.path.join(
+                base_path, current_network, APP_DIR, CACHE_FOLDER_NAME,
+            )
 
             if not os.path.exists(cache_dir_path):
-                local_store.create_folder(CACHE_FOLDER_NAME)
+                local_store.create_folder(cache_dir_path)
 
             full_cache_file_path = os.path.join(cache_dir_path, file_name)
             return Cache(db_name=file_name, expire_after=CACHE_EXPIRE_TIMEOUT, file_path=full_cache_file_path)

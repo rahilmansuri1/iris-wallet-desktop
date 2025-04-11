@@ -5,8 +5,10 @@ from __future__ import annotations
 from PySide6.QtCore import QCoreApplication
 from PySide6.QtCore import QSize
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QCloseEvent
 from PySide6.QtGui import QCursor
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QDialog
 from PySide6.QtWidgets import QDialogButtonBox
 from PySide6.QtWidgets import QFileDialog
@@ -18,8 +20,10 @@ from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtWidgets import QSpacerItem
 from PySide6.QtWidgets import QVBoxLayout
 
+from src.utils.common_utils import cleanup_debug_logs
 from src.utils.common_utils import copy_text
 from src.utils.common_utils import download_file
+from src.utils.common_utils import translate_value
 from src.utils.common_utils import zip_logger_folder
 from src.utils.constant import CONTACT_EMAIL
 from src.utils.constant import GITHUB_ISSUE_LINK
@@ -31,9 +35,10 @@ from src.utils.local_store import local_store
 class ErrorReportDialog(QDialog):
     """This class represents the UI elements of the error report dialog"""
 
-    def __init__(self):
+    def __init__(self, initiated_from_splash=False):
         super().__init__()
 
+        self.initiated_from_splash = initiated_from_splash
         self.setObjectName('error_report_dialog_box')
         self.setStyleSheet(
             load_stylesheet(
@@ -160,6 +165,9 @@ class ErrorReportDialog(QDialog):
 
         self.grid_layout.addWidget(self.button_box, 7, 1, 1, 2)
 
+        if initiated_from_splash:
+            self.setup_exit_button()
+
         self.retranslate_ui()
         self.setup_ui()
 
@@ -223,10 +231,12 @@ class ErrorReportDialog(QDialog):
         )
 
     def on_click_download_debug_log(self):
-        """This method opens the file dialog box and saves the debug logs to the selected path"""
-
+        """
+        This method opens the file dialog box and saves the debug logs to the selected path.
+        After the operation completes, it cleans up temporary files and the zip file.
+        """
         path = local_store.get_path()
-        zip_filename, output_dir = zip_logger_folder(path)
+        zip_filename, output_dir, zip_file_path = zip_logger_folder(path)
 
         save_path, _ = QFileDialog.getSaveFileName(
             self, 'Save logs File', zip_filename, 'Zip Files (*.zip)',
@@ -234,3 +244,28 @@ class ErrorReportDialog(QDialog):
 
         if save_path:
             download_file(save_path, output_dir)
+            cleanup_debug_logs(zip_file_path)
+
+    # pylint disable(invalid-name) because of closeEvent is internal function of QWidget
+    def closeEvent(self, event: QCloseEvent):  # pylint:disable=invalid-name, unused-argument
+        """Handle operations when the dialog is closed."""
+        if self.initiated_from_splash:
+            QApplication.instance().exit()
+
+    def setup_exit_button(self):
+        """Adds an exit button to the error report dialog when launched from the splash screen."""
+        self.exit_button = QPushButton(self)
+        self.exit_button.setObjectName('exit_button')
+        self.exit_button.setMinimumSize(QSize(120, 40))
+        self.exit_button.setCursor(
+            QCursor(Qt.CursorShape.PointingHandCursor),
+        )
+
+        translate_value(self.exit_button, 'exit')
+        self.button_box.addButton(
+            self.exit_button, QDialogButtonBox.ActionRole,
+        )
+
+        self.grid_layout.addWidget(self.button_box, 8, 1, 1, 2)
+
+        self.exit_button.clicked.connect(QApplication.instance().exit)
