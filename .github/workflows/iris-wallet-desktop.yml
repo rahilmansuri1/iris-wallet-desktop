@@ -73,7 +73,7 @@ jobs:
       #     git submodule update --init --recursive
 
       - name: Call Clone RGB Node reusable workflow
-        uses: ./.github/workflows/clone-rln.yml
+        uses: ./.github/actions/clone-rln
         with:
           os: ubuntu-22.04
 
