@@ -1766,5 +1766,25 @@ If you understand the above remarks and wish to proceed, press the button below 
         <source>learn_about_rgb</source>
         <translation>Visit rgb.info for resources and documentation.</translation>
     </message>
+    <message>
+        <source>node_incompatibility_dialog_desc</source>
+        <translation>This RGB Lightning Node is not compatible with the current version of the app. Please reinitialize the wallet by deleting the data, or switch to an older version of the app.</translation>
+    </message>
+    <message>
+        <source>delete_app_data</source>
+        <translation>Delete app data</translation>
+    </message>
+    <message>
+        <source>confirm_app_data_deletion</source>
+        <translation>Warning! Deleting app data will COMPLETELY wipe all data, including your bitcoin, RGB assets, and any lightning channels. Are you sure you want to proceed with the deletion?</translation>
+    </message>
+    <message>
+        <source>rln_node_commit_id</source>
+        <translation>RGB Lightning Node Commit ID</translation>
+    </message>
+    <message>
+        <source>exit</source>
+        <translation>Exit</translation>
+    </message>
 </context>
 </TS>

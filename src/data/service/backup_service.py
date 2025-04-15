@@ -4,18 +4,17 @@ This module provides the service for backup.
 from __future__ import annotations
 
 import os
+import shutil
 
 from src.data.repository.common_operations_repository import CommonOperationRepository
+from src.data.service.common_operation_service import CommonOperationService
 from src.model.common_operation_model import BackupRequestModel
+from src.utils.build_app_path import app_paths
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_BACKUP_FILE_NOT_EXITS
-from src.utils.error_message import ERROR_UNABLE_GET_MNEMONIC
-from src.utils.error_message import ERROR_UNABLE_TO_GET_HASHED_MNEMONIC
 from src.utils.error_message import ERROR_UNABLE_TO_GET_PASSWORD
 from src.utils.gdrive_operation import GoogleDriveManager
 from src.utils.handle_exception import handle_exceptions
-from src.utils.helpers import hash_mnemonic
-from src.utils.local_store import local_store
 from src.utils.logging import logger
 
 
@@ -36,7 +35,8 @@ class BackupService:
     @staticmethod
     def backup(mnemonic: str, password: str) -> bool:
         """
-        Creates a backup of the node's data and uploads it to Google Drive.
+        Creates a temporary backup of the node's data, uploads it to Google Drive,
+        and deletes the local backup after a successful upload.
 
         Returns:
             bool: True if the backup and upload were successful, False otherwise.
@@ -46,23 +46,19 @@ class BackupService:
         """
         try:
             logger.info('Back up process started...')
-            if not mnemonic:
-                raise CommonException(ERROR_UNABLE_GET_MNEMONIC)
 
-            hashed_mnemonic = hash_mnemonic(mnemonic_phrase=mnemonic)
+            backup_folder_path = app_paths.backup_folder_path
 
-            if not hashed_mnemonic:
-                raise CommonException(ERROR_UNABLE_TO_GET_HASHED_MNEMONIC)
+            hashed_mnemonic = CommonOperationService.get_hashed_mnemonic(
+                mnemonic=mnemonic,
+            )
 
             backup_file_name: str = f'{hashed_mnemonic}.rgb_backup'
-
-            local_store_base_path = local_store.get_path()
-            backup_folder_path = os.path.join(local_store_base_path, 'backup')
 
             # Ensure the backup folder exists
             if not os.path.exists(backup_folder_path):
                 logger.info('Creating backup folder')
-                local_store.create_folder('backup')
+                os.makedirs(backup_folder_path, exist_ok=True)
 
             backup_file_path = os.path.join(
                 backup_folder_path, backup_file_name,
@@ -100,3 +96,9 @@ class BackupService:
             return success
         except Exception as exc:
             return handle_exceptions(exc)
+        finally:
+            if os.path.exists(app_paths.iriswallet_temp_folder_path):
+                shutil.rmtree(
+                    app_paths.iriswallet_temp_folder_path, ignore_errors=True,
+                )
+                logger.info('Deleting backup folder')

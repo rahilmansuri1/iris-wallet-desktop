@@ -4,20 +4,15 @@ from __future__ import annotations
 
 from src.model.enums.enums_model import WalletType
 from src.utils.constant import APP_NAME
-from src.utils.constant import ORGANIZATION_NAME
+
 APP1_NAME = 'test_app_1'
 APP2_NAME = 'test_app_2'
 FIRST_SERVICE = f"{APP_NAME}_{APP1_NAME}"
 SECOND_SERVICE = f"{APP_NAME}_{APP2_NAME}"
 FIRST_APPLICATION = f"Iris Wallet Regtest {APP1_NAME}"
 SECOND_APPLICATION = f"Iris Wallet Regtest {APP2_NAME}"
-ORIGINAL_PATH = f"{ORGANIZATION_NAME}/{APP_NAME}"
-FIRST_APPLICATION_PATH = f"{ORGANIZATION_NAME}_{
-    APP1_NAME
-}/{APP_NAME}_{APP1_NAME}"
-SECOND_APPLICATION_PATH = f"{ORGANIZATION_NAME}_{
-    APP2_NAME
-}/{APP_NAME}_{APP2_NAME}"
+FIRST_APPLICATION_PATH = f"{APP_NAME}_{APP1_NAME}"
+SECOND_APPLICATION_PATH = f"{APP_NAME}_{APP2_NAME}"
 FIRST_APPLICATION_URL = 'http://127.0.0.1:3001'
 SECOND_APPLICATION_URL = 'http://127.0.0.1:3002'
 LN_PORT = '9736'

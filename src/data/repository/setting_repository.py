@@ -20,6 +20,7 @@ from src.model.setting_model import SetWalletInitialized
 from src.utils.constant import IS_NATIVE_AUTHENTICATION_ENABLED
 from src.utils.constant import LIGHTNING_URL_KEY
 from src.utils.constant import NATIVE_LOGIN_ENABLED
+from src.utils.constant import RGB_LN_COMMIT_ID_KEY
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_KEYRING_STATUS
 from src.utils.handle_exception import handle_exceptions
@@ -524,3 +525,20 @@ class SettingRepository:
             return current_value
         except Exception as exe:
             return handle_exceptions(exe)
+
+    @staticmethod
+    def get_rln_node_commit_id():
+        """This method gets the commit ID of the RGB Lightning Node"""
+        try:
+            rgb_ln_commit_id = local_store.get_value(RGB_LN_COMMIT_ID_KEY)
+            return rgb_ln_commit_id
+        except Exception as exc:
+            return handle_exceptions(exc)
+
+    @staticmethod
+    def set_rln_node_commit_id(commit_id: str):
+        """This method sets the commit ID of the RGB Lightning Node in the wallet's .ini file"""
+        try:
+            local_store.set_value(RGB_LN_COMMIT_ID_KEY, commit_id)
+        except Exception as exc:
+            handle_exceptions(exc)

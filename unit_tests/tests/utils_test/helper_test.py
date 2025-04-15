@@ -12,13 +12,11 @@ from unittest.mock import patch
 import pytest
 
 from src.model.enums.enums_model import NetworkEnumModel
-from src.utils.custom_exception import CommonException
 from src.utils.helpers import check_google_auth_token_available
 from src.utils.helpers import create_circular_pixmap
 from src.utils.helpers import get_available_port
 from src.utils.helpers import get_build_info
 from src.utils.helpers import get_node_arg_config
-from src.utils.helpers import get_path_of_ldk
 from src.utils.helpers import handle_asset_address
 from src.utils.helpers import hash_mnemonic
 from src.utils.helpers import is_port_available
@@ -96,41 +94,6 @@ def test_get_available_port(mocker):
         side_effect=lambda port: port != 1234,
     )
     assert get_available_port(1234) == 1235
-
-
-def test_get_path_of_ldk_success(mock_local_store):
-    """Test the `get_path_of_ldk` function to ensure it returns the correct path when the base path is available."""
-    mock_local_store.get_path.return_value = '/mock/path'
-    ldk_data_name = 'ldk_data_name'
-    expected_path = os.path.join('/mock/path', ldk_data_name)
-    result = get_path_of_ldk(ldk_data_name)
-    assert result == expected_path
-
-
-def test_get_path_of_ldk_no_base_path(mock_local_store):
-    """Test the `get_path_of_ldk` function to ensure it raises a CommonException when the base path is not available."""
-    mock_local_store.get_path.return_value = None
-    ldk_data_name = 'ldk_data_name'
-    with pytest.raises(CommonException, match='Unable to get base path of application'):
-        get_path_of_ldk(ldk_data_name)
-
-
-def test_get_path_of_ldk_os_error(mock_local_store):
-    """Test the `get_path_of_ldk` function to ensure it raises a CommonException when an OSError occurs."""
-    mock_local_store.get_path.return_value = '/mock/path'
-    with patch('os.path.join', side_effect=OSError('Join error')):
-        ldk_data_name = 'ldk_data_name'
-        with pytest.raises(CommonException, match='Failed to access or create the folder: Join error'):
-            get_path_of_ldk(ldk_data_name)
-
-
-def test_get_path_of_ldk_value_error(mock_local_store):
-    """Test the `get_path_of_ldk` function to ensure it raises a ValueError when a ValueError occurs."""
-    mock_local_store.get_path.return_value = '/mock/path'
-    with patch('os.path.join', side_effect=ValueError('Invalid path testing purpose')):
-        ldk_data_name = 'ldk_data_name'
-        with pytest.raises(ValueError, match='Invalid path testing purpose'):
-            get_path_of_ldk(ldk_data_name)
 
 
 def test_get_build_info(mocker):

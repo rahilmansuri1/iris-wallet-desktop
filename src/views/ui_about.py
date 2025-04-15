@@ -41,19 +41,23 @@ from src.model.common_operation_model import UnlockRequestModel
 from src.model.enums.enums_model import ToastPreset
 from src.model.enums.enums_model import WalletType
 from src.model.node_info_model import NodeInfoModel
+from src.utils.common_utils import cleanup_debug_logs
 from src.utils.common_utils import download_file
 from src.utils.common_utils import network_info
 from src.utils.common_utils import zip_logger_folder
 from src.utils.constant import ANNOUNCE_ADDRESS
 from src.utils.constant import ANNOUNCE_ALIAS
+from src.utils.constant import CURRENT_RLN_NODE_COMMIT
 from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import LDK_PORT_KEY
 from src.utils.constant import PRIVACY_POLICY_URL
 from src.utils.constant import TERMS_OF_SERVICE_URL
+from src.utils.error_message import ERROR_WHILE_DOWNLOADING_LOGS
 from src.utils.helpers import get_bitcoin_config
 from src.utils.helpers import load_stylesheet
 from src.utils.info_message import INFO_DOWNLOAD_CANCELED
 from src.utils.local_store import local_store
+from src.utils.logging import logger
 from src.version import __version__
 from src.viewmodels.main_view_model import MainViewModel
 from src.views.components.header_frame import HeaderFrame
@@ -202,6 +206,10 @@ class AboutWidget(QWidget):
             translation_key='connection_type', value=connection_type.value.capitalize(), v_layout=self.about_vertical_layout,
         )
 
+        self.rgb_ln_commit = NodeInfoWidget(
+            translation_key='rln_node_commit_id', value=CURRENT_RLN_NODE_COMMIT, v_layout=self.about_vertical_layout,
+        )
+
         self.privacy_policy_label = QLabel(self.about_widget)
         self.privacy_policy_label.setObjectName('privacy_policy_label')
         self.privacy_policy_label.setTextInteractionFlags(
@@ -291,22 +299,32 @@ class AboutWidget(QWidget):
     def download_logs(self):
         """
         Handles the button click event to zip the logger folder and provide a save dialog.
+        Ensures temporary files are cleaned up after completion or cancellation.
         """
         # Base path where the logs folder is located
         base_path = local_store.get_path()
 
         # Zip the logger folder
-        zip_filename, output_dir = zip_logger_folder(base_path)
+        zip_filename, output_dir, zip_file_path = zip_logger_folder(base_path)
 
-        # Show a file dialog to save the zip file
-        save_path, _ = QFileDialog.getSaveFileName(
-            self, 'Save logs File', QDir.homePath() + '/' + zip_filename, 'Zip Files (*.zip)',
-        )
+        try:
+            # Show a file dialog to save the zip file
+            save_path, _ = QFileDialog.getSaveFileName(
+                self, 'Save logs File', QDir.homePath() + '/' + zip_filename, 'Zip Files (*.zip)',
+            )
 
-        if save_path:
-            download_file(save_path, output_dir)
-        else:
+            if save_path:
+                download_file(save_path, output_dir)
+            else:
+                ToastManager.show_toast(
+                    self, ToastPreset.INFORMATION,
+                    description=INFO_DOWNLOAD_CANCELED,
+                )
+        except Exception as e:
+            logger.error('%s : %s', ERROR_WHILE_DOWNLOADING_LOGS, e)
             ToastManager.show_toast(
                 self, ToastPreset.ERROR,
-                description=INFO_DOWNLOAD_CANCELED,
+                description=ERROR_WHILE_DOWNLOADING_LOGS,
             )
+        finally:
+            cleanup_debug_logs(zip_file_path, output_dir)
