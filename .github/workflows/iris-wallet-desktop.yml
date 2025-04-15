@@ -15,7 +15,7 @@ jobs:
           submodules: true # Include submodules in the checkout
           fetch-depth: 1 # Fetch the latest commit only
 
-      - name: Validate Tag and Code Version
+      - name: Validate tag and code version
         uses: ./.github/actions/validate-tag-version
 
       - name: Set up Python 3.12.3 environment
@@ -52,13 +52,13 @@ jobs:
         run: |
           poetry run pyside6-rcc src/resources.qrc -o src/resources_rc.py
 
-      - name: Build and Upload Regtest AppImage
+      - name: Build and upload Regtest AppImage
         uses: ./.github/actions/build-and-upload-appimage
         with:
           network: regtest
           artifact-name: linux_appimage_regtest
 
-      - name: Build and Upload Testnet AppImage
+      - name: Build and upload Testnet AppImage
         uses: ./.github/actions/build-and-upload-appimage
         with:
           network: testnet
@@ -74,7 +74,7 @@ jobs:
           submodules: true
           fetch-depth: 1
 
-      - name: Validate Tag and Code Version
+      - name: Validate tag and code version
         uses: ./.github/actions/validate-tag-version
 
       - name: Set up Python 3.12.3
@@ -127,12 +127,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Retrieve tag name
-        run: |
-          TAG_NAME=$(git describe --tags)
-          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
-          echo "Using tag: $TAG_NAME"
 
       - name: Prepare uploads folder
         run: mkdir -p ./uploads
