@@ -27,6 +27,7 @@ from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import TokenSymbol
 from src.model.enums.enums_model import WalletType
 from src.model.selection_page_model import SelectionPageModel
+from src.utils.common_utils import cleanup_debug_logs
 from src.utils.common_utils import close_button_navigation
 from src.utils.common_utils import convert_hex_to_image
 from src.utils.common_utils import convert_timestamp
@@ -43,6 +44,7 @@ from src.utils.common_utils import set_qr_code
 from src.utils.common_utils import sigterm_handler
 from src.utils.common_utils import translate_value
 from src.utils.common_utils import zip_logger_folder
+from src.utils.constant import APP_DIR
 from src.utils.constant import APP_NAME
 from src.utils.constant import DEFAULT_LOCALE
 from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
@@ -287,7 +289,9 @@ def test_zip_logger_folder():
     @patch('os.makedirs')
     @patch('shutil.copy')
     @patch('os.path.join')
+    @patch('PySide6.QtCore.QDir.filePath')
     def _test_zip_logger_folder(
+        mock_file_path,
         mock_join,
         mock_copy,
         mock_makedirs,
@@ -300,8 +304,13 @@ def test_zip_logger_folder():
         epoch_time = str(int(time.time()))
         # network = 'regtest'
 
+        # Mock the return value of QDir.filePath
+        mock_file_path.return_value = os.path.join(
+            base_path, APP_DIR, LOG_FOLDER_NAME,
+        )
+
         # Call the function
-        zip_filename, output_dir = zip_logger_folder(base_path)
+        zip_filename, output_dir, zip_file_path = zip_logger_folder(base_path)
 
         # Expected behavior
         expected_zip_filename = f'{
@@ -310,6 +319,7 @@ def test_zip_logger_folder():
         expected_output_dir = os.path.join(
             base_path, f'embedded-{APP_NAME}-logs{epoch_time}-{__network__}',
         )
+        expected_zip_file_path = os.path.join(base_path, zip_filename)
         expected_wallet_logs_path = os.path.join(base_path, LOG_FOLDER_NAME)
         expected_ln_node_logs_path = os.path.join(
             base_path, f"dataldk{__network__}", '.ldk', 'logs', 'logs.txt',
@@ -330,6 +340,7 @@ def test_zip_logger_folder():
         # Assert
         assert zip_filename == expected_zip_filename
         assert output_dir == expected_output_dir
+        assert zip_file_path == expected_zip_file_path
         mock_makedirs.assert_called_with(expected_output_dir, exist_ok=True)
 
     _test_zip_logger_folder()
@@ -1136,3 +1147,72 @@ def test_disable_rln_node_termination_handling_exception(mock_logger_error, mock
     mock_logger_error.assert_called_once_with(
         'Exception occurred: %s, Message: %s', 'CommonException', 'Test Error',
     )
+
+
+@patch('os.path.exists')
+@patch('os.path.isfile')
+@patch('os.path.isdir')
+@patch('os.remove')
+@patch('shutil.rmtree')
+def test_cleanup_zip_and_logs(mock_rmtree, mock_remove, mock_isdir, mock_isfile, mock_exists):
+    """Test that cleanup_zip_and_logs removes the zip file and logs directory."""
+    # Set up mocks
+    mock_exists.return_value = True
+    mock_isfile.return_value = True
+    mock_isdir.return_value = True
+
+    # Test paths
+    zip_file_path = '/mock/path/logs.zip'
+    logs_dir = '/mock/path/logs'
+
+    # Call the function
+    cleanup_debug_logs(zip_file_path, logs_dir)
+
+    # Verify the calls
+    mock_exists.assert_any_call(zip_file_path)
+    mock_exists.assert_any_call(logs_dir)
+    mock_isfile.assert_called_once_with(zip_file_path)
+    mock_isdir.assert_called_once_with(logs_dir)
+    mock_remove.assert_called_once_with(zip_file_path)
+    mock_rmtree.assert_called_once_with(logs_dir)
+
+
+@patch('os.path.exists')
+@patch('os.path.isfile')
+@patch('os.remove')
+@patch('shutil.rmtree')
+def test_cleanup_zip_and_logs_no_logs_dir(mock_rmtree, mock_remove, mock_isfile, mock_exists):
+    """Test that cleanup_zip_and_logs works when logs_dir is None."""
+    # Set up mocks
+    mock_exists.return_value = True
+    mock_isfile.return_value = True
+
+    # Test path
+    zip_file_path = '/mock/path/logs.zip'
+
+    # Call the function with logs_dir as None
+    cleanup_debug_logs(zip_file_path)
+
+    # Verify the calls
+    mock_remove.assert_called_once_with(zip_file_path)
+    mock_rmtree.assert_not_called()
+
+
+@patch('os.path.exists')
+@patch('os.remove')
+@patch('shutil.rmtree')
+def test_cleanup_zip_and_logs_files_not_exist(mock_rmtree, mock_remove, mock_exists):
+    """Test that cleanup_zip_and_logs handles non-existent files correctly."""
+    # Set up mocks
+    mock_exists.return_value = False
+
+    # Test paths
+    zip_file_path = '/mock/path/logs.zip'
+    logs_dir = '/mock/path/logs'
+
+    # Call the function
+    cleanup_debug_logs(zip_file_path, logs_dir)
+
+    # Verify the calls
+    mock_remove.assert_not_called()
+    mock_rmtree.assert_not_called()

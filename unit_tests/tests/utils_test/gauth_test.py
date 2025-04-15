@@ -53,12 +53,10 @@ def mock_flow():
 @pytest.fixture
 def base_patches():
     """Common patches needed for tests"""
-    with patch('src.utils.gauth.local_store.get_path', return_value=MOCK_LOCAL_STORE), \
-            patch('src.utils.gauth.client_config', MOCK_CLIENT_CONFIG), \
+    with patch('src.utils.gauth.client_config', MOCK_CLIENT_CONFIG), \
             patch('src.utils.gauth.SCOPES', MOCK_SCOPES), \
             patch('src.utils.gauth.TOKEN_PICKLE_PATH', MOCK_TOKEN_PATH), \
-            patch('src.utils.gauth.CREDENTIALS_JSON_PATH', MOCK_CREDS_PATH), \
-            patch('src.utils.gauth.application_local_store_base_path', MOCK_LOCAL_STORE):
+            patch('src.utils.gauth.CREDENTIALS_JSON_PATH', MOCK_CREDS_PATH):
         yield
 
 

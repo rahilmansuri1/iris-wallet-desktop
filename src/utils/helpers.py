@@ -24,6 +24,7 @@ from src.data.repository.setting_repository import SettingRepository
 from src.flavour import __ldk_port__
 from src.model.common_operation_model import UnlockRequestModel
 from src.model.enums.enums_model import NetworkEnumModel
+from src.utils.build_app_path import app_paths
 from src.utils.constant import ANNOUNCE_ADDRESS
 from src.utils.constant import ANNOUNCE_ALIAS
 from src.utils.constant import BITCOIND_RPC_HOST_MAINNET
@@ -42,9 +43,6 @@ from src.utils.constant import DAEMON_PORT
 from src.utils.constant import INDEXER_URL_MAINNET
 from src.utils.constant import INDEXER_URL_REGTEST
 from src.utils.constant import INDEXER_URL_TESTNET
-from src.utils.constant import LDK_DATA_NAME_MAINNET
-from src.utils.constant import LDK_DATA_NAME_REGTEST
-from src.utils.constant import LDK_DATA_NAME_TESTNET
 from src.utils.constant import LDK_PORT
 from src.utils.constant import LDK_PORT_KEY
 from src.utils.constant import LIGHTNING_URL_KEY
@@ -59,7 +57,6 @@ from src.utils.constant import SAVED_BITCOIND_RPC_PORT
 from src.utils.constant import SAVED_BITCOIND_RPC_USER
 from src.utils.constant import SAVED_INDEXER_URL
 from src.utils.constant import SAVED_PROXY_ENDPOINT
-from src.utils.custom_exception import CommonException
 from src.utils.gauth import TOKEN_PICKLE_PATH
 from src.utils.local_store import local_store
 from src.utils.logging import logger
@@ -226,37 +223,6 @@ def get_available_port(port: int) -> int:
     return get_available_port(port + 1)
 
 
-def get_path_of_ldk(ldk_data_name: str) -> str:
-    """
-    Return the path of the LDK data. Creates the folder if it doesn't exist.
-
-    Args:
-        ldk_data_name (str): The name of the LDK data folder.
-
-    Returns:
-        str: The path to the LDK data folder.
-
-    Raises:
-        CommonException: If an error occurs while accessing or creating the folder.
-    """
-    try:
-        local_storage_base_path = local_store.get_path()
-        if not local_storage_base_path:
-            raise CommonException('Unable to get base path of application')
-
-        data_ldk_path = os.path.join(local_storage_base_path, ldk_data_name)
-
-        return data_ldk_path
-    except CommonException as exc:
-        raise exc
-    except OSError as exc:
-        raise CommonException(
-            f'Failed to access or create the folder: {str(exc)}',
-        ) from exc
-    except Exception as exc:
-        raise exc
-
-
 def get_node_arg_config(network: NetworkEnumModel) -> list:
     """
     Retrieves the configuration arguments for setting up the node based on the network.
@@ -271,23 +237,17 @@ def get_node_arg_config(network: NetworkEnumModel) -> list:
     Exception: If any error occurs during the retrieval of configuration arguments.
     """
     try:
-        ldk_data_name = (
-            LDK_DATA_NAME_MAINNET if network == NetworkEnumModel.MAINNET else
-            LDK_DATA_NAME_TESTNET if network == NetworkEnumModel.TESTNET else
-            LDK_DATA_NAME_REGTEST
-        )
-
         daemon_port = get_available_port(DAEMON_PORT)
         if __ldk_port__ is None:
             ldk_port = get_available_port(LDK_PORT)
         else:
             ldk_port = __ldk_port__
-        data_ldk_path = get_path_of_ldk(ldk_data_name)
+        node_data_path = app_paths.node_data_path
         node_url = f'http://127.0.0.1:{daemon_port}'
         local_store.set_value(LIGHTNING_URL_KEY, node_url)
         local_store.set_value(LDK_PORT_KEY, ldk_port)
         return [
-            data_ldk_path,
+            node_data_path,
             '--daemon-listening-port', str(daemon_port),
             '--ldk-peer-listening-port', str(ldk_port),
             '--network', network.value,
