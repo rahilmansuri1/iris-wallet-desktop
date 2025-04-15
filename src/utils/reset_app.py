@@ -6,9 +6,8 @@ import os
 import shutil
 import sys
 
-from src.utils.constant import APP_DIR
 from src.utils.constant import APP_NAME
-from src.utils.constant import NODE_DIR
+from src.utils.local_store import app_paths
 from src.utils.local_store import local_store
 from src.utils.logging import logger
 
@@ -23,7 +22,7 @@ def get_app_directory(app_name_suffix: str | None):
     Returns:
         str: The directory path of the app data.
     """
-    base_dir = local_store.get_path()
+    base_dir = os.path.dirname(local_store.get_path())
 
     if app_name_suffix:
         base_dir = os.path.join(
@@ -59,33 +58,15 @@ def delete_app_data(directory_path: str, network=None):
             )
             return
 
-        # Define patterns for network-specific deletion
-        config_file_name = f"{APP_NAME}-{network}.ini" if network else None
-        # Corrected to match folder name
-        data_directory_name = NODE_DIR if network else None
-        # cache directory
-        cache_directory = 'cache' if network else None
-
-        directory_path = os.path.join(
-            directory_path, network,
-        ) if network else directory_path
-        network = network or ''
-
         # Remove specific or all files and directories
         for item in os.listdir(directory_path):
             item_path = os.path.join(directory_path, item)
 
             if network:
 
-                config_file_path = os.path.join(
-                    directory_path, APP_DIR, config_file_name,
-                ) if config_file_name else None
-                data_directory_path = os.path.join(
-                    directory_path, data_directory_name,
-                ) if data_directory_name else None
-                cache_directory_path = os.path.join(
-                    directory_path, APP_DIR, cache_directory,
-                ) if cache_directory else None
+                config_file_path = app_paths.config_file_path
+                data_directory_path = app_paths.node_data_path
+                cache_directory_path = app_paths.cache_path
 
                 # Delete only network-specific files and directories
                 paths_to_delete = [

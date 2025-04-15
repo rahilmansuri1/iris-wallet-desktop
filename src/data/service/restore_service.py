@@ -9,9 +9,11 @@ import shutil
 import tempfile
 
 from src.data.repository.common_operations_repository import CommonOperationRepository
+from src.data.repository.setting_repository import SettingRepository
 from src.data.service.common_operation_service import CommonOperationService
 from src.model.common_operation_model import RestoreRequestModel
 from src.model.common_operation_model import RestoreResponseModel
+from src.model.enums.enums_model import NetworkEnumModel
 from src.utils.constant import APP_NAME
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_NOT_BACKUP_FILE
@@ -30,7 +32,7 @@ class RestoreService:
     @staticmethod
     def restore(mnemonic: str, password: str) -> RestoreResponseModel:
         """
-        Creates a backup of the node's data and uploads it to Google Drive.
+        Creates a temporary backup of the node's data, uploads it to Google Drive, and deletes the temporary copy afterward.
 
         Returns:
             bool: True if the backup and upload were successful, False otherwise.
@@ -40,8 +42,9 @@ class RestoreService:
         """
         try:
             temp_dir = tempfile.gettempdir()
+            network: NetworkEnumModel = SettingRepository.get_wallet_network()
             iriswallet_temp_folder_path = os.path.join(
-                temp_dir, APP_NAME,
+                temp_dir, APP_NAME, network.value,
             )
             restore_folder_path = os.path.join(
                 iriswallet_temp_folder_path, 'restore',

@@ -23,14 +23,13 @@ from PySide6.QtCore import QCoreApplication
 
 import src.flavour as bitcoin_network
 from src.model.enums.enums_model import NetworkEnumModel
-from src.utils.constant import APP_DIR
 from src.utils.constant import CACHE_EXPIRE_TIMEOUT
 from src.utils.constant import CACHE_FILE_NAME
-from src.utils.constant import CACHE_FOLDER_NAME
 from src.utils.constant import DEFAULT_CACHE_FILENAME
 from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.error_mapping import ERROR_MAPPING
 from src.utils.global_toast import global_toaster
+from src.utils.local_store import app_paths
 from src.utils.local_store import local_store
 from src.utils.logging import logger
 
@@ -76,10 +75,7 @@ class Cache:
                     current_network, DEFAULT_CACHE_FILENAME
                 )
             }.sqlite"
-            base_path = local_store.get_path()
-            cache_dir_path = os.path.join(
-                base_path, current_network, APP_DIR, CACHE_FOLDER_NAME,
-            )
+            cache_dir_path = app_paths.cache_path
 
             if not os.path.exists(cache_dir_path):
                 local_store.create_folder(cache_dir_path)

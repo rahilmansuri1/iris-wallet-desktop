@@ -8,8 +8,10 @@ import shutil
 import tempfile
 
 from src.data.repository.common_operations_repository import CommonOperationRepository
+from src.data.repository.setting_repository import SettingRepository
 from src.data.service.common_operation_service import CommonOperationService
 from src.model.common_operation_model import BackupRequestModel
+from src.model.enums.enums_model import NetworkEnumModel
 from src.utils.constant import APP_NAME
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_BACKUP_FILE_NOT_EXITS
@@ -36,7 +38,8 @@ class BackupService:
     @staticmethod
     def backup(mnemonic: str, password: str) -> bool:
         """
-        Creates a backup of the node's data and uploads it to Google Drive.
+        Creates a temporary backup of the node's data, uploads it to Google Drive,
+        and deletes the local backup after a successful upload.
 
         Returns:
             bool: True if the backup and upload were successful, False otherwise.
@@ -48,7 +51,10 @@ class BackupService:
             logger.info('Back up process started...')
 
             temp_dir = tempfile.gettempdir()
-            iriswallet_temp_folder_path = os.path.join(temp_dir, APP_NAME)
+            network: NetworkEnumModel = SettingRepository.get_wallet_network()
+            iriswallet_temp_folder_path = os.path.join(
+                temp_dir, APP_NAME, network.value,
+            )
             backup_folder_path = os.path.join(
                 iriswallet_temp_folder_path, 'backup',
             )

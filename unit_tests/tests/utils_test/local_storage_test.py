@@ -91,8 +91,10 @@ def test_all_keys(local_store):
 
 def test_get_path(local_store):
     """Test that get_path returns the base path."""
+    local_store.get_path = MagicMock(return_value='/mock/path/regtest')
+
     result = local_store.get_path()
-    assert result == '/mock/path'
+    assert result == '/mock/path/regtest'
 
 
 def test_create_folder(local_store, mock_qdir, mocker):

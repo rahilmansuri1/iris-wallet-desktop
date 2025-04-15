@@ -11,8 +11,12 @@ from PySide6.QtCore import QSettings
 from PySide6.QtCore import QStandardPaths
 
 from src.flavour import __network__
+from src.model.common_operation_model import AppPathsModel
 from src.utils.constant import APP_DIR
 from src.utils.constant import APP_NAME
+from src.utils.constant import CACHE_FOLDER_NAME
+from src.utils.constant import LOG_FOLDER_NAME
+from src.utils.constant import NODE_DIR
 from src.utils.constant import ORGANIZATION_DOMAIN
 
 
@@ -37,14 +41,15 @@ class LocalStore:
         QCoreApplication.setApplicationName(app_name)
         QCoreApplication.setOrganizationDomain(org_domain)
 
-        # Adjust the base path to include directory like 'com.iris'
-        self.base_path = QStandardPaths.writableLocation(
-            QStandardPaths.AppDataLocation,
-        )
-        self.network_path = QDir(self.base_path).filePath(__network__)
+        # Adjust the base path to include directory like 'iriswallet/network'
+        self.base_path = QDir(
+            QStandardPaths.writableLocation(
+                QStandardPaths.AppDataLocation,
+            ),
+        ).filePath(__network__)
 
         # Initialize settings with a custom location
-        self.settings_path = QDir(self.network_path).filePath(
+        self.settings_path = QDir(self.base_path).filePath(
             os.path.join(APP_DIR, f'{app_name}-{__network__}.ini'),
         )
         self.settings = QSettings(self.settings_path, QSettings.IniFormat)
@@ -121,11 +126,34 @@ class LocalStore:
             str: The full path to the created folder.
         """
         print('Base path', self.base_path)
-        folder_path = QDir(self.network_path).filePath(folder_name)
+        folder_path = QDir(self.base_path).filePath(folder_name)
         QDir().mkpath(folder_path)
         print('after', folder_path)
         return folder_path
 
+    def build_app_paths(self) -> AppPathsModel:
+        """
+        Constructs and returns an AppPathsModel containing all relevant
+        filesystem paths used by the application, including directories
+        for app data, node data, logs, cache, and config files.
+        """
+        app_path = os.path.join(self.base_path, APP_DIR)
+        node_path = os.path.join(self.base_path, NODE_DIR)
+
+        return AppPathsModel(
+            app_path=app_path,
+            node_data_path=node_path,
+            cache_path=os.path.join(app_path, CACHE_FOLDER_NAME),
+            app_logs_path=os.path.join(app_path, LOG_FOLDER_NAME),
+            node_logs_path=os.path.join(node_path, LOG_FOLDER_NAME),
+            ldk_logs_path=os.path.join(node_path, '.ldk', 'logs', 'logs.txt'),
+            pickle_file_path=os.path.join(app_path, 'token.pickle'),
+            config_file_path=os.path.join(
+                app_path, f"{APP_NAME}-{__network__}.ini",
+            ),
+        )
+
 
 # Create a singleton instance of LocalStore
 local_store = LocalStore(APP_NAME, ORGANIZATION_DOMAIN)
+app_paths = local_store.build_app_paths()

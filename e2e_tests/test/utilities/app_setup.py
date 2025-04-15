@@ -71,7 +71,7 @@ class TestEnvironment:
 
     def reset_app_data(self):
         """Resets the app data by deleting relevant directories."""
-        actual_path = local_store.get_path()
+        actual_path = os.path.dirname(local_store.get_path())
         app1_data = actual_path.replace(APP_NAME, FIRST_APPLICATION_PATH)
         app2_data = actual_path.replace(APP_NAME, SECOND_APPLICATION_PATH)
 

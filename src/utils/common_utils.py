@@ -21,7 +21,6 @@ from PIL import ImageOps
 from PIL.ImageQt import ImageQt
 from PySide6.QtCore import QByteArray
 from PySide6.QtCore import QCoreApplication
-from PySide6.QtCore import QDir
 from PySide6.QtCore import QLocale
 from PySide6.QtCore import QRegularExpression
 from PySide6.QtCore import QTranslator
@@ -35,7 +34,6 @@ from PySide6.QtWidgets import QMessageBox
 from PySide6.QtWidgets import QPlainTextEdit
 from PySide6.QtWidgets import QWidget
 
-import src.flavour as bitcoin_network
 from src.data.repository.setting_repository import SettingRepository
 from src.data.service.helpers.main_asset_page_helper import get_offline_asset_ticker
 from src.model.enums.enums_model import AssetType
@@ -43,15 +41,12 @@ from src.model.enums.enums_model import NetworkEnumModel
 from src.model.enums.enums_model import TokenSymbol
 from src.model.enums.enums_model import WalletType
 from src.model.selection_page_model import SelectionPageModel
-from src.utils.constant import APP_DIR
 from src.utils.constant import APP_NAME
 from src.utils.constant import BITCOIN_EXPLORER_URL
 from src.utils.constant import DEFAULT_LOCALE
 from src.utils.constant import FAST_TRANSACTION_FEE_BLOCKS
 from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
-from src.utils.constant import LOG_FOLDER_NAME
 from src.utils.constant import MEDIUM_TRANSACTION_FEE_BLOCKS
-from src.utils.constant import NODE_DIR
 from src.utils.constant import SLOW_TRANSACTION_FEE_BLOCKS
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_SAVE_LOGS
@@ -59,6 +54,7 @@ from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
 from src.utils.info_message import INFO_COPY_MESSAGE
 from src.utils.info_message import INFO_LOG_SAVE_DESCRIPTION
 from src.utils.ln_node_manage import LnNodeServerManager
+from src.utils.local_store import app_paths
 from src.utils.logging import logger
 from src.version import __version__
 from src.views.components.toast import ToastManager
@@ -209,16 +205,9 @@ def zip_logger_folder(base_path) -> tuple[str, str, str]:
     # Generate the log folder name using the current epoch time value
     epoch_time = str(int(time.time()))
     network: NetworkEnumModel = SettingRepository.get_wallet_network()
-    current_network = NetworkEnumModel(bitcoin_network.__network__)
-    ln_node_logs_path = os.path.join(
-        base_path, current_network, NODE_DIR, LOG_FOLDER_NAME,
-    )
-    wallet_logs_path = QDir(base_path).filePath(
-        os.path.join(current_network, APP_DIR, LOG_FOLDER_NAME),
-    )
-    ldk_logs_path = os.path.join(
-        base_path, current_network, NODE_DIR, '.ldk', 'logs', 'logs.txt',
-    )
+    ln_node_logs_path = app_paths.node_logs_path
+    wallet_logs_path = app_paths.app_logs_path
+    ldk_logs_path = app_paths.ldk_logs_path
     zip_filename = f'{
         APP_NAME
     }-logs-{epoch_time}-{__version__}-{network.value}.zip'
