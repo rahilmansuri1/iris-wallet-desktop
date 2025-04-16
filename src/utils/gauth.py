@@ -25,17 +25,14 @@ from PySide6.QtWidgets import QWidget
 
 from accessible_constant import BACKUP_WINDOW
 from config import client_config
+from src.utils.build_app_path import app_paths
 from src.utils.constant import G_SCOPES as SCOPES
-from src.utils.local_store import local_store
 from src.utils.logging import logger
 
-application_local_store_base_path = local_store.get_path()
 CREDENTIALS_JSON_PATH = os.path.join(
     os.path.dirname(__file__), '../../credentials.json',
 )
-TOKEN_PICKLE_PATH = os.path.join(
-    application_local_store_base_path, 'token.pickle',
-)
+TOKEN_PICKLE_PATH = app_paths.pickle_file_path
 
 
 class OAuthHandlerWindow(QWidget):

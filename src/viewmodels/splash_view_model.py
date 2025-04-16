@@ -16,29 +16,36 @@ from src.model.common_operation_model import NodeInfoResponseModel
 from src.model.common_operation_model import UnlockRequestModel
 from src.model.enums.enums_model import NativeAuthType
 from src.model.enums.enums_model import WalletType
+from src.utils.constant import COMPATIBLE_RLN_NODE_COMMITS
 from src.utils.constant import IRIS_WALLET_TRANSLATIONS_CONTEXT
 from src.utils.constant import NODE_PUB_KEY
 from src.utils.constant import WALLET_PASSWORD_KEY
 from src.utils.custom_exception import CommonException
 from src.utils.error_message import ERROR_CONNECTION_FAILED_WITH_LN
 from src.utils.error_message import ERROR_NATIVE_AUTHENTICATION
+from src.utils.error_message import ERROR_NODE_INCOMPATIBILITY
 from src.utils.error_message import ERROR_NODE_WALLET_NOT_INITIALIZED
 from src.utils.error_message import ERROR_PASSWORD_INCORRECT
 from src.utils.error_message import ERROR_REQUEST_TIMEOUT
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG
 from src.utils.error_message import ERROR_SOMETHING_WENT_WRONG_WHILE_UNLOCKING_LN_ON_SPLASH
 from src.utils.helpers import get_bitcoin_config
+from src.utils.info_message import INFO_RESTARTING_RLN_NODE
+from src.utils.info_message import INFO_STARTING_RLN_NODE
+from src.utils.info_message import INFO_WALLET_RESET
 from src.utils.keyring_storage import get_value
 from src.utils.ln_node_manage import LnNodeServerManager
 from src.utils.local_store import local_store
 from src.utils.logging import logger
-from src.utils.logging import rln_qprocess_logger
 from src.utils.page_navigation_events import PageNavigationEventManager
 from src.utils.render_timer import RenderTimer
+from src.utils.reset_app import delete_app_data
 from src.utils.worker import ThreadManager
 from src.viewmodels.wallet_and_transfer_selection_viewmodel import WalletTransferSelectionViewModel
+from src.views.components.error_report_dialog_box import ErrorReportDialog
 from src.views.components.message_box import MessageBox
 from src.views.components.node_crash_dialog import CrashDialogBox
+from src.views.components.node_incompatibility import NodeIncompatibilityDialog
 from src.views.components.toast import ToastManager
 
 
@@ -49,7 +56,7 @@ class SplashViewModel(QObject, ThreadManager):
     decline_button_clicked = Signal(str)
     splash_screen_message = Signal(str)
     sync_chain_info_label = Signal(bool)
-    show_main_window_loader = Signal(bool)
+    show_main_window_loader = Signal(bool, str)
 
     def __init__(self, page_navigation):
         super().__init__()
@@ -60,6 +67,7 @@ class SplashViewModel(QObject, ThreadManager):
         self.is_error_handled = False
         self.ln_node_manager = LnNodeServerManager.get_instance()
         self.ln_node_manager.process.finished.connect(self.on_node_failure)
+        self.error_dialog_box = None
 
     def load_wallet_transfer_selection_view_model(self, view_model: WalletTransferSelectionViewModel):
         """
@@ -126,10 +134,11 @@ class SplashViewModel(QObject, ThreadManager):
         node_pub_key: NodeInfoResponseModel = CommonOperationRepository.node_info()
         if node_pub_key is not None:
             local_store.set_value(NODE_PUB_KEY, node_pub_key.pubkey)
-        self.show_main_window_loader.emit(False)
+        self.show_main_window_loader.emit(False, INFO_RESTARTING_RLN_NODE)
 
     def on_error_of_unlock_api(self, error: Exception):
         """Handle error of unlock API."""
+        self.error_dialog_box = ErrorReportDialog(initiated_from_splash=True)
         error_message = error.message if isinstance(
             error, CommonException,
         ) else ERROR_SOMETHING_WENT_WRONG_WHILE_UNLOCKING_LN_ON_SPLASH
@@ -153,16 +162,20 @@ class SplashViewModel(QObject, ThreadManager):
             QApplication.instance().exit()
 
         if error_message == ERROR_CONNECTION_FAILED_WITH_LN and not self.is_error_handled:
-            if self.ln_node_manager.process.state() == QProcess.Running:
-                self.wallet_transfer_selection_view_model.on_ln_node_start()
-            else:
+            if self.ln_node_manager.process.state() == QProcess.ProcessState.NotRunning:
                 self.restart_ln_node_after_crash()
+            else:
+                self.is_error_handled = True
+                self.error_dialog_box.exec()
+            return
 
         if error_message == ERROR_PASSWORD_INCORRECT:
             PageNavigationEventManager.get_instance().enter_wallet_password_page_signal.emit()
+            return
 
         if error_message == ERROR_NODE_WALLET_NOT_INITIALIZED:
             PageNavigationEventManager.get_instance().set_wallet_password_page_signal.emit()
+            return
 
         # Log the error and display a toast message
         logger.error(
@@ -170,15 +183,18 @@ class SplashViewModel(QObject, ThreadManager):
             type(error).__name__, str(error),
         )
         if not self.is_from_retry and not self.is_error_handled:
-            self._page_navigation.enter_wallet_password_page()
-        self.show_main_window_loader.emit(False)
+            self.is_error_handled = True
+            self.error_dialog_box.exec()
+            return
+
+        self.show_main_window_loader.emit(False, INFO_RESTARTING_RLN_NODE)
 
         self.is_from_retry = False
 
     def handle_application_open(self):
         """This method handle application start"""
         try:
-            self.show_main_window_loader.emit(True)
+            self.show_main_window_loader.emit(True, INFO_RESTARTING_RLN_NODE)
             self.is_error_handled = False
             wallet_type: WalletType = SettingRepository.get_wallet_type()
             if WalletType.EMBEDDED_TYPE_WALLET.value == wallet_type.value:
@@ -187,7 +203,11 @@ class SplashViewModel(QObject, ThreadManager):
                         IRIS_WALLET_TRANSLATIONS_CONTEXT, 'wait_node_to_start', None,
                     ),
                 )
-                self.wallet_transfer_selection_view_model.start_node_for_embedded_option()
+                if self.is_rln_commit_valid():
+                    self.wallet_transfer_selection_view_model.start_node_for_embedded_option()
+                else:
+                    logger.error(ERROR_NODE_INCOMPATIBILITY)
+                    self.handle_node_incompatibility()
             else:
                 keyring_status = SettingRepository.get_keyring_status()
                 if keyring_status is True:
@@ -215,7 +235,7 @@ class SplashViewModel(QObject, ThreadManager):
                         },
                     )
         except CommonException as error:
-            self.show_main_window_loader.emit(False)
+            self.show_main_window_loader.emit(False, INFO_RESTARTING_RLN_NODE)
             logger.error(
                 'Exception occurred at handle_application_open: %s, Message: %s',
                 type(error).__name__, str(error),
@@ -224,7 +244,7 @@ class SplashViewModel(QObject, ThreadManager):
                 description=error.message,
             )
         except Exception as error:
-            self.show_main_window_loader.emit(False)
+            self.show_main_window_loader.emit(False, INFO_RESTARTING_RLN_NODE)
             logger.error(
                 'Exception occurred at handle_application_open: %s, Message: %s',
                 type(error).__name__, str(error),
@@ -232,6 +252,21 @@ class SplashViewModel(QObject, ThreadManager):
             ToastManager.error(
                 description=ERROR_SOMETHING_WENT_WRONG,
             )
+
+    def handle_node_incompatibility(self):
+        """Handles the case when the node commit ID is incompatible."""
+        node_incompatible = NodeIncompatibilityDialog()
+        node_incompatible.show_node_incompatibility_dialog()
+        clicked_button = node_incompatible.node_incompatibility_dialog.clickedButton()
+
+        if clicked_button == node_incompatible.close_button:
+            QApplication.instance().exit()
+        elif clicked_button == node_incompatible.delete_app_data_button:
+            node_incompatible.show_confirmation_dialog()
+            if node_incompatible.confirmation_dialog.clickedButton() == node_incompatible.confirm_delete_button:
+                self.on_delete_app_data()
+            elif node_incompatible.confirmation_dialog.clickedButton() == node_incompatible.cancel:
+                self.handle_application_open()
 
     def restart_ln_node_after_crash(self):
         """
@@ -242,7 +277,7 @@ class SplashViewModel(QObject, ThreadManager):
         if not self.is_error_handled:
             self.is_error_handled = True
 
-            rln_qprocess_logger.error(
+            logger.error(
                 'RLN node process was KILLED or CRASHED!',
             )
 
@@ -262,7 +297,23 @@ class SplashViewModel(QObject, ThreadManager):
     def on_node_failure(self, exit_code, exit_status):
         """This method handles crash exits of RGB LN Node"""
         if exit_status == QProcess.ExitStatus.CrashExit:
-            rln_qprocess_logger.error(
+            logger.error(
                 'RLN node process was KILLED or CRASHED! Exit Code: %s', exit_code,
             )
             self.restart_ln_node_after_crash()
+
+    def on_delete_app_data(self):
+        """This function deletes the wallet data after user confirms when using an invalid RGB Lightning node"""
+        basepath = local_store.get_path()
+        network_type = SettingRepository.get_wallet_network()
+        delete_app_data(basepath, network=network_type.value)
+        logger.info(INFO_WALLET_RESET)
+        self._page_navigation.welcome_page()
+        self.show_main_window_loader.emit(
+            True, INFO_STARTING_RLN_NODE,
+        )
+        self.wallet_transfer_selection_view_model.start_node_for_embedded_option()
+
+    def is_rln_commit_valid(self) -> bool:
+        """Checks if the stored commit ID is in the list of compatible commit IDs."""
+        return SettingRepository.get_rln_node_commit_id() in COMPATIBLE_RLN_NODE_COMMITS

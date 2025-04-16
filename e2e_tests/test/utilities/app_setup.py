@@ -20,7 +20,6 @@ from accessible_constant import APP2_NAME
 from accessible_constant import FIRST_APPLICATION
 from accessible_constant import FIRST_APPLICATION_PATH
 from accessible_constant import FIRST_SERVICE
-from accessible_constant import ORIGINAL_PATH
 from accessible_constant import SECOND_APPLICATION
 from accessible_constant import SECOND_APPLICATION_PATH
 from accessible_constant import SECOND_SERVICE
@@ -31,6 +30,7 @@ from e2e_tests.test.utilities.model import WalletTestSetup
 from e2e_tests.test.utilities.reset_app import delete_app_data
 from e2e_tests.test.utilities.translation_utils import TranslationManager
 from src.model.enums.enums_model import WalletType
+from src.utils.constant import APP_NAME
 from src.utils.constant import IS_NATIVE_AUTHENTICATION_ENABLED
 from src.utils.constant import NATIVE_LOGIN_ENABLED
 from src.utils.local_store import local_store
@@ -71,9 +71,9 @@ class TestEnvironment:
 
     def reset_app_data(self):
         """Resets the app data by deleting relevant directories."""
-        actual_path = local_store.get_path()
-        app1_data = actual_path.replace(ORIGINAL_PATH, FIRST_APPLICATION_PATH)
-        app2_data = actual_path.replace(ORIGINAL_PATH, SECOND_APPLICATION_PATH)
+        actual_path = os.path.dirname(local_store.get_path())
+        app1_data = actual_path.replace(APP_NAME, FIRST_APPLICATION_PATH)
+        app2_data = actual_path.replace(APP_NAME, SECOND_APPLICATION_PATH)
 
         delete_app_data(app1_data)
         delete_app_data('dataldk0')

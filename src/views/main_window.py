@@ -82,7 +82,7 @@ class MainWindow:
         self.retranslate_ui()
         QMetaObject.connectSlotsByName(self.main_window)
 
-    def show_main_window_loading_screen(self, loading_status: bool):
+    def show_main_window_loading_screen(self, loading_status: bool, loader_description: str):
         """Handles showing or hiding the loading screen on the main window."""
         current_widget = self.stacked_widget.currentWidget().objectName()
         if current_widget == 'splash_page':
@@ -91,7 +91,7 @@ class MainWindow:
         if loading_status:
             self._loading_translucent_screen = LoadingTranslucentScreen(
                 parent=self.main_window,
-                description_text='Ln node restarting. Please do not close the app',
+                description_text=loader_description,
                 loader_type=LoaderDisplayModel.FULL_SCREEN,
             )
             self._loading_translucent_screen.start()

@@ -175,3 +175,18 @@ class ConfigurableCardModel(BaseModel):
     suggestion_label: str | None = None
     suggestion_desc: str | None = None
     placeholder_value: float | str
+
+
+class AppPathsModel(BaseModel):
+    """Model representing filesystem paths used by the application and node."""
+    app_path: str
+    node_data_path: str
+    iriswallet_temp_folder_path: str
+    cache_path: str
+    app_logs_path: str
+    node_logs_path: str
+    ldk_logs_path: str
+    pickle_file_path: str
+    config_file_path: str
+    backup_folder_path: str
+    restore_folder_path: str

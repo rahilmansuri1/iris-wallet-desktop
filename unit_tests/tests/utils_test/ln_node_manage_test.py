@@ -15,7 +15,6 @@ from requests.exceptions import HTTPError
 from src.utils.constant import INTERVAL
 from src.utils.constant import MAX_ATTEMPTS_FOR_CLOSE
 from src.utils.ln_node_manage import LnNodeServerManager
-from src.utils.logging import rln_qprocess_logger
 
 
 @pytest.fixture
@@ -40,20 +39,6 @@ def instance(mock_process):
     obj = LnNodeServerManager()
     obj.process = mock_process  # Inject mock process
     return obj
-
-
-@patch.object(rln_qprocess_logger, 'info')
-def test_handle_stdout(mock_logger, instance):
-    """Test that handle_stdout logs the correct standard output."""
-    instance.handle_stdout()
-    mock_logger.assert_called_once_with('stdout message')
-
-
-@patch.object(rln_qprocess_logger, 'error')
-def test_handle_stderr(mock_logger, instance):
-    """Test that handle_stderr logs the correct standard error output."""
-    instance.handle_stderr()
-    mock_logger.assert_called_once_with('stderr message')
 
 
 def test_check_node_status_success(ln_node_manager):

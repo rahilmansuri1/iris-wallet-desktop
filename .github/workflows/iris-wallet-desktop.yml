@@ -16,30 +16,7 @@ jobs:
           fetch-depth: 1 # Fetch the latest commit only
 
       - name: Validate Tag and Code Version
-        run: |
-          TAG_VERSION=$(git describe --tags)
-          echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
-
-          # Extract version from tag
-          echo "Tag version: $TAG_VERSION"
-
-          # Extract version from code
-          CODE_VERSION=$(grep '__version__' ./src/version.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
-          echo "Code version: $CODE_VERSION"
-
-          # Compare the tag and code version
-          if [ "$TAG_VERSION" != "$CODE_VERSION" ]; then
-            echo "❌ Tag version ($TAG_VERSION) does not match code version ($CODE_VERSION)."
-            exit 1
-          else
-            echo "✅ Tag version matches code version."
-          fi
-
-      - name: Install Rust Programming Environment
-        run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-          source "$HOME/.cargo/env"
+        uses: ./.github/actions/validate-tag-version
 
       - name: Set up Python 3.12.3 environment
         uses: actions/setup-python@v5
@@ -50,20 +27,11 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libxcb-cursor0 -y # Required by the application
-          sudo apt-get install ruby-dev build-essential -y && sudo gem i fpm -f
+          sudo apt-get install ruby-dev build-essential libgirepository1.0-dev python3-dev -y && sudo gem i fpm -f
           sudo apt-get update && sudo apt-get install -y libfuse2 # Required for AppImage creation
 
-      - name: Clone rgb-lightning-node repository with submodules
-        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
-
       - name: Build the rgb-lightning-node binary
-        working-directory: rgb-lightning-node
-        run: cargo build --release
-
-      - name: Copy rgb-lightning-node binary to root directory
-        run: |
-          mkdir ln_node_binary
-          cp rgb-lightning-node/target/release/rgb-lightning-node ln_node_binary
+        uses: ./.github/actions/build-rln-node
 
       - name: Set environment variables from GitHub Secrets and generate config.py
         env:
@@ -78,52 +46,23 @@ jobs:
           python generate_config.py
 
       - name: Install Python dependencies
-        run: |
-          pip install poetry # Dependency management tool
-          pip install pyinstaller # Required for building executable files
-          poetry install # Install application dependencies
+        uses: ./.github/actions/install-python-dependencies
 
       - name: Compile QT resources
         run: |
           poetry run pyside6-rcc src/resources.qrc -o src/resources_rc.py
 
-      - name: Create AppImage for Regtest network
-        run: |
-          ARCH=$(uname -m)
-          VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
-          poetry run build-iris-wallet --network=regtest --distribution=appimage
-          REGTEST_APPIMAGE_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
-          RENAME_REGTEST_APPIMAGE_NAME="iriswallet-${VERSION}-regtest-${ARCH}.AppImage"
-          mv ${REGTEST_APPIMAGE_NAME} ${RENAME_REGTEST_APPIMAGE_NAME}
-          echo "RENAME_REGTEST_APPIMAGE_NAME=${RENAME_REGTEST_APPIMAGE_NAME}" >> $GITHUB_ENV
-          chmod +x $RENAME_REGTEST_APPIMAGE_NAME
-          echo "Generated file: $RENAME_REGTEST_APPIMAGE_NAME"
-        shell: bash
-
-      - name: Upload Regtest AppImage artifact
-        uses: actions/upload-artifact@v4
+      - name: Build and upload Regtest AppImage
+        uses: ./.github/actions/build-and-upload-appimage
         with:
-          name: linux_appimage_regtest
-          path: ${{ env.RENAME_REGTEST_APPIMAGE_NAME }}
+          network: regtest
+          artifact-name: linux_appimage_regtest
 
-      - name: Create AppImage for Testnet network
-        run: |
-          ARCH=$(uname -m)
-          VERSION=$(grep '__version__' src/version.py | cut -d "'" -f 2)
-          poetry run build-iris-wallet --network=testnet --distribution=appimage
-          TESTNET_APPIMAGE_NAME="iriswallet-${VERSION}-${ARCH}.AppImage"
-          RENAME_TESTNET_APPIMAGE_NAME="iriswallet-${VERSION}-testnet-${ARCH}.AppImage"
-          mv ${TESTNET_APPIMAGE_NAME} ${RENAME_TESTNET_APPIMAGE_NAME}
-          echo "RENAME_TESTNET_APPIMAGE_NAME=${RENAME_TESTNET_APPIMAGE_NAME}" >> $GITHUB_ENV
-          chmod +x $RENAME_TESTNET_APPIMAGE_NAME
-          echo "Generated file: $RENAME_TESTNET_APPIMAGE_NAME"
-        shell: bash
-
-      - name: Upload Testnet AppImage artifact
-        uses: actions/upload-artifact@v4
+      - name: Build and upload Testnet AppImage
+        uses: ./.github/actions/build-and-upload-appimage
         with:
-          name: linux_appimage_testnet
-          path: ${{ env.RENAME_TESTNET_APPIMAGE_NAME }}
+          network: testnet
+          artifact-name: linux_appimage_testnet
 
   build-iris-wallet-desktop-macos:
     runs-on: macos-latest
@@ -135,47 +74,15 @@ jobs:
           fetch-depth: 1
 
       - name: Validate Tag and Code Version
-        run: |
-          TAG_VERSION=$(git describe --tags)
-          echo "TAG_VERSION=${TAG_VERSION}" >> $GITHUB_ENV
-
-          # Extract version from tag
-          echo "Tag version: $TAG_VERSION"
-
-          # Extract version from code
-          CODE_VERSION=$(grep '__version__' ./src/version.py | awk -F'=' '{print $2}' | tr -d ' "' | xargs)
-          echo "Code version: $CODE_VERSION"
-
-          # Compare the tag and code version
-          if [ "$TAG_VERSION" != "$CODE_VERSION" ]; then
-            echo "❌ Tag version ($TAG_VERSION) does not match code version ($CODE_VERSION)."
-            exit 1
-          else
-            echo "✅ Tag version matches code version."
-          fi
-
-      - name: Install Rust
-        run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-          source "$HOME/.cargo/env"
+        uses: ./.github/actions/validate-tag-version
 
       - name: Set up Python 3.12.3
         uses: actions/setup-python@v5
         with:
           python-version: "3.12.3"
 
-      - name: Clone rgb-lightning-node repository with submodules
-        run: git clone https://github.com/RGB-Tools/rgb-lightning-node --recurse-submodules --shallow-submodules
-
       - name: Build the rgb-lightning-node binary
-        working-directory: rgb-lightning-node
-        run: cargo build --release
-
-      - name: Copy rgb-lightning-node binary to root directory
-        run: |
-          mkdir ln_node_binary
-          cp rgb-lightning-node/target/release/rgb-lightning-node ln_node_binary
+        uses: ./.github/actions/build-rln-node
 
       - name: Set environment variables from secrets and create config.py
         env:
@@ -189,11 +96,8 @@ jobs:
           cd src/utils
           python generate_config.py
 
-      - name: Install python dependencies
-        run: |
-          pip install poetry
-          pip install pyinstaller
-          poetry install
+      - name: Install Python dependencies
+        uses: ./.github/actions/install-python-dependencies
 
       - name: Compile QT resources
         run: |
@@ -222,12 +126,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Retrieve tag name
-        run: |
-          TAG_NAME=$(git describe --tags)
-          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
-          echo "Using tag: $TAG_NAME"
 
       - name: Prepare uploads folder
         run: mkdir -p ./uploads

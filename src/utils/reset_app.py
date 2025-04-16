@@ -6,36 +6,42 @@ import os
 import shutil
 import sys
 
+from src.utils.build_app_path import app_paths
+from src.utils.constant import APP_NAME
 from src.utils.local_store import local_store
+from src.utils.logging import logger
 
 
-def get_app_directory(app_name: str | None):
+def get_app_directory(app_name_suffix: str | None):
     """
-    Determines the correct app data directory based on the provided app name.
+    Determines the correct app data directory based on the provided app name suffix.
 
     Args:
-        app_name (str | None): The app name suffix, if provided.
+        app_name_suffix (str | None): The app name suffix, if provided.
 
     Returns:
         str: The directory path of the app data.
     """
-    base_dir = local_store.get_path()  # Example: /home/user/.local/share/rgb/iriswallet
+    base_dir = os.path.dirname(local_store.get_path())
 
-    if app_name:
-        # Get '/home/user/.local/share/rgb'
-        rgb_parent = os.path.dirname(base_dir)
-        # Correct path
-        return os.path.join(f"{rgb_parent}_{app_name}", f"iriswallet_{app_name}")
+    if app_name_suffix:
+        base_dir = os.path.join(
+            os.path.dirname(
+                base_dir,
+            ), f"{APP_NAME}_{app_name_suffix}",
+        )
 
     return base_dir  # Default path if no app name is provided
 
 
-def delete_app_data(directory_path: str):
+def delete_app_data(directory_path: str, network=None):
     """
     Delete all files and directories in the specified directory.
+    If a network is specified, only delete the network-specific configuration file, cache directory, and lightning node data.
 
     Args:
         directory_path (str): The path to the directory from which files and directories will be deleted.
+        network (str, optional): The network type ('testnet', 'regtest', or 'mainnet'). If None, deletes everything.
 
     Raises:
         Exception: If an error occurs during the deletion process.
@@ -46,21 +52,47 @@ def delete_app_data(directory_path: str):
             print(f'Directory does not exist: {directory_path}')
             return
 
-        # Remove all files and directories in the path
+        if network and network not in ('testnet', 'regtest', 'mainnet'):
+            print(
+                "Invalid network type. Choose either 'testnet', 'regtest', or 'mainnet'.",
+            )
+            return
+
+        # Remove specific or all files and directories
         for item in os.listdir(directory_path):
             item_path = os.path.join(directory_path, item)
-            if os.path.isfile(item_path) or os.path.islink(item_path):
-                os.remove(item_path)  # Remove file or symbolic link
-            elif os.path.isdir(item_path):
-                shutil.rmtree(item_path)  # Remove directory and its contents
 
-        print(
-            f'All files and directories in {
-                directory_path
-            } have been deleted.',
-        )
+            if network:
+
+                config_file_path = app_paths.config_file_path
+                data_directory_path = app_paths.node_data_path
+                cache_directory_path = app_paths.cache_path
+
+                # Delete only network-specific files and directories
+                paths_to_delete = [
+                    config_file_path,
+                    data_directory_path, cache_directory_path,
+                ]
+
+                for path in paths_to_delete:
+                    if path and os.path.exists(path):
+                        delete_path(path)
+
+            else:
+                # Delete everything
+                delete_path(item_path)
     except Exception as e:
-        print(f'An error occurred while deleting files: {e}')
+        logger.error('An error occurred while deleting files: %s', e)
+
+
+def delete_path(path):
+    """Helper function to delete a file or directory."""
+    if os.path.isfile(path) or os.path.islink(path):
+        os.remove(path)
+        logger.info('Deleted file: %s', path)
+    elif os.path.isdir(path):
+        shutil.rmtree(path)
+        logger.info('Deleted directory: %s', path)
 
 
 def main():
@@ -70,7 +102,7 @@ def main():
     It retrieves the path to the iriswallet directory and then deletes all its contents.
 
     Note:
-        This script is intended for development and testing purposes only. Use with caution as it will
+        This method is intended for development and testing purposes only. Use with caution as it will
         permanently delete data in the specified directory.
     """
     parser = argparse.ArgumentParser(
